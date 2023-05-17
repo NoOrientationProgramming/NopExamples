@@ -1,2 +1,4 @@
-# ProcessingExamples
-Real-life examples for the [Processing()](https://github.com/NoOrientationProgramming/ProcessingCore) class.
+
+![GitHub](https://img.shields.io/github/license/NoOrientationProgramming/ProcessingExamples?style=plastic)
+
+Real-life examples based on the [Processing()](https://github.com/NoOrientationProgramming/ProcessingCore) class.
