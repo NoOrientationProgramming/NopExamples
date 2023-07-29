@@ -62,7 +62,7 @@ cppArgs = [
 	'-std=gnu++11',
 ]
 
-cppArgs += '-g'
+cppArgs += '-Os'
 
 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
 warnings = [
