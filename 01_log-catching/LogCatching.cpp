@@ -58,6 +58,7 @@ LogCatching::LogCatching()
 	: Processing("LogCatching")
 	, mState(StStart)
 	, mStartMs(0)
+	, mCntLines(0)
 	, mFragmentLine("")
 {}
 
@@ -134,7 +135,9 @@ Success LogCatching::process()
 			//procInfLog("line: '%s'", mFragmentLine.c_str());
 
 			mLines.push_back(mFragmentLine);
+
 			mFragmentLine = "";
+			++mCntLines;
 
 			if (mLines.size() > numLines)
 				mLines.pop_front();
@@ -172,16 +175,17 @@ void LogCatching::logSaveRequest(int signum)
 
 bool LogCatching::logSave(bool triggeredByUser)
 {
-	time_t timeRaw;
-	struct tm *infoTime;
+	time_t now;
+	//struct tm *infoTime;
 	char buf[32];
 	string prefixFile;
 	string nameFile;
 
-	time(&timeRaw);
-	infoTime = localtime(&timeRaw);
+	now = time(NULL);
+	//infoTime = localtime(&now);
 
-	strftime(buf, sizeof(buf), "%y%m%d-%H%M%S_", infoTime);
+	//strftime(buf, sizeof(buf), "%y%m%d-%H%M%S_", infoTime);
+	snprintf(buf, sizeof(buf), "%ld_", now);
 	nameFile = string(buf) + nameBase;
 
 	if (triggeredByUser)
@@ -193,21 +197,23 @@ bool LogCatching::logSave(bool triggeredByUser)
 
 	//procWrnLog("Saving to file: %s", nameFile.c_str());
 
-	ofstream fileLog(nameFile);
+	FILE *pFile = fopen(nameFile.c_str(), "w");
 
-	if (!fileLog.good())
+	if (!pFile)
 	{
 		procErrLog(-1, "error opening file: %s (%d)", strerror(errno), errno);
 		return false;
 	}
 
 	list<string>::iterator iter;
+	uint32_t w = to_string(mCntLines).size();
+	uint32_t idxLine = mCntLines - mLines.size();
 
 	iter = mLines.begin();
-	for (; iter != mLines.end(); ++iter)
-		fileLog << *iter << endl;
+	for (; iter != mLines.end(); ++iter, ++idxLine)
+		fprintf(pFile, "%*d %s\n", w, idxLine, iter->c_str());
 
-	fileLog.close();
+	fclose(pFile);
 
 	return true;
 }
