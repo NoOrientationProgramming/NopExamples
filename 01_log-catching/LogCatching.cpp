@@ -69,11 +69,6 @@ Success LogCatching::process()
 	//uint32_t curTimeMs = millis();
 	//uint32_t diffMs = curTimeMs - mStartMs;
 	//Success success;
-	char buf[5];
-	size_t lenReq;
-	ssize_t lenRead;
-	char *pBuf, *pFound;
-	bool ok;
 #if 0
 	procWrnLog("mState = %s", ProcStateString[mState]);
 #endif
@@ -91,59 +86,7 @@ Success LogCatching::process()
 		break;
 	case StMain:
 
-		lenReq = sizeof(buf) - 1;
-
-		lenRead = read(STDIN_FILENO, buf, lenReq);
-#if 0
-		if (!lenRead)
-			break;
-
-		if (lenRead < 0)
-#else
-		if (lenRead <= 0)
-#endif
-		{
-#if 0
-			if (errno == EAGAIN or errno == EWOULDBLOCK)
-				break;
-
-			procWrnLog("could not read line from stdin: %s (%d)",
-							strerror(errno), errno);
-#endif
-			ok = logSave();
-			if (!ok)
-				return procErrLog(-1, "could not save log");
-
-			return Positive;
-		}
-
-		buf[lenRead] = 0;
-		pBuf = buf;
-
-		while (true)
-		{
-			pFound = strchr(pBuf, '\n');
-			if (!pFound)
-			{
-				mFragmentLine += pBuf;
-				break;
-			}
-
-			*pFound++ = 0;
-			mFragmentLine += pBuf;
-
-			//procInfLog("line: '%s'", mFragmentLine.c_str());
-
-			mLines.push_back(mFragmentLine);
-
-			mFragmentLine = "";
-			++mCntLines;
-
-			if (mLines.size() > numLines)
-				mLines.pop_front();
-
-			pBuf = pFound;
-		}
+		return linesFetch();
 
 		break;
 	case StTmp:
@@ -151,6 +94,76 @@ Success LogCatching::process()
 		break;
 	default:
 		break;
+	}
+
+	return Pending;
+}
+
+Success LogCatching::shutdown()
+{
+	return linesFetch();
+}
+
+Success LogCatching::linesFetch()
+{
+	char buf[5];
+	size_t lenReq;
+	ssize_t lenRead;
+	char *pBuf, *pFound;
+	bool ok;
+
+	lenReq = sizeof(buf) - 1;
+
+	lenRead = read(STDIN_FILENO, buf, lenReq);
+#if 0
+	if (!lenRead)
+		break;
+
+	if (lenRead < 0)
+#else
+	if (lenRead <= 0)
+#endif
+	{
+#if 0
+		if (errno == EAGAIN or errno == EWOULDBLOCK)
+			break;
+
+		procWrnLog("could not read line from stdin: %s (%d)",
+						strerror(errno), errno);
+#endif
+		ok = logSave();
+		if (!ok)
+			return procErrLog(-1, "could not save log");
+
+		return Positive;
+	}
+
+	buf[lenRead] = 0;
+	pBuf = buf;
+
+	while (true)
+	{
+		pFound = strchr(pBuf, '\n');
+		if (!pFound)
+		{
+			mFragmentLine += pBuf;
+			break;
+		}
+
+		*pFound++ = 0;
+		mFragmentLine += pBuf;
+
+		//procInfLog("line: '%s'", mFragmentLine.c_str());
+
+		mLines.push_back(mFragmentLine);
+
+		mFragmentLine = "";
+		++mCntLines;
+
+		if (mLines.size() > numLines)
+			mLines.pop_front();
+
+		pBuf = pFound;
 	}
 
 	return Pending;

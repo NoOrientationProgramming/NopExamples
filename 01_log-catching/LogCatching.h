@@ -61,8 +61,10 @@ private:
 
 	/* member functions */
 	Success process();
+	Success shutdown();
 	void processInfo(char *pBuf, char *pBufEnd);
 
+	Success linesFetch();
 	bool logSave(bool triggeredByUser = false);
 
 	/* member variables */

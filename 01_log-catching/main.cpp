@@ -44,9 +44,7 @@ Literature
 */
 void applicationCloseRequest(int signum)
 {
-	if (signum == SIGINT)
-		return;
-
+	(void)signum;
 	cout << endl;
 	pApp->unusedSet();
 }
