@@ -38,6 +38,8 @@ public:
 		return new (std::nothrow) LcSupervising;
 	}
 
+	bool mDebug;
+
 protected:
 
 	LcSupervising();

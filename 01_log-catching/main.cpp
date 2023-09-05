@@ -102,6 +102,8 @@ int main(int argc, char *argv[]) try
 		return 1;
 	}
 
+	pApp->mDebug = argDebug.getValue();
+
 	LogCatching::numLines = argNumLines.getValue();
 	LogCatching::nameBase = argNameBase.getValue();
 

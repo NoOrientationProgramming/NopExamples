@@ -33,6 +33,7 @@ using namespace std;
 
 LcSupervising::LcSupervising()
 	: Processing("LcSupervising")
+	, mDebug(false)
 	, mpApp(NULL)
 {}
 
@@ -40,15 +41,18 @@ LcSupervising::LcSupervising()
 
 Success LcSupervising::initialize()
 {
-	SystemDebugging *pDbg = SystemDebugging::create(this);
-	if (!pDbg)
-		return procErrLog(-1, "could not create process");
+	if (mDebug)
+	{
+		SystemDebugging *pDbg = SystemDebugging::create(this);
+		if (!pDbg)
+			return procErrLog(-1, "could not create process");
 
-	//pDbg->procTreeDisplaySet(false);
-	pDbg->portStartSet(3030);
-	pDbg->listenLocalSet();
+		//pDbg->procTreeDisplaySet(false);
+		pDbg->portStartSet(3030);
+		pDbg->listenLocalSet();
 
-	start(pDbg);
+		start(pDbg);
+	}
 
 	mpApp = start(LogCatching::create());
 	if (!mpApp)
