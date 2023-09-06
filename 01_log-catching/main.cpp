@@ -61,7 +61,7 @@ void licensesPrint()
 	cout << endl;
 }
 
-int main(int argc, char *argv[]) try
+int main(int argc, char *argv[])
 {
 	CmdLine cmd("Command description message", ' ', "unknown");
 
@@ -131,13 +131,5 @@ int main(int argc, char *argv[]) try
 
 	return !(success == Positive);
 
-} catch (ArgException &tclapE)
-{
-	cerr << "tclap exception: " << tclapE.error() << " for arg " << tclapE.argId() << endl;
-	return 1;
-} catch (...)
-{
-	cerr << "Foo" << endl;
-	return 1;
 }
 
