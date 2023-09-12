@@ -32,10 +32,10 @@ objs = \
 	boot2.o
 objsFull = $(addprefix $(dirOut)/, $(objs))
 
-all: $(dirOut) $(dirOut)/nopos.iso
+all: $(dirOut)/nopos.iso
 
-$(dirOut)/nopos.iso: $(dirOut)/nopos.bin
-	cd $(dirOut); ../tools/post.sh $(notdir $<) $(notdir $@)
+$(dirOut)/nopos.iso: $(dirOut) $(dirOut)/nopos.bin
+	cd $(dirOut); ../tools/post.sh nopos.bin $(notdir $@)
 
 $(dirOut)/nopos.bin: main/boot2.ld $(objsFull)
 	ld $(argsLd) -T $< -o $@ $(objsFull)
