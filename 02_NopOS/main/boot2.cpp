@@ -1,10 +1,12 @@
 
+#include "types.h"
+
 void printf(const char *pStr)
 {
 	if (!pStr)
 		return;
 
-	unsigned short *pVideo = (unsigned short *)0xb8000;
+	uint16_t *pVideo = (uint16_t *)0xb8000;
 
 	for (; *pStr; ++pStr, ++pVideo)
 		*pVideo = (*pVideo & 0xFF00) | *pStr;
