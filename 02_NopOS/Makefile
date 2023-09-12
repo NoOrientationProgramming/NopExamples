@@ -49,3 +49,6 @@ $(dirOut)/%.o: main/%.s
 $(dirOut):
 	mkdir $(dirOut)
 
+run: $(dirOut)/nopos.iso
+	VirtualBoxVM --startvm "NopOS" &
+
