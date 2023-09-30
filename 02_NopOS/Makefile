@@ -3,6 +3,8 @@ dirOut = build-native
 
 argsCpp = \
 	-m32 \
+	-Imain \
+	-I../ProcessingCore \
 	-std=gnu++11 \
 	-fno-use-cxa-atexit \
 	-fno-builtin \
@@ -21,7 +23,11 @@ argsCpp = \
 	-DCONFIG_PROC_SHOW_ADDRESS_IN_ID=0 \
 	-DCONFIG_PROC_INFO_BUFFER_SIZE=1024 \
 	-DCONFIG_PROC_DISABLE_TREE_DEFAULT=1 \
-	-DCONFIG_PROC_HAVE_DRIVERS=0
+	-DCONFIG_PROC_HAVE_LIB_STD_C=0 \
+	-DCONFIG_PROC_HAVE_LIB_STD_CPP=0 \
+	-DCONFIG_PROC_HAVE_LIB_C_CUSTOM=1 \
+	-DCONFIG_PROC_HAVE_DRIVERS=0 \
+	-DCONFIG_PROC_HAVE_GLOBAL_DESTRUCTORS=0
 argsAs = \
 	--32
 argsLd = \
@@ -29,7 +35,9 @@ argsLd = \
 
 objs = \
 	start2.o \
-	boot2.o
+	boot2.o \
+	LibcCustom.o \
+	Processing.o
 objsFull = $(addprefix $(dirOut)/, $(objs))
 
 all: $(dirOut)/nopos.iso
@@ -41,6 +49,9 @@ $(dirOut)/nopos.bin: main/boot2.ld $(objsFull)
 	ld $(argsLd) -T $< -o $@ $(objsFull)
 
 $(dirOut)/%.o: main/%.cpp
+	g++ $(argsCpp) -o $@ -c $<
+
+$(dirOut)/%.o: ../ProcessingCore/%.cpp
 	g++ $(argsCpp) -o $@ -c $<
 
 $(dirOut)/%.o: main/%.s

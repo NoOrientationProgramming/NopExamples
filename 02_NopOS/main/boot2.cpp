@@ -1,5 +1,6 @@
 
 #include "types.h"
+#include "Processing.h"
 
 void printf(const char *pStr)
 {
@@ -33,6 +34,11 @@ extern "C" void kernelMain(void *bootMulti, unsigned int numMagic)
 	ctorsExec();
 
 	printf("NopOS - Hello!");
+
+	dInfo("foo: %s", "test");
+
+	if (bootMulti)
+		dInfo("bar: %s", "test");
 
 	while(1);
 }
