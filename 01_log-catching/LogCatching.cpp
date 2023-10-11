@@ -56,11 +56,12 @@ LogCatching *LogCatching::pLog = NULL;
 
 LogCatching::LogCatching()
 	: Processing("LogCatching")
-	, mState(StStart)
 	, mStartMs(0)
 	, mCntLines(0)
 	, mFragmentLine("")
-{}
+{
+	mState = StStart;
+}
 
 /* member functions */
 
@@ -70,7 +71,7 @@ Success LogCatching::process()
 	//uint32_t diffMs = curTimeMs - mStartMs;
 	//Success success;
 #if 0
-	procWrnLog("mState = %s", ProcStateString[mState]);
+	dStateTrace;
 #endif
 	switch (mState)
 	{
