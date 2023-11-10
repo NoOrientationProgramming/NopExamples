@@ -246,3 +246,23 @@ dühös	verärgert
 jókedvű	froh
 szomorú	traurig
 
+stresszes	gestresst
+bosszús	wütend
+féltékeny	eifersüchtig
+rémült	verängstigt
+ideges	nervös
+fáradt	müde
+undorodó	angeekelt
+konok	dickköpfig
+unott	gelangweilt
+mérges	sauer
+homlokát ráncolja	Stirn runzeln
+döbbent	bestürzt
+ellenszenves	unsympathisch
+kétségbeesett	verzweifelt
+irigy	neidisch
+türelmetlen	ungeduldig
+arrogáns	arrogant
+intoleráns	intolerant
+érzékeny	sensibel
+
