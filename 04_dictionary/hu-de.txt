@@ -586,3 +586,20 @@ vitrin	Vitrine
 tévéállvány	Fernsehbank
 könyvespolc	Bücherregal
 
+### Étkező	Esszimmer
+
+roló	Rollo
+csillár	Kronleuchter
+szobanövény	Zimmerpflanze
+ablakpárkány	Fensterbrett
+étkezőasztal	Esstisch
+asztali futó	Tischläufer
+asztali dekoráció	Tischdekoration
+gyertya	Kerze
+fapadló	Holzboden
+szék	Stuhl
+(virág)váza	Blumenvase
+tálaló	Anrichte
+flióra	Wanduhr
+etetőszék	Hochstuhl
+
