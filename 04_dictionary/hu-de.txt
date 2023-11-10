@@ -1,0 +1,93 @@
+
+# emberek	Menschen
+## család	Familie
+### családfa	Stammbaum
+
+após	Schwiegervater
+anyós	Schwiegermutter
+sógornő	Schwägerin
+sógor	Schwager
+férj	Ehemann
+feleség	Ehefrau
+vő	Schwiegersohn
+lány	Tochter
+fiú	Sohn
+fiúunoka	Enkel
+lányunoka	Enkelin
+
+nagypapa	Großvater
+nagymama	Großmutter
+anya	Mutter
+apa	Vater
+nagynéni	Tante
+nagybácsi	Onkel
+lánytestvér	Schwester
+fiútestvér	Bruder
+unokatestvér	Cousine
+unokahúg	Nichte
+unokaöcs	Neffe
+rokon	Verwandte
+nagyszülők	Großeltern
+szülők	Eltern
+házaspár	Ehepaar
+szingli	ledig
+hajadon	ledig
+nőtlen	ledig
+házas	verheiratet
+elvált	geschieden
+eljegyzett	verlobt
+özvegy	verwitwet
+rokon	verwandt
+
+## kapcsolatok	Beziehungen
+### életszakaszok	Lebensphasen
+
+kisbaba	Baby
+gyerek	Kind
+úr	Herr
+férfi	Mann
+fiatal	Jungendliche
+ikrek	Zwillinge
+nő	Frau
+asszony	Frau
+ismerős	Bekannte
+fiú	Junge
+lány	Mädchen
+barátok	Freunde
+pár	Paar
+barátnő	Freundin
+barát	Freund
+felnőtt	Erwachsene
+testvérek	Geschwister
+keresztapa	Patenonkel
+keresztanya	Patentante
+mostohaapa	Stiefvater
+mostohaanya	Stiefmutter
+mostohatestvér	Stiefschwester/-bruder
+szomszéd	Nachbar
+szomszéd	Nachbarin
+
+bemutat vkit	jemanden vorstellen
+köszön vkinek	jemanden begrüßen
+kezet fognak	sich die Hand geben
+meghajol	sich verbeugen
+ölelkeznek	sich umarmen
+nevet	lachen
+sír	weinen
+elbúcsúzik	sich verabschieden
+pukedlizik	einen Knicks machen
+integet	winken
+megcsókol/megpuszil vkit	jemandem einen Kuss geben
+felhív vkit	jemanden anrufen
+kisebb ajándék	kleines Geschenk
+szia	Hallo
+jó napot	Guten Tag
+jó estét	Guten Abend
+hogy hívnák	Wie heißt du
+hogy hívják	Wie heißen Sie
+nak/nek hívnak	Ich heiße ..
+isten hozott	Herzlich willkommen
+viszlát	Tschüss
+viszontlátásra
+
+
