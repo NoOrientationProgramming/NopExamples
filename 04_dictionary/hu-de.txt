@@ -429,3 +429,29 @@ talp	Sohle
 szíj	Riemen
 csat	Schnalle
 
+## Testápolás	Körperpflege
+
+fogkrém	Zahnpasta
+parfüm	Parfüm
+dezodor	Deo
+arckrém	Gesichtscreme
+fésű	Kamm
+tusfürdő	Duschgel
+sampon	Shampoo
+hajbalzsam	Spülung
+szappan	Seife
+hajkefe	Haarbürste
+naptej	Sonnencreme
+piperetáska	Kulturbeutel
+csipesz	Pinzette
+körömvágó olló	Nagelschere
+körömreszelő	Nagelfeile
+hajcsat	Haarspange
+hidratáló krém	Feuchtigkeitscreme
+szőrtelenítés	Enthaarung
+körömlakklemosó	Nagellackentferner
+hajápoló	Haarprodukt
+hajat szárít	Haare föhnen
+hajat vasal	Haare glätten
+hajgumi	Haargummi
+
