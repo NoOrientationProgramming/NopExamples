@@ -674,3 +674,25 @@ alufólia	Alufolie
 mélyhűtő tasak	Gefrierbeutel
 keverőtál	Rührschlüssel
 
+hámozó	Schäler
+reszelő	Reibe
+(konyhai)bárd	Hackmesser
+konyhakés	Küchenmesser
+szita	Küchensieb
+gyümölcsmosó	Abtropfsieb
+krumplinyomó	Kartoffelstampfer
+fokhagymanyomó	Knoblauchpresse
+merőkanál	Schöpfkelle
+habverő	Schneebesen
+nyárs	Spieß
+konzervnyitó	Dosenöffner
+vágódeszka	Schneidebrett
+mozsár	Mörser
+mozsártörő	Stößel
+késtartó	Messerblock
+húsklopfoló	Fleischklopfer
+tojásszeletelő	Eierschneider
+fagylaltoskanál	Eisportionierer
+termosz	Thermoskanne
+mosogatórongy	Spüllappen
+
