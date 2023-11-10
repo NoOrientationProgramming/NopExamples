@@ -92,7 +92,6 @@ isten hozott	Herzlich willkommen
 viszlát	Tschüss
 viszontlátásra
 
-## Az élet fontos eseményei	Wichtige Ereignisse im Leben
 ### Ünnepek	Feste
 
 esküvő	Hochzeit
@@ -119,6 +118,7 @@ keresztelő	Taufe
 gratulálok	Herzlichen Glückwunsch
 boldog születésnapot	Alles Gute zum Geburtstag
 
+## Az élet fontos eseményei	Wichtige Ereignisse im Leben
 ### Fordulópontok	Wendepunkte
 
 születés	Geburt
