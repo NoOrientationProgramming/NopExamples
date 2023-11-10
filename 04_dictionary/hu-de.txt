@@ -92,6 +92,7 @@ isten hozott	Herzlich willkommen
 viszlát	Tschüss
 viszontlátásra
 
+## Az élet fontos eseményei	Wichtige Ereignisse im Leben
 ### Ünnepek	Feste
 
 esküvő	Hochzeit
