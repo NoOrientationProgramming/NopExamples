@@ -118,4 +118,28 @@ keresztelő	Taufe
 gratulálok	Herzlichen Glückwunsch
 boldog születésnapot	Alles Gute zum Geburtstag
 
+### Fordulópontok	Wendepunkte
+
+születés	Geburt
+óvoda	Kindergarten
+beiratkozás	Einschulung
+szalagavató (bál)	Schulabschluss(ball)
+tanulmányok vége	Studienabschluss
+első munkahely	Berufseinstieg
+beleszeret	sich verlieben
+eljegyez vkit	sich verloben
+házasodik	heiraten
+terhesség	Schwangerschaft
+költözik	umziehen
+nyugdíjba megy	in Rente gehen
+temetés	Beerdigung
+nagykoróvá válik	volljährig werden
+megkéri vkinek a kezét	jemandem einen Heiratsantrag machen
+esküvői ruha	Brautkleid
+menyasszony	Braut
+vőlegény	Bräutigam
+családot alapít	Familie gründen
+válás	Scheidung
+elválik	sich scheiden lassen
+meghal	sterben
 
