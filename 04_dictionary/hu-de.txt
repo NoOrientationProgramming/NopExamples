@@ -314,3 +314,22 @@ gomb	Knopf
 patent	Druckknopf
 gomblyuk	Knopfloch
 
+### Férfiruházat	Herrenkleidung
+
+póló	T-Shirt
+pólóing	Polohemd
+garbó	Rollkragenpullover
+(pufi)mellény	Weste
+mellény	Pullunder
+csokornyakkendő	Fliege
+rövidnadrág	kurze Hose
+bokszeralsó	Boxershorts
+alsónadrág	Unterhose
+fürdőnadrág	Badehose
+öltöny	Anzug
+gallér	Kragen
+nyakkendő	Krawatte
+ing	Hemd
+zakó	Sakko
+nadrág	Hose
+
