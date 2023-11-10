@@ -473,3 +473,28 @@ szemceruza	Kajalstift
 ajakfény	Lipgloss
 szemöldökcsipesz	Wimpernzange
 
+# Otthon	Zu Hause
+## Lakás	Die Wohnung
+
+kulcs	Hausschlüssel
+kaputelefon	Sprechanlage
+házszám	Hausnummer
+csengő	Türklingel
+zár	Türschloss
+lábtörlő	Fußabtreter
+postaláda	Briefkasten
+családi ház	Einfamilienhaus
+ikerház	Doppelhaus
+sorház	Reihenhaus
+társasház	Mehrfamilienhaus
+víkendház	Bungalow
+esernyőtartó	Schirmständer
+öröklakás	Eigentumswohnung
+bérelt lakás	Mietwohnung
+udvar	Hof
+tulajdon	Eigentum
+telek	Grundstück
+átépítés	Umbau
+bővítés	Anbau
+eladó	zu verkaufen
+
