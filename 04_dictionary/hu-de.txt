@@ -144,3 +144,53 @@ válás	Scheidung
 elválik	sich scheiden lassen
 meghal	sterben
 
+## Az emberek jellemzése	Menschen beschreiben
+### Arc	Gesicht
+
+haj	Haar
+homlok	Stirn
+halánték	Schläfe
+fül	Ohr
+arc	Wange
+(alsó) állkapocs	Unterkiefer
+áll	Kinn
+pofa	Mund
+száj	Mund
+ajak	Lippe
+fog	Zahn
+orrlyuk	Nasenloch
+orr	Nase
+szem	Auge
+szempilla	Wimper
+szemöldök	Augenbraue
+grimaszol	eine Grimasse schneiden
+bőr	Haut
+ránc	Falte
+anyajegy	Muttermal
+gödröcske	Grübchen
+szeplő	Sommersprossen
+pórus	Pore
+pattanás	Pickel
+
+### Haj	Haar
+
+vörös hajú	rothaarig
+hullámos	gewellt
+konty	Dutt
+barna	brünett
+őszülő	grau meliert
+rövid haj	Kurzhaarschnitt
+paróka	Perücke
+lépcsőzetes vágás	Stufenschnitt
+frufru	Pony
+melír	Strähnchen
+bubifrizura	Bobfrisur
+egyenes	glatt
+szőke	blond
+sötét	dunkel
+kopasz	Glatze
+lófarok	Pferdeschwanz
+copf	Pferdeschwanz
+göndör	lockig
+hajfonat	Zopf
+
