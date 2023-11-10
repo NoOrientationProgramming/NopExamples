@@ -360,3 +360,18 @@ kényelmes	bequem
 sztreccses anyagú	Stretchanteil
 divatos	modisch
 
+masni	Schleife
+ruha	Kleid
+top	Trägertop
+blúz	Bluse
+kardigán	Strickjacke
+szoknya	Rock
+sort	Shorts
+szűk nadrág	Röhrenhose
+trapéznadrág	Schlaghose
+válltömés	Schulterpolster
+blézer	Blazer
+felső	Oberteil
+farmer	Jeans
+bokacsizma	Stiefelette
+
