@@ -401,3 +401,31 @@ utazótáska	Reisetasche
 bőrönd	Koffer
 koffer	Koffer
 
+### Cipők és bőrkiegészítők	Schuhe und Lederwaren
+
+magas sarkú cipő	Pumps/Stöckelschuhe
+szandál	Sandale
+balerina	Ballerina
+gumicsizma	Gummistiefel
+flipflop	Flip-Flop
+csizma	hohe Stiefel
+ridikül	Handtasche
+erszény	Portemonnaie
+pénztárca	Brieftasche
+irattárca	Brieftasche
+aktatáska	Aktentasche
+öv	Gürtel
+bőrdzseki	Lederjacke
+félcipő	Schnürschuh
+túrabakancs	Wanderstiefel
+zokni	Socke
+túraszandál	Trekkingsandale
+sportcipő	Turnschuh
+cipőfűző	Schnürsenkel
+bújtató(övön)	Gürtelschlaufe
+sarok	Keilabsatz
+cipősarok	Absatz
+talp	Sohle
+szíj	Riemen
+csat	Schnalle
+
