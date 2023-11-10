@@ -498,3 +498,26 @@ telek	Grundstück
 bővítés	Anbau
 eladó	zu verkaufen
 
+padlás	Dachboden
+pince	Keller
+folyosó	Flur
+lift	Aufzug
+alaprajz	Grundriss
+garázs	Garage
+kocsibeálló	Carport
+régi épület	Altbau
+házmester	Hausmeister
+csigalépcső	Wendeltreppe
+füstjelző	Rauchmelder
+lépcsőház	Treppenhaus
+bérleti szerződés	Mietvertrag
+bérel	mieten
+bérlemény	Miete
+lakbér	Miete
+kiad	vermieten
+főbérlő (nő)	Vermieterin
+főbérlő (férfi)	Vermieter
+bérlő (nő)	Mieterin
+bérlő (férfi)	Mieter
+kaució	Kaution
+
