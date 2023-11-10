@@ -375,3 +375,29 @@ felső	Oberteil
 farmer	Jeans
 bokacsizma	Stiefelette
 
+### Kiegészítők	Accessoires
+
+szalmakalap	Sonnenhut
+kalap	Hut
+szemüveg	Brille
+napszemüveg	Sonnenbrille
+hátizsák	Rucksack
+nyakkendőtű	Krawattennadel
+esernyő	Regenschirm
+óra	Uhr
+nadrágtartó	Hosenträger
+gyűrű	Ring
+kesztyű	Handschuh
+(téli)sapka	Mütze
+sál	Schal
+fülbevaló	Ohrring
+nyaklánc	Halskette
+mandzsettagomb	Manschettenknopf
+cipzár	Reißverschluss
+tépőzár	Klettverschluss
+mobiltok	Handytasche
+telefonok	Handytasche
+utazótáska	Reisetasche
+bőrönd	Koffer
+koffer	Koffer
+
