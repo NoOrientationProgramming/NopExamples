@@ -289,3 +289,28 @@ cumisüveg	Babyfläschen
 biopamut	Biobaumwolle
 műszálas	Kunstfaser
 
+### Uniszex ruhadarabok	Unisex-Kleidung
+
+melegítő	Trainingsanzug
+pizsama	Schlafanzug
+papucs	Hausschuh
+kapucnis pulóver	Kapuzenpullover
+fürdőköpeny	Bademantel
+télikabát	Wintermantel
+sportcipő	Turnschuh
+esőkabát	Regenjacke
+sínadrág	Schneehose
+szűk	eng
+bő	weit
+rövid	kurz
+hosszú	lang
+kicsi	klein
+nagy	groß
+jó a méret	das passt gut
+elviszem	ich nehme es
+rövid ujjú	kurze Ärmel
+hosszú ujjú	lange Ärmel
+gomb	Knopf
+patent	Druckknopf
+gomblyuk	Knopfloch
+
