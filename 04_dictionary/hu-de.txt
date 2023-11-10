@@ -266,3 +266,26 @@ arrogáns	arrogant
 intoleráns	intolerant
 érzékeny	sensibel
 
+## Öltözködés	Kleidung
+### Babaruha	Babysachen
+
+textilpelenka	Stoffwindel
+eldobható pelenka	Wegwerfwindel
+body	Body
+anorák	Schneeanzug
+babahálózsák	Babyschlafsack
+csörgő	Rassel
+rugdalózó	Strampler
+egyujjas kesztyű	Babyfäustling
+(téli) sapka	Mütze
+babacipő	Babyschühchen
+sapka	Sonnenhut
+zokni	Söckchen
+cumi	Schnuller
+előke	Lätzchen
+kantáros nadrág	Latzhöschen
+takaró	Babydecke
+cumisüveg	Babyfläschen
+biopamut	Biobaumwolle
+műszálas	Kunstfaser
+
