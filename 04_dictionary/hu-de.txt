@@ -650,3 +650,27 @@ párológép	Dampfgarer
 Raclette (grill)sütő	Raclettegrill
 rizsfőző	Reiskocher
 
+### Főző- és sütőeszközök	Koch- und Backutensilien
+
+konyhai óra	Küchenwecker
+süteménykiszúró	Ausstechförmchen
+papírtörlő	Küchenpapier
+kötény	Schürze
+muffinforma	Muffinförmchen
+muffinsütő	Törtchenform
+tortaforma	Springform
+tepsi	Backblech
+késélező	Messerschärfer
+szaggató	Teigrad
+edényfogó kesztyű	Topfhandschuh
+tálca	Tablett
+homokóra	Sanduhr
+sütőrács	Kuchengitter
+nyomózsák	Spritzbeutel
+sütőpapír	Backpapier
+folpack	Frischhaltefolie
+törlőrongy	Putzlappen
+alufólia	Alufolie
+mélyhűtő tasak	Gefrierbeutel
+keverőtál	Rührschlüssel
+
