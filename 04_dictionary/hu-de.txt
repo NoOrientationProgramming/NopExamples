@@ -333,3 +333,30 @@ ing	Hemd
 zakó	Sakko
 nadrág	Hose
 
+### Női ruházat	Damenkleidung
+
+harisnya	Strumpf
+harisnyanadrág	Strumpfhose
+leggings	Leggings
+bugyi	Slip
+bikini	Bikini
+fürdőruha	Badeanzug
+sportmelltartó	Sport-BH
+melltartó	Büstenhalter
+fodor	Rüsche
+kismamaruha	Umstandsmode
+varrás	Naht
+ujj	Ärmel
+szegély	Saum
+selyem	Seide
+csipke	Spitze
+méret	Größe
+kivágás	Ausschnitt
+vállpánt nélküli	trägerlos
+karcsúsított	tailliert
+laza	leger
+csinos	schick
+kényelmes	bequem
+sztreccses anyagú	Stretchanteil
+divatos	modisch
+
