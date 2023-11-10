@@ -564,3 +564,25 @@ fogas	Kleiderhaken
 vállfa	Kleiderbügel
 cipőkanál	Schuhlöffel
 
+### Nappali	Wohnzimmer
+
+függöny	Vorhang
+ventilátor	Ventilator
+plafon	Decke
+képkeret	Bilderrahmen
+festmény	Gemälde
+kanapé	Sofa
+lámpa	Lampe
+kanapépárna	Sofakissen
+kisszekrény	Beistellschrank
+szőnyegpadló	Teppichboden
+dohányzóasztal	Couchtisch
+puff	gepolsteter Hocker
+fotel	Sessel
+kandallószél	Kaminsims
+kandalló	Kamin
+kinyitható kanapé	Schlafcouch
+vitrin	Vitrine
+tévéállvány	Fernsehbank
+könyvespolc	Bücherregal
+
