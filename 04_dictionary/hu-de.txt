@@ -455,3 +455,21 @@ hajat szárít	Haare föhnen
 hajat vasal	Haare glätten
 hajgumi	Haargummi
 
+## Kozmetikai cikkek	Schminksachen
+
+tükör	Spiegel
+korrektor	Abdeckcreme
+alapozó	Grundierung
+rúzs	Lippenstift
+szempillaspirál	Wimperntusche
+paletta	Farbpalette
+szemhéjfesték	Lidschatten
+körömlakk	Nagellack
+pirosító	Rouge
+bronzosító	Bronzer
+púdertartó	Puderdose
+ecset	Pinsel
+szemceruza	Kajalstift
+ajakfény	Lipgloss
+szemöldökcsipesz	Wimpernzange
+
