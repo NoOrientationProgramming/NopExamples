@@ -67,6 +67,8 @@ mostohatestvér	Stiefschwester/-bruder
 szomszéd	Nachbar
 szomszéd	Nachbarin
 
+### Üdvözlés és búcsúzás
+
 bemutat vkit	jemanden vorstellen
 köszön vkinek	jemanden begrüßen
 kezet fognak	sich die Hand geben
@@ -89,5 +91,31 @@ nak/nek hívnak	Ich heiße ..
 isten hozott	Herzlich willkommen
 viszlát	Tschüss
 viszontlátásra
+
+### Ünnepek	Feste
+
+esküvő	Hochzeit
+születésnap	Geburtstag
+karácsony	Weihnachten
+Valentin-nap	Valentinstag
+hálaadás	Thanksgiving
+halloween	Halloween
+szilveszter	Silvester
+húsvét	Ostern
+hanuka	Hanukkah
+vészák	Wesakfest
+ramadán	Ramadanfest
+kínai újév	chinesisches Neujahr
+karnevál	Karneval
+díváli	Diwalifest
+pészah	Passah
+ünnep	Feier
+házassági évforduló	Hochzeitstag
+ünnepnap	Feiertag
+anyák napja	Muttertag
+apák napja	Vatertag
+keresztelő	Taufe
+gratulálok	Herzlichen Glückwunsch
+boldog születésnapot	Alles Gute zum Geburtstag
 
 
