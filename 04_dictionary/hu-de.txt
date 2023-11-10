@@ -220,3 +220,29 @@ alacsony	klein
 sebhely	Narbe
 heg	Narbe
 
+### Érzések és személyiség	Gefühle und Persönlichkeit
+
+boldog	glücklich
+büszke	stolz
+meglepett	überrascht
+izgatott	aufgeregt
+zavarban van	verlegen
+összezavarodott	verwirrt
+félénk	schüchtern
+szégyenlős	schüchtern
+töprengő	nachdenklich
+kíváncsi	neugierig
+aranyos	niedlich/goldig
+szerelmes	verliebt
+öntudatos	selbstbewusst
+nyílt	offen
+toleráns	tolerant
+türelmes	geduldig
+barátságos	freundlich
+rokonszenves	sympathisch
+helyes	nett
+mosolyog	lächeln
+dühös	verärgert
+jókedvű	froh
+szomorú	traurig
+
