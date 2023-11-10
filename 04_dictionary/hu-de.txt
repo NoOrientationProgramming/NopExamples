@@ -603,3 +603,31 @@ tálaló	Anrichte
 flióra	Wanduhr
 etetőszék	Hochstuhl
 
+### Konyha	Küche
+
+beépített konyha	Einbauküche
+spotlámpa	Einbauleuchte
+páraelszívó	Dunstabzugshaube
+szagelszívó	Dunstabzugshaube
+munkapult	Arbeitsplatte
+faliszekrény	Hängeschrank
+kapcsológomb	Backofenschalter
+tűzhely	Herd
+sütő	Backofen
+mosogató	Spülbecken
+reggelizőasztal	Frühstückstheke
+konyhai szék	Küchenhocker
+mosogatógép	Spülmaschine
+fiók	Schublade
+fagyasztó	Gefrierschrank
+hűtő(szekrény)	Kühlschrank
+konyharuha	Geschirrtuch
+szemetes	Mülleimer
+szelektív hulladékgyűjtés	Mülltrennung
+csomagolás	Verpackung
+üveghulladék	Altglas
+sütőt előmelegít	Ofen vorheizen
+elindítja a mosogatógépet	Spülmaschine laufen lassen
+kiolvaszt	Essen auftauen
+lecsepegteti az edényeket	Geschirr abtropfen lassen
+
