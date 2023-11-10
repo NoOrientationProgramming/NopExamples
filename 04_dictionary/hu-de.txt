@@ -521,3 +521,27 @@ bérlő (nő)	Mieterin
 bérlő (férfi)	Mieter
 kaució	Kaution
 
+## A ház	Das Haus
+
+kutyaól	Dachgaube
+tetőablak	Dachfenster
+első emelet	erster Stock
+kémény	Schornstein
+tető	Dach
+vízelvezető árok	Dachrinne
+tetőcserép	Dachziegel
+erkély	Balkon
+küszöb	Türschwelle
+bejárati ajtó	Haustür
+ablak	Fenster
+földszint	Erdgeschoss
+terasz	Terrasse
+családi ház	Einzelhaus
+új építésű ház	Neubau
+háromszobás lakás	Dreizimmerwohnung
+bútorozott	möbliert
+emelet	Stockwerk
+tulajdonos (férfi)	Eigentümer
+tulajdonos (nő)	Eigentrümerin
+jelzálogkölcsönt	Hypothek
+
