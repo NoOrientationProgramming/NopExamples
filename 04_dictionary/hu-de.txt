@@ -631,3 +631,22 @@ elindítja a mosogatógépet	Spülmaschine laufen lassen
 kiolvaszt	Essen auftauen
 lecsepegteti az edényeket	Geschirr abtropfen lassen
 
+### Konyhai eszközök	Küchengeräte
+
+botmixer	Pürierstab
+turmixgép	Mixer
+konyhai robotgép	Küchenmschine
+mikrosütő	Mikrowelle
+kézi mixer	Handrührgerät
+vízforraló	Wasserkocher
+gofrisütő	Waffeleisen
+elektromos grill	Elektrogrill
+kenyérpirító	Toaster
+konyhai mérleg	Küchenwaage
+kukta	Schnellkochtopf
+szendvicssütő	Sandwichgrill
+kávétfőző	Kaffeemaschine
+párológép	Dampfgarer
+Raclette (grill)sütő	Raclettegrill
+rizsfőző	Reiskocher
+
