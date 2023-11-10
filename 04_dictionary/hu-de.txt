@@ -194,3 +194,29 @@ copf	Pferdeschwanz
 göndör	lockig
 hajfonat	Zopf
 
+### Külső megjelenés	Die äußere Erscheinung
+
+szakáll	Bart
+bajusz	Schnurrbart
+fiatal	jung
+idős	alt
+öreg	alt
+izmos	muskulös
+fogszabályozó	Zahnspange
+sápadt	blass
+napbarnított	sonnengebräunt
+zöld szem	grüne Augen
+barna szem	braune Augen
+szürke szem	graue Augen
+kék szem	blaue Augen
+vonzó	attraktiv
+csinos	hübsch
+csúnya	hässlich
+szép	schön
+vékony	schlank
+kövér	dick
+magas	groß
+alacsony	klein
+sebhely	Narbe
+heg	Narbe
+
