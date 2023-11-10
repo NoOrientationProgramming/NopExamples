@@ -545,3 +545,22 @@ tulajdonos (férfi)	Eigentümer
 tulajdonos (nő)	Eigentrümerin
 jelzálogkölcsönt	Hypothek
 
+### Bejárat	Eingang
+
+előtér	Diele
+tükör	Spiegel
+fotel	Sessel
+konzolasztal	Ablagetisch
+(lépcső)korlát	Treppengeländer
+lépcső	Treppe
+lépcsőforduló	Treppenabsatz
+pihenő	Treppenabsatz
+lépcsőfok	Treppenstufe
+lakássajtó	Wohnungstür
+(álló)fogas	Garderobenständer
+esernyőtartó	Schirmständer
+(fali)kulcstartó	Schlüsselbrett
+fogas	Kleiderhaken
+vállfa	Kleiderbügel
+cipőkanál	Schuhlöffel
+
