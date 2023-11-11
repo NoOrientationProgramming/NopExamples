@@ -766,3 +766,29 @@ játék	Spielzeug
 pelenkázóasztal	Wickeltisch
 pelenkázómatrac	Wickelauflage
 
+### Ifjúsági szoba	Jugendzimmer
+
+egyszemélyes ágy	Einzelbett
+függőlámpa	Hängelampe
+íróasztal	Schreibtisch
+könyvespolc	Bücherregal
+asztali lámpa	Schreibtischlampe
+szék	Stuhl
+fiók	Schublade
+ablakpárkány	Fensterbank
+szőnyegpadló	Teppichboden
+emeletes ágy	Etagenbett
+alszik	schlafen
+horkol	schnarchen
+felébred	aufwachen
+felkel	aufstehen
+rémálom	Albtraum
+álmodik	träumen
+elalszik	einschlafen
+mélyen alszik	tief schlafen
+kipihen	ausschlafen
+ébren van	wach sein
+beágyaz	das Bett machen
+lefekszik	ins Bett gehen
+kitakarítja a szobát	das Zimmer aufäumen
+
