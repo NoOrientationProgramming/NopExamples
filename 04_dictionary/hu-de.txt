@@ -696,3 +696,25 @@ fagylaltoskanál	Eisportionierer
 termosz	Thermoskanne
 mosogatórongy	Spüllappen
 
+dugóhúzó	Korkenzieher
+kenőecset	Backpinsel
+sodrófa	Nudelholz
+fordítólapát	Pfannenwender
+konyhai fogó	Küchenzange
+tésztalapát	Teigschaber
+szedőkanál	Servierlöffel
+fakanál	Kochlöffel
+serpenyő	Bratpfanne
+wok	Wok
+edény	Kochtopf
+párolóedény	Schmortopf
+szufléforma	Auflaufförmchen
+sütővilla	Bratengabel
+poháralátét	Untersetzer
+grillserpenyő	Grillpfanne
+mérőpohár	Messbecher
+tölcsér	Trichter
+mérőkanál	Messlöffel
+csepegtető	Abtropfständer
+sörnyitó	Flaschenöffner
+
