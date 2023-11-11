@@ -718,3 +718,28 @@ mérőkanál	Messlöffel
 csepegtető	Abtropfständer
 sörnyitó	Flaschenöffner
 
+### Hálószoba	Schlafzimmer
+
+franciaágy	Doppelbett
+ágynemű	Bettbezug
+párna	Kopfkissen
+paplan	Bettdecke
+párnahuzat	Kissenbezug
+ágytámia	Kopfteil
+kislámpa	Nachttischlampe
+szőnyeg	Teppich
+komód	Kommode
+puff	Hocker
+ágykeret	Bettgestell
+matrac	Matratze
+lepedő	Laken
+éjjeliszekrény	Nachttisch
+ruhásszekrény	Kleiderschrank
+ébresztőóra	Wecker
+ébresztőórát állít	Wecker stellen
+ágymelegítő palack	Wärmflasche
+fűthető takaró	Heizdecke
+ágytakaró	Bett-/Tagesdecke
+alvómaszk	Schlafbrille
+fürdőszobás szoba	Zimmer mit Bad
+
