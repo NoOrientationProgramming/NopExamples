@@ -743,3 +743,26 @@ fűthető takaró	Heizdecke
 alvómaszk	Schlafbrille
 fürdőszobás szoba	Zimmer mit Bad
 
+### Gyerekszoba	Kinderzimmer
+
+labda	Ball
+baba	Puppe
+pelenkázótáska	Wickeltasche
+babakocsi	Kinderwagen
+bébiőr	Babyfon
+bébifon	Babyfon
+járóka	Laufstall
+bili	Töpfchen
+babahordozó	Babytragetasche
+iskolatáska	Schultasche
+építőkocka	Bauklötzchen
+rácsos ágy	Gitterbettchen
+babajáték	Mobile
+babapléd	Flauschdecke
+rács	Gitterstab
+mackó	Teddy
+plüssállat	Kuscheltier
+játék	Spielzeug
+pelenkázóasztal	Wickeltisch
+pelenkázómatrac	Wickelauflage
+
