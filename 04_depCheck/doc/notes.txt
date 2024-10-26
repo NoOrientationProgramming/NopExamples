@@ -1,3 +1,4 @@
 
 ack --cpp "\#include <|\#include \"" | grep include | awk -F ':#include ' '{print $2}'
+ack --cpp "\#include <|\#include \"" | grep include | awk -F ':#include ' '{print $2}' | LC_COLLATE=C sort | uniq
 
