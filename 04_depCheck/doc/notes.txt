@@ -1,0 +1,3 @@
+
+ack "\#include <|\#include \"" | grep include | awk -F ':#include ' '{print $2}'
+
