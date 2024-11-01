@@ -16,6 +16,7 @@ typedef unsigned short uint16_t;
 typedef unsigned int size_t;
 
 #define NULL	nullptr
+#define dNoThrow (std::nothrow)
 
 int snprintf(char *pBuf, size_t size, const char *format, ...);
 

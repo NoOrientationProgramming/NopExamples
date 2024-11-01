@@ -28,8 +28,11 @@ extern "C" void ctorsExec()
 
 extern "C" void kernelMain(void *bootMulti, unsigned int numMagic)
 {
-	(void)bootMulti;
 	(void)numMagic;
+
+	char buff[257];
+	char *pBuf = buff;
+	char *pBufEnd = pBuf + sizeof(buff);
 
 	ctorsExec();
 

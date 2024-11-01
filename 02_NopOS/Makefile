@@ -63,3 +63,6 @@ $(dirOut):
 run: $(dirOut)/nopos.iso
 	VirtualBoxVM --startvm "NopOS" &
 
+clean:
+	rm -f $(dirOut)/*.o
+
