@@ -112,7 +112,6 @@ myApp = executable(
 		cppArgs,
 	],
 	link_args : [
-		'-static',
 	],
 )
 
