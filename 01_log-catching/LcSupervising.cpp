@@ -29,8 +29,6 @@
 
 using namespace std;
 
-#define LOG_LVL	0
-
 LcSupervising::LcSupervising()
 	: Processing("LcSupervising")
 	, mDebug(false)
