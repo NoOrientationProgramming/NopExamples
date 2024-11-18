@@ -47,8 +47,6 @@ dProcessStateStr(ProcState);
 
 using namespace std;
 
-#define LOG_LVL	0
-
 uint32_t LogCatching::numLines = 0;
 string LogCatching::nameBase = "";
 
@@ -56,7 +54,7 @@ LogCatching *LogCatching::pLog = NULL;
 
 LogCatching::LogCatching()
 	: Processing("LogCatching")
-	, mStartMs(0)
+	//, mStartMs(0)
 	, mCntLines(0)
 	, mFragmentLine("")
 {

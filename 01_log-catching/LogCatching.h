@@ -68,7 +68,7 @@ private:
 	bool logSave(bool triggeredByUser = false);
 
 	/* member variables */
-	uint32_t mStartMs;
+	//uint32_t mStartMs;
 	uint32_t mCntLines;
 	std::string mFragmentLine;
 	std::list<std::string> mLines;

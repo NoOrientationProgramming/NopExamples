@@ -7,6 +7,7 @@ project(
 )
 
 fs = import('fs')
+cxx = meson.get_compiler('cpp')
 
 srcsCore = [
 	'Processing.cpp',
@@ -51,7 +52,7 @@ endforeach
 deps = []
 deps += dependency('tclap')
 
-cppArgs = [
+args = [
 	'-DdPackageName="' + meson.project_name() + '"',
 	'-DdAppName="log-catching"',
 	'-DHAVE_SSTREAM',
@@ -62,42 +63,51 @@ cppArgs = [
 	'-std=gnu++11',
 ]
 
-cppArgs += '-Os'
+args += '-Os'
+
+if cxx.get_id() == 'clang'
+	args += '-gdwarf-4'
+endif
+
+warnings = []
 
 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-warnings = [
-	'-Wall',
-	'-Wextra',
-	'-Wpedantic',
-	'-Werror',
-	'-Wfatal-errors',
-	'-Wreorder',
-	'-Wswitch-enum',
-	'-Wuseless-cast',
-	'-Wparentheses',
-	'-Wshift-overflow',
-	'-Wsign-compare',
-	'-Wzero-as-null-pointer-constant',
-	'-Wcast-align',
-	'-Wcast-qual',
-	'-Wcatch-value',
-	'-Wchar-subscripts',
-	'-Wswitch-default',
-	'-Wctor-dtor-privacy',
-	'-Wduplicated-branches',
-	'-Wduplicated-cond',
-	'-Wempty-body',
-	'-Wextra-semi',
-	'-Wfloat-equal',
-	'-Wformat',
-	'-Wformat-extra-args',
-	'-Wimplicit-fallthrough',
-	'-Wmissing-field-initializers',
-	'-Wnull-dereference',
-	'-Wshadow',
-]
+if cxx.get_id() == 'gcc'
+	warnings = [
+		'-Wall',
+		'-Wextra',
+		'-Wpedantic',
+		'-Werror',
+		'-Wfatal-errors',
+		'-Wreorder',
+		'-Wswitch-enum',
+		'-Wuseless-cast',
+		'-Wparentheses',
+		'-Wshift-overflow',
+		'-Wsign-compare',
+		'-Wzero-as-null-pointer-constant',
+		'-Wcast-align',
+		'-Wcast-qual',
+		'-Wcatch-value',
+		'-Wchar-subscripts',
+		'-Wswitch-default',
+		'-Wctor-dtor-privacy',
+		'-Wno-prio-ctor-dtor',
+		'-Wduplicated-branches',
+		'-Wduplicated-cond',
+		'-Wempty-body',
+		'-Wextra-semi',
+		'-Wfloat-equal',
+		'-Wformat',
+		'-Wformat-extra-args',
+		'-Wimplicit-fallthrough',
+		'-Wmissing-field-initializers',
+		'-Wnull-dereference',
+		'-Wshadow',
+	]
+endif
 
-cppArgs += warnings
+args += warnings
 
 myApp = executable(
 	'log-catching',
@@ -109,7 +119,7 @@ myApp = executable(
 		deps,
 	],
 	cpp_args : [
-		cppArgs,
+		args,
 	],
 	link_args : [
 	],
