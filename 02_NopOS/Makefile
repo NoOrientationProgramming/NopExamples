@@ -4,7 +4,7 @@ dirOut = build-native
 argsCpp = \
 	-m32 \
 	-Imain \
-	-I../ProcessingCore \
+	-I../SystemCore \
 	-std=gnu++11 \
 	-fno-use-cxa-atexit \
 	-fno-builtin \
@@ -51,7 +51,7 @@ $(dirOut)/nopos.bin: main/boot2.ld $(objsFull)
 $(dirOut)/%.o: main/%.cpp
 	g++ $(argsCpp) -o $@ -c $<
 
-$(dirOut)/%.o: ../ProcessingCore/%.cpp
+$(dirOut)/%.o: ../SystemCore/%.cpp
 	g++ $(argsCpp) -o $@ -c $<
 
 $(dirOut)/%.o: main/%.s

@@ -1,6 +1,7 @@
-[submodule "ProcessingCore"]
-	path = ProcessingCore
-	url = https://github.com/NoOrientationProgramming/ProcessingCore.git
-[submodule "ProcessingCommon"]
-	path = ProcessingCommon
-	url = https://github.com/NoOrientationProgramming/ProcessingCommon.git
+
+[submodule "SystemCore"]
+	path = SystemCore
+	url = https://github.com/NoOrientationProgramming/SystemCore.git
+[submodule "LibNaegCommon"]
+	path = LibNaegCommon
+	url = https://github.com/NoOrientationProgramming/LibNaegCommon.git

@@ -32,16 +32,16 @@ srcs = []
 srcs += srcsSpecific
 
 foreach f : srcsCore
-	srcs += join_paths('../ProcessingCore', f)
+	srcs += join_paths('../SystemCore', f)
 endforeach
 
 foreach f : srcsCommon
-	srcs += join_paths('../ProcessingCommon', f)
+	srcs += join_paths('../LibNaegCommon', f)
 endforeach
 
 incs = [
-	'../ProcessingCore',
-	'../ProcessingCommon',
+	'../SystemCore',
+	'../LibNaegCommon',
 ]
 
 incsAbs = []
