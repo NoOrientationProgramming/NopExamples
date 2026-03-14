@@ -42,7 +42,7 @@ public:
 	size_t width;
 	size_t height;
 	size_t idxLine;
-	bool dataFinished;
+	bool dataOk;
 
 	static bool create(const char *pFilename, FileBmp *pBmp);
 };

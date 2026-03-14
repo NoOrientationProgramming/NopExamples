@@ -28,6 +28,7 @@
 #include <string.h>
 
 #include "LibBmp.h"
+#include "Processing.h"
 
 using namespace std;
 
@@ -48,7 +49,7 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	// Object
 	pBmp->pFile = pFile;
 	pBmp->idxLine = 0;
-	pBmp->dataFinished = 0;
+	pBmp->dataOk = 0;
 
 	// Headers
 	uint8_t buf[40];
@@ -82,13 +83,16 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 
 bool FileBmp::lineAppend(const char *pData, size_t len)
 {
-	if (!pFile || !pData || !len)
+	if (!pFile || !pData || !len || (len & 3))
 		return false;
 
 	if (!width || !height)
 		return false;
 
-	// TODO: Check dataFinished
+	fwrite(pData, sizeof(*pData), len, pFile);
+
+	++idxLine;
+	dataOk = idxLine == height;
 
 	return true;
 }
@@ -98,10 +102,10 @@ void FileBmp::close()
 	if (!pFile)
 		return;
 
-	// TODO: Check dataFinished
-
-	if (!width || !height || !dataFinished)
+	if (!width || !height || !dataOk)
 	{
+		if (!dataOk) wrnLog("Data NOT OK. Line index: %u", idxLine);
+
 		fclose(pFile);
 		pFile = NULL;
 		return;
