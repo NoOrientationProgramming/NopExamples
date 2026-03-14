@@ -33,6 +33,9 @@ int main(int argc, char *argv[])
 	(void)argc;
 	(void)argv;
 
+	if (argc >= 2)
+		levelLogSet(atoi(argv[1]));
+
 	pApp = Supervising::create();
 	if (!pApp)
 	{
