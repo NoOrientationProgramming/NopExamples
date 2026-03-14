@@ -38,11 +38,24 @@ dProcessStateEnum(ProcState);
 dProcessStateStr(ProcState);
 #endif
 
+#define dForEach_SdState(gen) \
+		gen(StSdStart) \
+		gen(StSdAppDoneWait) \
+
+#define dGenSdStateEnum(s) s,
+dProcessStateEnum(SdState);
+
+#if 0
+#define dGenSdStateString(s) #s,
+dProcessStateStr(SdState);
+#endif
+
 using namespace std;
 
 Supervising::Supervising()
 	: Processing("Supervising")
 	//, mStartMs(0)
+	, mStateSd(StSdStart)
 	, mpMbCreate(NULL)
 {
 	mState = StStart;
@@ -71,6 +84,32 @@ Success Supervising::process()
 
 		break;
 	case StMain:
+
+		break;
+	default:
+		break;
+	}
+
+	return Pending;
+}
+
+Success Supervising::shutdown()
+{
+	switch (mStateSd)
+	{
+	case StSdStart:
+
+		cancel(mpMbCreate);
+
+		mStateSd = StSdAppDoneWait;
+
+		break;
+	case StSdAppDoneWait:
+
+		if (mpMbCreate->progress())
+			break;
+
+		return Positive;
 
 		break;
 	default:
