@@ -73,7 +73,7 @@ Success MandelbrotCreating::process()
 		mBmp.width = 1920;
 		mBmp.height = 1200;
 
-		mSzLine = mBmp.width * 3 * sizeof(char);
+		mSzLine = sizeof(uint32_t) + mBmp.width * 3 * sizeof(char);
 		procDbgLog("Line size     %u", mSzLine);
 		procDbgLog("Line padding  %u", ((mSzLine + 3) & ~3) - mSzLine);
 
