@@ -62,6 +62,11 @@ private:
 
 	Success linesProcess();
 	void lineFill(size_t idx, char *pData, size_t len);
+	void colorTest(char *pData, size_t idxLine, size_t idxPixel);
+	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
+	void palette(double fracIter, int &r, int &g, int &b);
+	double fractionalIter(double cx, double cy, size_t numIter);
+	size_t mandelbrot(double cx, double cy, size_t numIterMax);
 	void progressPrint();
 	bool servicesStart();
 

@@ -23,6 +23,8 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <math.h>
+
 #include "MandelbrotCreating.h"
 #include "LibTime.h"
 
@@ -193,13 +195,96 @@ void MandelbrotCreating::lineFill(size_t idxLine, char *pData, size_t len)
 
 	for (; idxPixel < numPixels; ++idxPixel)
 	{
-		*pData++ = idxPixel % 256;
-		*pData++ = idxLine % 256;
-		*pData++ = 0;
+		colorMandelbrot(pData, idxLine, idxPixel);
+		pData += cBytesPerPixel;
 	}
 
 	for (; pData < pDataEnd; ++pData)
 		*pData = 0;
+}
+
+void MandelbrotCreating::colorTest(char *pData, size_t idxLine, size_t idxPixel)
+{
+	*pData++ = idxPixel % 256;
+	*pData++ = idxLine % 256;
+	*pData++ = 0;
+}
+
+void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
+{
+	double w2 = mBmp.width >> 1;
+	double h2 = mBmp.height >> 1;
+	double idxX = idxPixel - w2;
+	double idxY = idxLine - h2;
+	double scaleX = 2.0;
+	double scaleY = scaleX * mBmp.height / mBmp.width;
+	double offsX = -0.5;
+	double offsY = 0.0;
+	double cx = scaleX * idxX / w2 + offsX;
+	double cy = scaleY * idxY / h2 + offsY;
+	size_t numIterMax = 40;
+	int r = 0, g = 0, b = 0;
+
+	size_t numIter = mandelbrot(cx, cy, numIterMax);
+	double fracIter = fractionalIter(cx, cy, numIter);
+
+	if (numIter < numIterMax)
+	{
+		r = 9 * numIter % 255;
+		g = 7 * numIter % 255;
+		b = 5 * numIter % 255;
+	}
+
+	//palette(fracIter, r, g, b);
+#if 1
+	if (idxLine < 5 && !idxPixel)
+	{
+		procDbgLog("Index X      %.0f", idxX);
+		procDbgLog("Index Y      %.0f", idxY);
+
+		procDbgLog("Complex X    %.3f", cx);
+		procDbgLog("Complex Y    %.3f", cy);
+
+		procDbgLog("Iterations   %u", numIter);
+		procDbgLog("Frac. iter.  %.3f", fracIter);
+
+		procDbgLog("R/G/B        %d/%d/%d", r, g, b);
+	}
+#endif
+	*pData++ = r;
+	*pData++ = g;
+	*pData++ = b;
+}
+
+void MandelbrotCreating::palette(double fracIter, int &r, int &g, int &b)
+{
+	r = (int)(128 + 127 * sin(0.016 * fracIter + 4));
+	g = (int)(128 + 127 * sin(0.013 * fracIter + 2));
+	b = (int)(128 + 127 * sin(0.01  * fracIter + 1));
+}
+
+double MandelbrotCreating::fractionalIter(double cx, double cy, size_t numIter)
+{
+	double mag = sqrt(cx * cx + cy * cy);
+	return numIter + 1 - log2(log2(mag));
+}
+
+size_t MandelbrotCreating::mandelbrot(double cx, double cy, size_t numIterMax)
+{
+	double zx = 0.0;
+	double zy = 0.0;
+	double xt;
+
+	size_t i = 0;
+
+	for (; zx*zx + zy*zy <= 4.0 && i < numIterMax; ++i)
+	{
+		xt = zx * zx - zy * zy + cx;
+		zy = 2 * zx * zy + cy;
+		zx = xt;
+	}
+
+	return i;
 }
 
 void MandelbrotCreating::progressPrint()
