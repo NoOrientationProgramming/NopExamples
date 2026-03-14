@@ -149,6 +149,7 @@ Success MandelbrotCreating::linesProcess()
 	size_t numRemaining, numBurst = 53;
 	size_t lenData = mSzLine - sizeof(uint32_t);
 	char *pData;
+	bool ok;
 
 	numRemaining = mBmp.height - mIdxLine;
 	numBurst = PMIN(numRemaining, numBurst);
@@ -158,7 +159,9 @@ Success MandelbrotCreating::linesProcess()
 		pData = mpLine + sizeof(uint32_t);
 
 		lineFill(mIdxLine, pData, lenData);
-		mBmp.lineAppend(pData, lenData);
+		ok = mBmp.lineAppend(pData, lenData);
+		if (!ok)
+			return procErrLog(-1, "could not append line");
 
 		mpLine += mSzLine;
 
