@@ -119,6 +119,8 @@ Success MandelbrotCreating::process()
 
 		//progressPrint();
 
+		gradientBuild();
+
 		mState = StMain;
 
 		break;
@@ -231,7 +233,7 @@ static GradientStop gradient[] =
 	{0.857,   0,   2,   0}, // orange
 	{1.0,     0,   0,   0}, // yellow
 };
-#else
+//#else
 static GradientStop gradient[] =
 {
 	{0.00,    0,   0,   0}, // black
@@ -253,6 +255,24 @@ static GradientStop gradient[] =
 	{1.00,    0,   0,   0}, // back to black
 };
 #endif
+
+static GradientStop gradient[256] = {};
+
+void MandelbrotCreating::gradientBuild()
+{
+	size_t i = 0;
+	double t;
+
+	for (; i < sizeof(gradient) / sizeof(gradient[0]); i++)
+	{
+		t = i / 255.0;
+
+		gradient[i].t = t;
+		gradient[i].r = (uint8_t)(9 * (1 - t) * t * t * t * 255);
+		gradient[i].g = (uint8_t)(15 * (1 - t) * (1 - t) * t * t * 255);
+		gradient[i].b = (uint8_t)(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255);
+	}
+}
 
 void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
