@@ -21,6 +21,7 @@ srcs = [
 	'main.cpp',
 	'Supervising.cpp',
 	'MandelbrotCreating.cpp',
+	'LibBmp.cpp',
 ]
 
 # Arguments
