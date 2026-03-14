@@ -226,16 +226,6 @@ struct GradientStop
 #if 0
 static GradientStop gradient[] =
 {
-	{0.0,     0,   7, 100}, // dark blue
-	{0.16,   32, 107, 203}, // blue
-	{0.42,  237, 255, 255}, // purple
-	{0.642, 255, 170,   0}, // red
-	{0.857,   0,   2,   0}, // orange
-	{1.0,     0,   0,   0}, // yellow
-};
-//#else
-static GradientStop gradient[] =
-{
 	{0.00,    0,   0,   0}, // black
 	{0.05,    0,   0,  80}, // deep blue
 	{0.10,    0,   0, 150}, // blue
