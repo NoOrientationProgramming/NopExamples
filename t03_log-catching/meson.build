@@ -32,16 +32,16 @@ srcs = []
 srcs += srcsSpecific
 
 foreach f : srcsCore
-	srcs += join_paths('../SystemCore', f)
+	srcs += join_paths('../deps/SystemCore', f)
 endforeach
 
 foreach f : srcsCommon
-	srcs += join_paths('../LibNaegCommon', f)
+	srcs += join_paths('../deps/LibNaegCommon', f)
 endforeach
 
 incs = [
-	'../SystemCore',
-	'../LibNaegCommon',
+	'../deps/SystemCore',
+	'../deps/LibNaegCommon',
 ]
 
 incsAbs = []
@@ -57,6 +57,7 @@ args = [
 	'-DdAppName="log-catching"',
 	'-DHAVE_SSTREAM',
 	'-DCONFIG_PROC_HAVE_LOG=1',
+	'-DCONFIG_PROC_HAVE_CORE_LOG=1',
 	'-DCONFIG_PROC_SHOW_ADDRESS_IN_ID=0',
 	'-DCONFIG_PROC_INFO_BUFFER_SIZE=1024',
 	'-DCONFIG_PROC_DISABLE_TREE_DEFAULT=0',
@@ -110,7 +111,7 @@ endif
 args += warnings
 
 myApp = executable(
-	'log-catching',
+	'app',
 	srcs,
 	include_directories : [
 		incsAbs,
