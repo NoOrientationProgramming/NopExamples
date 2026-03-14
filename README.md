@@ -24,11 +24,11 @@ If you want to use [meson and ninja](https://mesonbuild.com/) (recommended) add
 
 ### Clone the example repository
 
-`git clone https://github.com/NoOrientationProgramming/ProcessingExamples.git`
+`git clone https://github.com/NoOrientationProgramming/NopExamples.git`
 
 Initialize and Update the Submodules
 
-Enter the new directory with `cd ProcessingExamples/` and execute
+Enter the new directory with `cd NopExamples/` and execute
 
 `git submodule update --init --recursive`
 
@@ -47,8 +47,9 @@ Then execute the application by entering
 
 Every example will have its own README file for further information explaining what is going on.
 
-## Add the Processing() class to your project
+## Add the SystemCore to your project
 
 If you want to use the core in your own project then simply add the repository as a submodule like this
 
-`
+`git submodule add https://github.com/NoOrientationProgramming/SystemCore.git`
+
