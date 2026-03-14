@@ -28,6 +28,8 @@
 
 #include <stdio.h>
 
+const size_t cBytesPerPixel = 3 * sizeof(char);
+
 class FileBmp
 {
 public:

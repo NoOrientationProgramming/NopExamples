@@ -39,8 +39,6 @@ dProcessStateStr(ProcState);
 
 using namespace std;
 
-const size_t cBytesPerPixel = 3 * sizeof(char);
-
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	//, mStartMs(0)
