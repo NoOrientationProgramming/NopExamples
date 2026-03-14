@@ -44,11 +44,18 @@ bool bmpCreate(const char *pFilename, FileBmp *pBmp)
 
 	pBmp->pFile = pFile;
 
-	uint8_t headerBmp[14];
+	uint8_t buffer[40];
+	size_t len;
 
-	(void)memset(headerBmp, 0, sizeof(headerBmp));
+	// Header BMP
+	len = 14;
+	(void)memset(buffer, 0, len);
+	fwrite(buffer, sizeof(buffer[0]), len, pFile);
 
-	fwrite(headerBmp, sizeof(headerBmp[0]), sizeof(headerBmp), pFile);
+	// Header DIB
+	len = sizeof(buffer);
+	(void)memset(buffer, 0, len);
+	fwrite(buffer, sizeof(buffer[0]), len, pFile);
 
 	return true;
 }
