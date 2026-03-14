@@ -233,21 +233,23 @@ static GradientStop gradient[] =
 
 void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
+	double offsX = -0.743643887037151;
+	double offsY = 0.131825904205330;
+	double scaleIter = 1.2;
+	double scale = 150000;
+
 	double w2 = mBmp.width >> 1;
 	double h2 = mBmp.height >> 1;
 	double idxX = idxPixel - w2;
 	double idxY = idxLine - h2;
-	double scale = 300000;
-	double scaleX = 2.0 / scale;
+	double scaleX = 1.0 / scale;
 	double scaleY = scaleX * mBmp.height / mBmp.width;
-	double offsX = -0.743643887037151;
-	double offsY = 0.131825904205330;
 	double cx = scaleX * idxX / w2 + offsX;
 	double cy = scaleY * idxY / h2 + offsY;
 	double zx, zy, mu, t;
 	int r = 0, g = 0, b = 0;
 
-	size_t numIterMax = 1.2 * mBmp.width;
+	size_t numIterMax = scaleIter * mBmp.width;
 	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
 	size_t idxGrad1, idxGrad2;
 
