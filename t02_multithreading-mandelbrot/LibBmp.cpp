@@ -23,6 +23,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
 #include "LibBmp.h"
 
 using namespace std;
@@ -39,6 +43,12 @@ bool bmpCreate(const char *pFilename, FileBmp *pBmp)
 		return false;
 
 	pBmp->pFile = pFile;
+
+	uint8_t headerBmp[14];
+
+	(void)memset(headerBmp, 0, sizeof(headerBmp));
+
+	fwrite(headerBmp, sizeof(headerBmp[0]), sizeof(headerBmp), pFile);
 
 	return true;
 }
