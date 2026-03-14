@@ -236,7 +236,7 @@ void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 	double offsX = -0.743643887037151;
 	double offsY = 0.131825904205330;
 	double scaleIter = 1.2;
-	double scale = 150000;
+	double scale = 170000;
 
 	double w2 = mBmp.width >> 1;
 	double h2 = mBmp.height >> 1;
