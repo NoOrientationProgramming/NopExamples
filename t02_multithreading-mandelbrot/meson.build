@@ -1,7 +1,9 @@
 
 project(
-	'SystemCore - Introduction',
+	'Multithreaded Mandelbrot',
+	'c',
 	'cpp',
+	default_options : ['cpp_std=c++11'],
 )
 
 fs = import('fs')
@@ -10,15 +12,15 @@ cxx = meson.get_compiler('cpp')
 # Sources
 
 srcs = [
-	'../../Processing.cpp',
-	'../../Log.cpp',
-	'../../SystemDebugging.cpp',
-	'../../SystemCommanding.cpp',
-	'../../TcpListening.cpp',
-	'../../TcpTransfering.cpp',
+	'../deps/SystemCore/Processing.cpp',
+	'../deps/SystemCore/Log.cpp',
+	'../deps/SystemCore/SystemDebugging.cpp',
+	'../deps/SystemCore/SystemCommanding.cpp',
+	'../deps/SystemCore/TcpListening.cpp',
+	'../deps/SystemCore/TcpTransfering.cpp',
 	'main.cpp',
-	'Introducing.cpp',
-	'ChildExecuting.cpp',
+	'Supervising.cpp',
+	'MandelbrotCreating.cpp',
 ]
 
 # Arguments
@@ -115,9 +117,9 @@ endif
 
 # Application
 
-nameExe = 'introducing'
+nameExe = 'app'
 if host_machine.system() == 'windows'
-	nameExe = 'Introducing'
+	nameExe = 'App'
 endif
 
 myApp = executable(
@@ -126,7 +128,7 @@ myApp = executable(
 		srcs,
 	],
 	include_directories : include_directories([
-		'../..',
+		'../deps/SystemCore',
 	]),
 	dependencies : [
 		deps,
