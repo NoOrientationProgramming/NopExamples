@@ -31,6 +31,8 @@
 struct FileBmp
 {
 	FILE *pFile;
+	size_t width;
+	size_t height;
 };
 
 bool bmpCreate(const char *pFilename, FileBmp *pBmp);
