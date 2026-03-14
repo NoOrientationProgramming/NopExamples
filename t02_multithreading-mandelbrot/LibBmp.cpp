@@ -36,6 +36,9 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	if (!pFilename || !pBmp)
 		return false;
 
+	if (pBmp->pFile)
+		return false;
+
 	FILE *pFile;
 
 	pFile = fopen(pFilename, "wb");
@@ -75,11 +78,13 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 
 bool FileBmp::lineAppend(const char *pData, size_t len)
 {
-	if (!pData || !len)
+	if (!pFile || !pData || !len)
 		return false;
 
 	if (!width || !height)
 		return false;
+
+	// TODO: Check dataFinished
 
 	return true;
 }
@@ -89,12 +94,18 @@ void FileBmp::close()
 	if (!pFile)
 		return;
 
-	if (!width || !height)
+	// TODO: Check dataFinished
+
+	if (!width || !height || !dataFinished)
 	{
 		fclose(pFile);
+		pFile = NULL;
 		return;
 	}
 
+	// TODO: Update headers
+
 	fclose(pFile);
+	pFile = NULL;
 }
 

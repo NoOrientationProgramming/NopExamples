@@ -33,12 +33,15 @@ const size_t cBytesPerPixel = 3 * sizeof(char);
 class FileBmp
 {
 public:
-	FILE *pFile;
-	size_t width;
-	size_t height;
+	virtual ~FileBmp() { this->close(); }
 
 	bool lineAppend(const char *pData, size_t len);
 	void close();
+
+	FILE *pFile;
+	size_t width;
+	size_t height;
+	bool dataFinished;
 
 	static bool create(const char *pFilename, FileBmp *pBmp);
 };
