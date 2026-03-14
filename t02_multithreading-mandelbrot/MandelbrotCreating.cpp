@@ -223,8 +223,7 @@ struct GradientStop
 	int b;
 };
 
-#if 0
-static GradientStop gradient[] =
+static GradientStop keysGradient[] =
 {
 	{0.00,    0,   0,   0}, // black
 	{0.05,    0,   0,  80}, // deep blue
@@ -244,23 +243,47 @@ static GradientStop gradient[] =
 	{0.90,   60,  30,   0}, // dark brown
 	{1.00,    0,   0,   0}, // back to black
 };
-#endif
 
-static GradientStop gradient[256] = {};
+const size_t cNumGradients = 256;
+
+const size_t cNumKeysGradient = sizeof(keysGradient) / sizeof(keysGradient[0]);
+const size_t cScaleGradient = cNumGradients / (cNumKeysGradient - 1);
+
+static GradientStop gradient[cNumGradients] = {};
 
 void MandelbrotCreating::gradientBuild()
 {
-	size_t i = 0;
+	GradientStop *pKey1, *pKey2, *pGrad;
+	size_t i, s, k = 0;
 	double t;
 
-	for (; i < sizeof(gradient) / sizeof(gradient[0]); i++)
+	for (; k < cNumKeysGradient - 1; ++k)
 	{
-		t = i / 255.0;
+		for (s = 0; s < cScaleGradient; ++s)
+		{
+			pKey1 = &keysGradient[k];
+			pKey2 = &keysGradient[k + 1];
 
-		gradient[i].t = t;
-		gradient[i].r = (uint8_t)(9 * (1 - t) * t * t * t * 255);
-		gradient[i].g = (uint8_t)(15 * (1 - t) * (1 - t) * t * t * 255);
-		gradient[i].b = (uint8_t)(8.5 * (1 - t) * (1 - t) * (1 - t) * t * 255);
+			i = k * cScaleGradient + s;
+			pGrad = &gradient[i];
+
+			t = ((double)s) / cScaleGradient;
+			t = PMAX(0.0, PMIN(1.0, t));
+
+			pGrad->t = pKey1->t + t * (pKey2->t - pKey1->t);
+
+			colorLerp(t,
+				pKey1->r, pKey1->g, pKey1->b,
+				pKey2->r, pKey2->g, pKey2->b,
+				pGrad->r, pGrad->g, pGrad->b);
+#if 0
+			if (i >= 32)
+				continue;
+
+			procDbgLog("%2u - %2u - %2u: %0.3f, %3u %3u %3u",
+				k, s, i, pGrad->t, pGrad->r, pGrad->g, pGrad->b);
+#endif
+		}
 	}
 }
 
@@ -337,7 +360,7 @@ size_t MandelbrotCreating::idxGradient(double t)
 {
 	size_t i = 0;
 
-	for (; i < sizeof(gradient) / sizeof(gradient[0]) - 1; ++i)
+	for (; i < cNumGradients - 1; ++i)
 	{
 		if (t > gradient[i].t && t < gradient[i + 1].t)
 			return i;
