@@ -97,8 +97,8 @@ Success MandelbrotCreating::process()
 		if (!mpBuffer)
 			return procErrLog(-1, "could not allocate data buffer");
 
-		procDbgLog("Buffer start  %u", mpBuffer);
-		procDbgLog("Buffer end    %u", mpBuffer + mSzBuffer);
+		procDbgLog("Buffer start  %p", mpBuffer);
+		procDbgLog("Buffer end    %p", mpBuffer + mSzBuffer);
 
 		ok = FileBmp::create("mandelbrot.bmp", &mBmp);
 		if (!ok)
