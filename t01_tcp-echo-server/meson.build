@@ -1,21 +1,26 @@
 
-project('NOP - Tutorials', 'cpp')
+project(
+	'TCP Echo Server',
+	'c',
+	'cpp',
+	default_options : ['cpp_std=c++11'],
+)
 
 myApp = executable(
 	'app',
 	[
-		'../SystemCore/Processing.cpp',
-		'../SystemCore/Log.cpp',
-		'../SystemCore/TcpListening.cpp',
-		'../SystemCore/TcpTransfering.cpp',
-		'../SystemCore/SystemCommanding.cpp',
-		'../SystemCore/SystemDebugging.cpp',
+		'../deps/SystemCore/Processing.cpp',
+		'../deps/SystemCore/Log.cpp',
+		'../deps/SystemCore/TcpListening.cpp',
+		'../deps/SystemCore/TcpTransfering.cpp',
+		'../deps/SystemCore/SystemCommanding.cpp',
+		'../deps/SystemCore/SystemDebugging.cpp',
 		'main.cpp',
 		'Supervising.cpp',
 		'UserInteracting.cpp',
 	],
 	include_directories : include_directories([
-		'../SystemCore',
+		'../deps/SystemCore',
 	]),
 	dependencies : [
 		dependency('threads'),
@@ -23,6 +28,7 @@ myApp = executable(
 	cpp_args : [
 		'-std=gnu++11',
 		'-DCONFIG_PROC_HAVE_LOG=1',
+		'-DCONFIG_PROC_HAVE_CORE_LOG=1',
 	],
 )
 
