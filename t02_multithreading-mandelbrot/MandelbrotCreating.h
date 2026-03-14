@@ -60,6 +60,8 @@ private:
 	Success shutdown();
 	void processInfo(char *pBuf, char *pBufEnd);
 
+	Success linesProcess();
+	void progressPrint();
 	bool servicesStart();
 
 	/* member variables */
@@ -69,6 +71,8 @@ private:
 	size_t mSzLine;
 	size_t mSzData;
 	FileBmp mBmp;
+	size_t mIdxLine;
+	char *mpLine;
 
 	/* static functions */
 

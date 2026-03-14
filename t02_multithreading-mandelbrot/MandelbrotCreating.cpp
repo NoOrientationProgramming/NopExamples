@@ -47,6 +47,8 @@ MandelbrotCreating::MandelbrotCreating()
 	, mSzLine(0)
 	, mSzData(0)
 	, mBmp()
+	, mIdxLine(0)
+	, mpLine(NULL)
 {
 	mState = StStart;
 }
@@ -57,7 +59,7 @@ Success MandelbrotCreating::process()
 {
 	//uint32_t curTimeMs = millis();
 	//uint32_t diffMs = curTimeMs - mStartMs;
-	//Success success;
+	Success success;
 	bool ok;
 #if 0
 	dStateTrace;
@@ -88,10 +90,28 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
+		userInfLog("Processing");
+
+		mpLine = mpData;
+		mIdxLine = 0;
+
+		progressPrint();
+
 		mState = StMain;
 
 		break;
 	case StMain:
+
+		success = linesProcess();
+		if (success == Pending)
+			break;
+
+		if (success != Positive)
+			return procErrLog(-1, "could not process lines");
+
+		userInfLog("\nProcessing: Done");
+
+		return Positive;
 
 		break;
 	default:
@@ -109,6 +129,48 @@ Success MandelbrotCreating::shutdown()
 		delete[] mpData;
 
 	return Positive;
+}
+
+Success MandelbrotCreating::linesProcess()
+{
+	size_t numRemaining, numBurst = 53;
+	size_t lenData = mSzLine - sizeof(uint32_t);
+	char *pData = mpLine + sizeof(uint32_t);
+
+	numRemaining = mBmp.height - mIdxLine;
+	numBurst = PMAX(numRemaining, numBurst);
+#if 0
+	for (; numBurst; --numBurst)
+	{
+	}
+#endif
+	mBmp.lineAppend(pData, lenData);
+	mpLine += mSzLine;
+
+	++mIdxLine;
+
+	progressPrint();
+
+	if (mIdxLine < mBmp.height)
+		return Pending;
+
+	return Positive;
+}
+
+void MandelbrotCreating::progressPrint()
+{
+	char buf[59];
+	char *pBufStart = buf;
+	char *pBuf = pBufStart;
+	char *pBufEnd = pBuf + sizeof(buf);
+
+	buf[0] = 0;
+
+	dInfo("\r");
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLine, mBmp.height);
+
+	fprintf(stdout, "%s", pBufStart);
+	fflush(stdout);
 }
 
 bool MandelbrotCreating::servicesStart()
@@ -132,6 +194,7 @@ void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 #if 1
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLine, mBmp.height);
 }
 
 /* static functions */
