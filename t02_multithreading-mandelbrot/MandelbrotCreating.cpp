@@ -44,13 +44,14 @@ MandelbrotCreating::MandelbrotCreating()
 	//, mStartMs(0)
 	, mpPool(NULL)
 	, mpBuffer(NULL)
+	, mpLine(NULL)
+	, mBmp()
 	, mSzData(0)
 	, mSzLine(0)
 	, mSzPadding(0)
 	, mSzBuffer(0)
-	, mBmp()
 	, mIdxLine(0)
-	, mpLine(NULL)
+	, mIdxProgress(0)
 {
 	mState = StStart;
 }
@@ -165,18 +166,21 @@ Success MandelbrotCreating::linesProcess()
 
 		mpLine += mSzLine;
 
-		++mIdxLine;
 		progressPrint();
+		++mIdxLine;
 	}
 
 	if (mIdxLine < mBmp.height)
 		return Pending;
+
+	progressPrint();
 
 	return Positive;
 }
 
 void MandelbrotCreating::lineFill(size_t idxLine, char *pData, size_t len)
 {
+	char *pDataEnd = pData + len;
 	size_t numPixels = len / cBytesPerPixel;
 	size_t idxPixel = 0;
 
@@ -189,10 +193,18 @@ void MandelbrotCreating::lineFill(size_t idxLine, char *pData, size_t len)
 		*pData++ = idxLine % 256;
 		*pData++ = 0;
 	}
+
+	for (; pData < pDataEnd; ++pData)
+		*pData = 0;
 }
 
 void MandelbrotCreating::progressPrint()
 {
+	++mIdxProgress;
+	if (mIdxLine != 0 && mIdxLine != mBmp.height && mIdxProgress < 100)
+		return;
+	mIdxProgress = 0;
+
 	char buf[59];
 	char *pBufStart = buf;
 	char *pBuf = pBufStart;

@@ -69,13 +69,14 @@ private:
 	//uint32_t mStartMs;
 	ThreadPooling *mpPool;
 	char *mpBuffer;
+	char *mpLine;
+	FileBmp mBmp;
 	size_t mSzData;
 	size_t mSzLine;
 	size_t mSzPadding;
 	size_t mSzBuffer;
-	FileBmp mBmp;
 	size_t mIdxLine;
-	char *mpLine;
+	size_t mIdxProgress;
 
 	/* static functions */
 
