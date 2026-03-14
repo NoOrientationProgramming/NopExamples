@@ -28,16 +28,18 @@
 
 #include <stdio.h>
 
-struct FileBmp
+class FileBmp
 {
+public:
 	FILE *pFile;
 	size_t width;
 	size_t height;
-};
 
-bool bmpCreate(const char *pFilename, FileBmp *pBmp);
-bool bmpAppend(FileBmp *pBmp, const char *pData, size_t len);
-void bmpClose(FileBmp *pBmp);
+	bool lineAppend(const char *pData, size_t len);
+	void close();
+
+	static bool create(const char *pFilename, FileBmp *pBmp);
+};
 
 #endif
 

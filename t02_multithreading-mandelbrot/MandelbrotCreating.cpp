@@ -84,7 +84,7 @@ Success MandelbrotCreating::process()
 		if (!mpData)
 			return procErrLog(-1, "could not allocate data buffer");
 
-		ok = bmpCreate("mandelbrot.bmp", &mBmp);
+		ok = FileBmp::create("mandelbrot.bmp", &mBmp);
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
@@ -103,7 +103,7 @@ Success MandelbrotCreating::process()
 
 Success MandelbrotCreating::shutdown()
 {
-	bmpClose(&mBmp);
+	mBmp.close();
 
 	if (mpData)
 		delete[] mpData;

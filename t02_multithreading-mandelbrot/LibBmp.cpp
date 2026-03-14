@@ -31,7 +31,7 @@
 
 using namespace std;
 
-bool bmpCreate(const char *pFilename, FileBmp *pBmp)
+bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 {
 	if (!pFilename || !pBmp)
 		return false;
@@ -73,31 +73,28 @@ bool bmpCreate(const char *pFilename, FileBmp *pBmp)
 	return true;
 }
 
-bool bmpAppend(FileBmp *pBmp, const char *pData, size_t len)
+bool FileBmp::lineAppend(const char *pData, size_t len)
 {
-	if (!pBmp || !pData || !len)
+	if (!pData || !len)
 		return false;
 
-	if (!pBmp->width || !pBmp->height)
+	if (!width || !height)
 		return false;
 
 	return true;
 }
 
-void bmpClose(FileBmp *pBmp)
+void FileBmp::close()
 {
-	if (!pBmp)
+	if (!pFile)
 		return;
 
-	if (!pBmp->pFile)
-		return;
-
-	if (!pBmp->width || !pBmp->height)
+	if (!width || !height)
 	{
-		fclose(pBmp->pFile);
+		fclose(pFile);
 		return;
 	}
 
-	fclose(pBmp->pFile);
+	fclose(pFile);
 }
 
