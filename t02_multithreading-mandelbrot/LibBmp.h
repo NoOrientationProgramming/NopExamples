@@ -36,7 +36,7 @@ struct FileBmp
 };
 
 bool bmpCreate(const char *pFilename, FileBmp *pBmp);
-bool bmpAppend(const char *pData, size_t len);
+bool bmpAppend(FileBmp *pBmp, const char *pData, size_t len);
 void bmpClose(FileBmp *pBmp);
 
 #endif

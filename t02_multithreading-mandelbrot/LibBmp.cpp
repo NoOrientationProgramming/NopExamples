@@ -43,10 +43,13 @@ bool bmpCreate(const char *pFilename, FileBmp *pBmp)
 	return true;
 }
 
-bool bmpAppend(const char *pData, size_t len)
+bool bmpAppend(FileBmp *pBmp, const char *pData, size_t len)
 {
-	(void)pData;
-	(void)len;
+	if (!pBmp || !pData || !len)
+		return false;
+
+	if (!pBmp->width || !pBmp->height)
+		return false;
 
 	return true;
 }
@@ -58,6 +61,12 @@ void bmpClose(FileBmp *pBmp)
 
 	if (!pBmp->pFile)
 		return;
+
+	if (!pBmp->width || !pBmp->height)
+	{
+		fclose(pBmp->pFile);
+		return;
+	}
 
 	fclose(pBmp->pFile);
 }
