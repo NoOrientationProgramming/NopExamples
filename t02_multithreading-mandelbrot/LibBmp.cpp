@@ -88,7 +88,10 @@ bool FileBmp::lineAppend(const char *pData, size_t len)
 
 	if (!width || !height)
 		return false;
-
+#if 0
+	if (idxLine < 5)
+		wrnLog("Writing line: %u (%u) @ %p -> %p", idxLine, len, pData, pFile);
+#endif
 	fwrite(pData, sizeof(*pData), len, pFile);
 
 	++idxLine;
