@@ -39,13 +39,17 @@ dProcessStateStr(ProcState);
 
 using namespace std;
 
+const size_t cBytesPerPixel = 3 * sizeof(char);
+
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	//, mStartMs(0)
 	, mpPool(NULL)
 	, mpData(NULL)
-	, mSzLine(0)
 	, mSzData(0)
+	, mSzLine(0)
+	, mSzPadding(0)
+	, mSzBuffer(0)
 	, mBmp()
 	, mIdxLine(0)
 	, mpLine(NULL)
@@ -75,12 +79,20 @@ Success MandelbrotCreating::process()
 		mBmp.width = 1920;
 		mBmp.height = 1200;
 
-		mSzLine = sizeof(uint32_t) + mBmp.width * 3 * sizeof(char);
-		procDbgLog("Line size     %u", mSzLine);
-		procDbgLog("Line padding  %u", ((mSzLine + 3) & ~3) - mSzLine);
+		mSzData = mBmp.width * cBytesPerPixel;
+		mSzLine = ((mSzData + 3) & ~3);
+		mSzPadding = mSzLine - mSzData;
 
-		mSzData = mSzLine * mBmp.height;
-		procDbgLog("Buffer size   %u", mSzData);
+		mSzLine += sizeof(uint32_t); // Add header
+
+		procDbgLog("Line header   %u", sizeof(uint32_t));
+		procDbgLog("Data size     %u", mSzData);
+		procDbgLog("Line padding  %u", mSzPadding);
+
+		procDbgLog("Line size     %u", mSzLine);
+
+		mSzBuffer = mSzLine* mBmp.height;
+		procDbgLog("Buffer size   %u", mSzBuffer);
 
 		mpData = new dNoThrow char[mSzData];
 		if (!mpData)
@@ -95,7 +107,7 @@ Success MandelbrotCreating::process()
 		mpLine = mpData;
 		mIdxLine = 0;
 
-		progressPrint();
+		//progressPrint();
 
 		mState = StMain;
 
@@ -161,9 +173,14 @@ Success MandelbrotCreating::linesProcess()
 
 void MandelbrotCreating::lineFill(size_t idx, char *pData, size_t len)
 {
+	size_t numPixels = len / cBytesPerPixel;
+
 	(void)idx;
 	(void)pData;
 	(void)len;
+
+	if (!idx)
+		procDbgLog("Pixels per line %u", numPixels);
 }
 
 void MandelbrotCreating::progressPrint()

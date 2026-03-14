@@ -69,8 +69,10 @@ private:
 	//uint32_t mStartMs;
 	ThreadPooling *mpPool;
 	char *mpData;
-	size_t mSzLine;
 	size_t mSzData;
+	size_t mSzLine;
+	size_t mSzPadding;
+	size_t mSzBuffer;
 	FileBmp mBmp;
 	size_t mIdxLine;
 	char *mpLine;
