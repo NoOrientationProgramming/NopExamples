@@ -24,20 +24,10 @@ dHere="$(pwd)"
 dTool="$dHere/$(dirname $0)"
 dTarget="$dTool/../../$dirTut/build-native"
 dRelHereToTarget="$(realpath --relative-to=$dHere $dTarget)"
-dRelTargetToTool="$(realpath --relative-to=$dTarget $dTool)"
-
-echo "Target: $dRelHereToTarget"
-
-#	--gen-suppressions=all \
 
 cd "${dRelHereToTarget}" && \
 ninja && \
 
-valgrind \
-	--leak-check=full \
-	--show-leak-kinds=all \
-	--track-fds=yes \
-	--suppressions=${dRelTargetToTool}/valgrind_suppressions.txt \
 ./app \
 	$@
 
