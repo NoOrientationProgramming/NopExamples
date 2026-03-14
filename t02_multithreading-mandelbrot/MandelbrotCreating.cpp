@@ -42,6 +42,7 @@ using namespace std;
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	//, mStartMs(0)
+	, mBmp()
 {
 	mState = StStart;
 }
@@ -53,12 +54,17 @@ Success MandelbrotCreating::process()
 	//uint32_t curTimeMs = millis();
 	//uint32_t diffMs = curTimeMs - mStartMs;
 	//Success success;
+	bool ok;
 #if 0
 	dStateTrace;
 #endif
 	switch (mState)
 	{
 	case StStart:
+
+		ok = bmpCreate("mandelbrot.bmp", &mBmp);
+		if (!ok)
+			return procErrLog(-1, "could not create BMP file");
 
 		mState = StMain;
 
@@ -71,6 +77,12 @@ Success MandelbrotCreating::process()
 	}
 
 	return Pending;
+}
+
+Success MandelbrotCreating::shutdown()
+{
+	bmpClose(&mBmp);
+	return Positive;
 }
 
 void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)

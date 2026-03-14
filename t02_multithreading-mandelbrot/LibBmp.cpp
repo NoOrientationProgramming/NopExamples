@@ -27,4 +27,30 @@
 
 using namespace std;
 
+bool bmpCreate(const char *pFilename, FileBmp *pBmp)
+{
+	if (!pFilename || !pBmp)
+		return false;
+
+	FILE *pFile;
+
+	pFile = fopen(pFilename, "wb");
+	if (!pFile)
+		return false;
+
+	pBmp->pFile = pFile;
+
+	return true;
+}
+
+void bmpClose(FileBmp *pBmp)
+{
+	if (!pBmp)
+		return;
+
+	if (!pBmp->pFile)
+		return;
+
+	fclose(pBmp->pFile);
+}
 

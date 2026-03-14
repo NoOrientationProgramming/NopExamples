@@ -26,7 +26,15 @@
 #ifndef LIB_BMP_H
 #define LIB_BMP_H
 
+#include <stdio.h>
 
+struct FileBmp
+{
+	FILE *pFile;
+};
+
+bool bmpCreate(const char *pFilename, FileBmp *pBmp);
+void bmpClose(FileBmp *pBmp);
 
 #endif
 
