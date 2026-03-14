@@ -220,7 +220,7 @@ struct GradientStop
 	int g;
 	int b;
 };
-
+#if 0
 static GradientStop gradient[] =
 {
 	{0.0,     0,   7, 100}, // dark blue
@@ -230,6 +230,35 @@ static GradientStop gradient[] =
 	{0.857,   0,   2,   0}, // orange
 	{1.0,     0,   0,   0}, // yellow
 };
+#else
+static GradientStop gradient[] =
+{
+	{0.00,    0,   0,   0}, // black
+	{0.05,    0,   0,  80}, // deep blue
+	{0.10,    0,   0, 150}, // blue
+	{0.15,    0,  50, 200}, // blue-cyan
+	{0.20,    0, 120, 220}, // cyan
+	{0.25,   40, 180, 255}, // light cyan
+	{0.30,  120, 220, 255}, // very light blue
+	{0.35,  200, 240, 255}, // almost white
+	{0.40,  255, 255, 255}, // white
+	{0.45,  255, 240, 180}, // warm white
+	{0.50,  255, 220, 120}, // light gold
+	{0.55,  255, 200,  60}, // gold
+	{0.60,  255, 170,   0}, // deep gold
+	{0.70,  200, 120,   0}, // bronze
+	{0.80,  120,  60,   0}, // dark bronze
+	{0.90,   60,  30,   0}, // dark brown
+	{1.00,    0,   0,   0}, // back to black
+};
+#endif
+template<typename T>
+T clamp(T v, T lo, T hi)
+{
+	if (v < lo) return lo;
+	if (v > hi) return hi;
+	return v;
+}
 
 void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
@@ -256,12 +285,16 @@ void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 	if (numIter < numIterMax)
 	{
 		mu = fractionalIter(zx, zy, numIter);
-
+#if 0
 		t = mu / numIterMax;
 		//t = pow(t, 0.7);
 		t = sqrt(t);
 		//t = 1.0 - t;
-
+		t = clamp(t, 0.0, 1.0);
+#else
+		t = mu * 0.02;
+		t = t - floor(t);
+#endif
 		idxGrad1 = idxGradient(t);
 		idxGrad2 = idxGrad1 + 1;
 
