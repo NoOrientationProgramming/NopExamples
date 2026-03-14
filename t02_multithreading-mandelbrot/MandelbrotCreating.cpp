@@ -220,6 +220,7 @@ struct GradientStop
 	int g;
 	int b;
 };
+
 #if 0
 static GradientStop gradient[] =
 {
@@ -252,13 +253,6 @@ static GradientStop gradient[] =
 	{1.00,    0,   0,   0}, // back to black
 };
 #endif
-template<typename T>
-T clamp(T v, T lo, T hi)
-{
-	if (v < lo) return lo;
-	if (v > hi) return hi;
-	return v;
-}
 
 void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
@@ -290,11 +284,11 @@ void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 		//t = pow(t, 0.7);
 		t = sqrt(t);
 		//t = 1.0 - t;
-		t = clamp(t, 0.0, 1.0);
 #else
 		t = mu * 0.02;
 		t = t - floor(t);
 #endif
+		t = PMAX(0.0, PMIN(1.0, t));
 		idxGrad1 = idxGradient(t);
 		idxGrad2 = idxGrad1 + 1;
 
