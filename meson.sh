@@ -14,7 +14,7 @@ if [ ! -z "$1" ]; then
 	fi
 fi
 
-echo "Building tutorial: $dirTut"
+echo "Building example: $dirTut"
 
 if [ ! -d "$dirTut" ]; then
 	echo "Could not build tutorial. Wrong directory?"
