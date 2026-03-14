@@ -138,18 +138,16 @@ Success MandelbrotCreating::linesProcess()
 	char *pData = mpLine + sizeof(uint32_t);
 
 	numRemaining = mBmp.height - mIdxLine;
-	numBurst = PMAX(numRemaining, numBurst);
-#if 0
+	numBurst = PMIN(numRemaining, numBurst);
+
 	for (; numBurst; --numBurst)
 	{
+		mBmp.lineAppend(pData, lenData);
+		mpLine += mSzLine;
+
+		++mIdxLine;
+		progressPrint();
 	}
-#endif
-	mBmp.lineAppend(pData, lenData);
-	mpLine += mSzLine;
-
-	++mIdxLine;
-
-	progressPrint();
 
 	if (mIdxLine < mBmp.height)
 		return Pending;
