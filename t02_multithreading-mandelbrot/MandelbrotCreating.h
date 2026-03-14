@@ -64,9 +64,14 @@ private:
 	void lineFill(size_t idx, char *pData, size_t len);
 	void colorTest(char *pData, size_t idxLine, size_t idxPixel);
 	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
-	void palette(double fracIter, int &r, int &g, int &b);
-	double fractionalIter(double cx, double cy, size_t numIter);
-	size_t mandelbrot(double cx, double cy, size_t numIterMax);
+	size_t idxGradient(double t);
+	void colorLerp(double t,
+				int r1, int g1, int b1,
+				int r2, int g2, int b2,
+				int &ro, int &go, int &bo);
+	void palette(double t, int &r, int &g, int &b);
+	double fractionalIter(double zx, double zy, size_t numIter);
+	size_t mandelbrot(double cx, double cy, double &zx, double &zy, size_t numIterMax);
 	void progressPrint();
 	bool servicesStart();
 

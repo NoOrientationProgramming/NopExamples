@@ -79,10 +79,13 @@ Success MandelbrotCreating::process()
 		ok = servicesStart();
 		if (!ok)
 			return procErrLog(-1, "could not start services");
-
+#if 1
 		mBmp.width = 1920;
 		mBmp.height = 1200;
-
+#else
+		mBmp.width = 3840;
+		mBmp.height = 2400;
+#endif
 		mSzData = mBmp.width * cBytesPerPixel;
 		mSzLine = ((mSzData + 3) & ~3);
 		mSzPadding = mSzLine - mSzData;
@@ -210,72 +213,131 @@ void MandelbrotCreating::colorTest(char *pData, size_t idxLine, size_t idxPixel)
 	*pData++ = 0;
 }
 
+struct GradientStop
+{
+	double t;
+	int r;
+	int g;
+	int b;
+};
+
+static GradientStop gradient[] =
+{
+	{0.0,     0,   7, 100}, // dark blue
+	{0.16,   32, 107, 203}, // blue
+	{0.42,  237, 255, 255}, // purple
+	{0.642, 255, 170,   0}, // red
+	{0.857,   0,   2,   0}, // orange
+	{1.0,     0,   0,   0}, // yellow
+};
+
 void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
 	double w2 = mBmp.width >> 1;
 	double h2 = mBmp.height >> 1;
 	double idxX = idxPixel - w2;
 	double idxY = idxLine - h2;
-	double scaleX = 2.0;
+	double scale = 300000;
+	double scaleX = 2.0 / scale;
 	double scaleY = scaleX * mBmp.height / mBmp.width;
-	double offsX = -0.5;
-	double offsY = 0.0;
+	double offsX = -0.743643887037151;
+	double offsY = 0.131825904205330;
 	double cx = scaleX * idxX / w2 + offsX;
 	double cy = scaleY * idxY / h2 + offsY;
-	size_t numIterMax = 40;
+	double zx, zy, mu, t;
 	int r = 0, g = 0, b = 0;
 
-	size_t numIter = mandelbrot(cx, cy, numIterMax);
-	double fracIter = fractionalIter(cx, cy, numIter);
+	size_t numIterMax = 1.2 * mBmp.width;
+	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
+	size_t idxGrad1, idxGrad2;
 
 	if (numIter < numIterMax)
 	{
-		r = 9 * numIter % 255;
-		g = 7 * numIter % 255;
-		b = 5 * numIter % 255;
+		mu = fractionalIter(zx, zy, numIter);
+
+		t = mu / numIterMax;
+		//t = pow(t, 0.7);
+		t = sqrt(t);
+		//t = 1.0 - t;
+
+		idxGrad1 = idxGradient(t);
+		idxGrad2 = idxGrad1 + 1;
+
+		colorLerp(t,
+			gradient[idxGrad1].r, gradient[idxGrad1].g, gradient[idxGrad1].b,
+			gradient[idxGrad2].r, gradient[idxGrad2].g, gradient[idxGrad2].b,
+			r, g, b);
+
+		//palette(mu, r, g, b);
 	}
-
-	//palette(fracIter, r, g, b);
-#if 1
-	if (idxLine < 5 && !idxPixel)
+#if 0
+	if (idxLine < 2 && !idxPixel)
 	{
-		procDbgLog("Index X      %.0f", idxX);
-		procDbgLog("Index Y      %.0f", idxY);
+		procDbgLog("Idx. X          %.0f", idxX);
+		procDbgLog("Idx. Y          %.0f", idxY);
 
-		procDbgLog("Complex X    %.3f", cx);
-		procDbgLog("Complex Y    %.3f", cy);
+		procDbgLog("Complex X       %.3f", cx);
+		procDbgLog("Complex Y       %.3f", cy);
 
-		procDbgLog("Iterations   %u", numIter);
-		procDbgLog("Frac. iter.  %.3f", fracIter);
+		procDbgLog("Iterations      %u", numIter);
+		procDbgLog("Frac. iter.     %.3f", mu);
+		procDbgLog("Normalized      %.3f", t);
+		procDbgLog("Idx. grad. 1    %u", idxGrad1);
+		procDbgLog("Idx. grad. 2    %u", idxGrad2);
 
-		procDbgLog("R/G/B        %d/%d/%d", r, g, b);
+		procDbgLog("R/G/B           %d/%d/%d", r, g, b);
 	}
 #endif
-	*pData++ = r;
-	*pData++ = g;
+	// Not RGB but BGR! => BMP specific
 	*pData++ = b;
+	*pData++ = g;
+	*pData++ = r;
 }
 
-void MandelbrotCreating::palette(double fracIter, int &r, int &g, int &b)
+size_t MandelbrotCreating::idxGradient(double t)
 {
-	r = (int)(128 + 127 * sin(0.016 * fracIter + 4));
-	g = (int)(128 + 127 * sin(0.013 * fracIter + 2));
-	b = (int)(128 + 127 * sin(0.01  * fracIter + 1));
+	size_t i = 0;
+
+	for (; i < sizeof(gradient) / sizeof(gradient[0]) - 1; ++i)
+	{
+		if (t > gradient[i].t && t < gradient[i + 1].t)
+			return i;
+	}
+
+	return 0;
 }
 
-double MandelbrotCreating::fractionalIter(double cx, double cy, size_t numIter)
+void MandelbrotCreating::colorLerp(double t,
+			int r1, int g1, int b1,
+			int r2, int g2, int b2,
+			int &ro, int &go, int &bo)
 {
-	double mag = sqrt(cx * cx + cy * cy);
+	ro = r1 + (r2 - r1) * t;
+	go = g1 + (g2 - g1) * t;
+	bo = b1 + (b2 - b1) * t;
+}
+
+void MandelbrotCreating::palette(double t, int &r, int &g, int &b)
+{
+	double scale = 20;
+	r = (int)(128 + 127 * sin(0.016 * scale * t + 4));
+	g = (int)(128 + 127 * sin(0.013 * scale * t + 2));
+	b = (int)(128 + 127 * sin(0.01  * scale * t + 1));
+}
+
+double MandelbrotCreating::fractionalIter(double zx, double zy, size_t numIter)
+{
+	double mag = sqrt(zx * zx + zy * zy);
 	return numIter + 1 - log2(log2(mag));
 }
 
-size_t MandelbrotCreating::mandelbrot(double cx, double cy, size_t numIterMax)
+size_t MandelbrotCreating::mandelbrot(double cx, double cy, double &zx, double &zy, size_t numIterMax)
 {
-	double zx = 0.0;
-	double zy = 0.0;
+	size_t i = 0;
 	double xt;
 
-	size_t i = 0;
+	zx = 0.0;
+	zy = 0.0;
 
 	for (; zx*zx + zy*zy <= 4.0 && i < numIterMax; ++i)
 	{
