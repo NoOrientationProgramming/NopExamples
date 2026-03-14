@@ -32,6 +32,9 @@
 
 using namespace std;
 
+const size_t cSzHeaderBmp = 14;
+const size_t cSzHeaderDib = 40;
+
 bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 {
 	if (!pFilename || !pBmp)
@@ -52,11 +55,11 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	pBmp->dataOk = 0;
 
 	// Headers
-	uint8_t buf[40];
+	uint8_t buf[cSzHeaderDib];
 	size_t len;
 
 	// Header BMP
-	len = 14;
+	len = cSzHeaderBmp;
 
 	(void)memset(buf, 0, len);
 
@@ -114,7 +117,30 @@ void FileBmp::close()
 		return;
 	}
 
-	// TODO: Update headers
+	size_t szData = width * cBytesPerPixel; // Data per line
+	size_t szLine = ((szData + 3) & ~3);
+	uint32_t szFile;
+
+	szData = szLine * height; // Data all lines
+	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
+
+	dbgLog("Updating headers");
+	dbgLog("Size file   %u", szFile);
+	dbgLog("Width       %u", width);
+	dbgLog("Height      %u", height);
+	dbgLog("Size data   %u", szData);
+
+	fseek(pFile, 2, SEEK_SET);
+	fwrite(&szFile, 4, 1, pFile);
+
+	fseek(pFile, cSzHeaderBmp + 4, SEEK_SET);
+	fwrite(&width, 4, 1, pFile);
+
+	fseek(pFile, cSzHeaderBmp + 8, SEEK_SET);
+	fwrite(&height, 4, 1, pFile);
+
+	fseek(pFile, cSzHeaderBmp + 20, SEEK_SET);
+	fwrite(&szData, 4, 1, pFile);
 
 	fclose(pFile);
 	pFile = NULL;
