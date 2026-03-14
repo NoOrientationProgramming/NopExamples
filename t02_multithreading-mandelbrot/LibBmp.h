@@ -39,8 +39,8 @@ public:
 	void close();
 
 	FILE *pFile;
-	size_t width;
-	size_t height;
+	uint32_t width;
+	uint32_t height;
 	size_t idxLine;
 	bool dataOk;
 
