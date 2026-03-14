@@ -42,6 +42,7 @@ using namespace std;
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	//, mStartMs(0)
+	, mpPool(NULL)
 	, mBmp()
 {
 	mState = StStart;
@@ -61,6 +62,10 @@ Success MandelbrotCreating::process()
 	switch (mState)
 	{
 	case StStart:
+
+		ok = servicesStart();
+		if (!ok)
+			return procErrLog(-1, "could not start services");
 
 		ok = bmpCreate("mandelbrot.bmp", &mBmp);
 		if (!ok)
@@ -86,6 +91,22 @@ Success MandelbrotCreating::shutdown()
 {
 	bmpClose(&mBmp);
 	return Positive;
+}
+
+bool MandelbrotCreating::servicesStart()
+{
+	mpPool = ThreadPooling::create();
+	if (!mpPool)
+	{
+		procWrnLog("could not create process");
+		return false;
+	}
+
+	mpPool->cntWorkerSet(3);
+
+	start(mpPool);
+
+	return true;
 }
 
 void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)

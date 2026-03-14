@@ -27,6 +27,7 @@
 #define MANDELBROT_CREATING_H
 
 #include "Processing.h"
+#include "ThreadPooling.h"
 #include "LibBmp.h"
 
 class MandelbrotCreating : public Processing
@@ -59,8 +60,11 @@ private:
 	Success shutdown();
 	void processInfo(char *pBuf, char *pBufEnd);
 
+	bool servicesStart();
+
 	/* member variables */
 	//uint32_t mStartMs;
+	ThreadPooling *mpPool;
 	FileBmp mBmp;
 
 	/* static functions */
