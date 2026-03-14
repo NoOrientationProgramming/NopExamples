@@ -27,6 +27,7 @@
 #define SUPERVISING_H
 
 #include "Processing.h"
+#include "MandelbrotCreating.h"
 
 class Supervising : public Processing
 {
@@ -57,8 +58,11 @@ private:
 	Success process();
 	void processInfo(char *pBuf, char *pBufEnd);
 
+	bool servicesStart();
+
 	/* member variables */
 	//uint32_t mStartMs;
+	MandelbrotCreating *mpMbCreate;
 
 	/* static functions */
 

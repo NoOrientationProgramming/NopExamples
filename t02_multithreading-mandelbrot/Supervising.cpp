@@ -24,6 +24,7 @@
 */
 
 #include "Supervising.h"
+#include "SystemDebugging.h"
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
@@ -42,6 +43,7 @@ using namespace std;
 Supervising::Supervising()
 	: Processing("Supervising")
 	//, mStartMs(0)
+	, mpMbCreate(NULL)
 {
 	mState = StStart;
 }
@@ -53,12 +55,17 @@ Success Supervising::process()
 	//uint32_t curTimeMs = millis();
 	//uint32_t diffMs = curTimeMs - mStartMs;
 	//Success success;
+	bool ok;
 #if 0
 	dStateTrace;
 #endif
 	switch (mState)
 	{
 	case StStart:
+
+		ok = servicesStart();
+		if (!ok)
+			return procErrLog(-1, "could not start services");
 
 		mState = StMain;
 
@@ -71,6 +78,34 @@ Success Supervising::process()
 	}
 
 	return Pending;
+}
+
+bool Supervising::servicesStart()
+{
+	SystemDebugging *pDbg;
+
+	pDbg = SystemDebugging::create(this);
+	if (!pDbg)
+	{
+		procWrnLog("could not create process");
+		return false;
+	}
+
+	pDbg->listenLocalSet();
+
+	pDbg->procTreeDisplaySet(false);
+	start(pDbg);
+
+	mpMbCreate = MandelbrotCreating::create();
+	if (!mpMbCreate)
+	{
+		procWrnLog("could not create process");
+		return false;
+	}
+
+	start(mpMbCreate);
+
+	return true;
 }
 
 void Supervising::processInfo(char *pBuf, char *pBufEnd)
