@@ -24,6 +24,7 @@
 */
 
 #include "MandelbrotCreating.h"
+#include "LibTime.h"
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
@@ -41,7 +42,7 @@ using namespace std;
 
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
-	//, mStartMs(0)
+	, mStartMs(0)
 	, mpPool(NULL)
 	, mpBuffer(NULL)
 	, mpLine(NULL)
@@ -60,8 +61,8 @@ MandelbrotCreating::MandelbrotCreating()
 
 Success MandelbrotCreating::process()
 {
-	//uint32_t curTimeMs = millis();
-	//uint32_t diffMs = curTimeMs - mStartMs;
+	uint32_t curTimeMs = millis();
+	uint32_t diffMs = curTimeMs - mStartMs;
 	Success success;
 	bool ok;
 #if 0
@@ -70,6 +71,8 @@ Success MandelbrotCreating::process()
 	switch (mState)
 	{
 	case StStart:
+
+		mStartMs = curTimeMs;
 
 		ok = servicesStart();
 		if (!ok)
@@ -104,7 +107,7 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
-		userInfLog("Processing");
+		//userInfLog("Processing");
 
 		mpLine = mpBuffer;
 		mIdxLine = 0;
@@ -123,7 +126,8 @@ Success MandelbrotCreating::process()
 		if (success != Positive)
 			return procErrLog(-1, "could not process lines");
 
-		userInfLog("\nProcessing: Done");
+		userInfLog("\n");
+		userInfLog("Duration: %ums\n", diffMs);
 
 		return Positive;
 
@@ -210,7 +214,7 @@ void MandelbrotCreating::progressPrint()
 	char *pBuf = pBufStart;
 	char *pBufEnd = pBuf + sizeof(buf);
 
-	buf[0] = 0;
+	pBuf[0] = 0;
 
 	dInfo("\r");
 	pBuf += progressStr(pBuf, pBufEnd, mIdxLine, mBmp.height);

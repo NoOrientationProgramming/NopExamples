@@ -66,7 +66,7 @@ private:
 	bool servicesStart();
 
 	/* member variables */
-	//uint32_t mStartMs;
+	uint32_t mStartMs;
 	ThreadPooling *mpPool;
 	char *mpBuffer;
 	char *mpLine;

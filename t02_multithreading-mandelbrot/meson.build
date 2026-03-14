@@ -19,6 +19,7 @@ srcs = [
 	'../deps/SystemCore/TcpListening.cpp',
 	'../deps/SystemCore/TcpTransfering.cpp',
 	'../deps/LibNaegCommon/ThreadPooling.cpp',
+	'../deps/LibNaegCommon/LibTime.cpp',
 	'main.cpp',
 	'Supervising.cpp',
 	'MandelbrotCreating.cpp',
