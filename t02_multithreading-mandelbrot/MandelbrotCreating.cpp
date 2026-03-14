@@ -43,6 +43,9 @@ MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	//, mStartMs(0)
 	, mpPool(NULL)
+	, mpData(NULL)
+	, mSzLine(0)
+	, mSzData(0)
 	, mBmp()
 {
 	mState = StStart;
@@ -67,12 +70,23 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not start services");
 
+		mBmp.width = 1920;
+		mBmp.height = 1200;
+
+		mSzLine = mBmp.width * 3 * sizeof(char);
+		procDbgLog("Line size     %u", mSzLine);
+		procDbgLog("Line padding  %u", ((mSzLine + 3) & ~3) - mSzLine);
+
+		mSzData = mSzLine * mBmp.height;
+		procDbgLog("Buffer size   %u", mSzData);
+
+		mpData = new dNoThrow char[mSzData];
+		if (!mpData)
+			return procErrLog(-1, "could not allocate data buffer");
+
 		ok = bmpCreate("mandelbrot.bmp", &mBmp);
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
-
-		mBmp.width = 1920;
-		mBmp.height = 1200;
 
 		mState = StMain;
 
@@ -90,6 +104,10 @@ Success MandelbrotCreating::process()
 Success MandelbrotCreating::shutdown()
 {
 	bmpClose(&mBmp);
+
+	if (mpData)
+		delete[] mpData;
+
 	return Positive;
 }
 

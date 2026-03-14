@@ -65,6 +65,9 @@ private:
 	/* member variables */
 	//uint32_t mStartMs;
 	ThreadPooling *mpPool;
+	char *mpData;
+	size_t mSzLine;
+	size_t mSzData;
 	FileBmp mBmp;
 
 	/* static functions */
