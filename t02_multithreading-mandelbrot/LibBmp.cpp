@@ -44,18 +44,31 @@ bool bmpCreate(const char *pFilename, FileBmp *pBmp)
 
 	pBmp->pFile = pFile;
 
-	uint8_t buffer[40];
+	uint8_t buf[40];
 	size_t len;
 
 	// Header BMP
 	len = 14;
-	(void)memset(buffer, 0, len);
-	fwrite(buffer, sizeof(buffer[0]), len, pFile);
+
+	(void)memset(buf, 0, len);
+
+	buf[0] = 'B'; // Signature
+	buf[1] = 'M';
+	buf[10] = 54; // Pixel data offset
+
+	fwrite(buf, sizeof(buf[0]), len, pFile);
 
 	// Header DIB
-	len = sizeof(buffer);
-	(void)memset(buffer, 0, len);
-	fwrite(buffer, sizeof(buffer[0]), len, pFile);
+	len = sizeof(buf);
+
+	(void)memset(buf, 0, len);
+
+	buf[0] = (uint8_t)len; // Header size
+
+	buf[12] = 1; // Planes
+	buf[14] = 24; // Bits per pixel
+
+	fwrite(buf, sizeof(buf[0]), len, pFile);
 
 	return true;
 }
