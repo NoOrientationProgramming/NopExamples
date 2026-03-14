@@ -18,6 +18,7 @@ srcs = [
 	'../deps/SystemCore/SystemCommanding.cpp',
 	'../deps/SystemCore/TcpListening.cpp',
 	'../deps/SystemCore/TcpTransfering.cpp',
+	'../deps/LibNaegCommon/ThreadPooling.cpp',
 	'main.cpp',
 	'Supervising.cpp',
 	'MandelbrotCreating.cpp',
@@ -131,6 +132,7 @@ myApp = executable(
 	],
 	include_directories : include_directories([
 		'../deps/SystemCore',
+		'../deps/LibNaegCommon',
 	]),
 	dependencies : [
 		deps,
