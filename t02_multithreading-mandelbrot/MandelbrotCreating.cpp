@@ -66,6 +66,9 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
+		mBmp.width = 1920;
+		mBmp.height = 1200;
+
 		mState = StMain;
 
 		break;
