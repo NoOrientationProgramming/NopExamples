@@ -45,8 +45,12 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	if (!pFile)
 		return false;
 
+	// Object
 	pBmp->pFile = pFile;
+	pBmp->idxLine = 0;
+	pBmp->dataFinished = 0;
 
+	// Headers
 	uint8_t buf[40];
 	size_t len;
 
