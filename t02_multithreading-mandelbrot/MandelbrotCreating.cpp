@@ -45,7 +45,7 @@ MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	//, mStartMs(0)
 	, mpPool(NULL)
-	, mpData(NULL)
+	, mpBuffer(NULL)
 	, mSzData(0)
 	, mSzLine(0)
 	, mSzPadding(0)
@@ -91,12 +91,15 @@ Success MandelbrotCreating::process()
 
 		procDbgLog("Line size     %u", mSzLine);
 
-		mSzBuffer = mSzLine* mBmp.height;
+		mSzBuffer = mSzLine * mBmp.height;
 		procDbgLog("Buffer size   %u", mSzBuffer);
 
-		mpData = new dNoThrow char[mSzData];
-		if (!mpData)
+		mpBuffer = new dNoThrow char[mSzBuffer];
+		if (!mpBuffer)
 			return procErrLog(-1, "could not allocate data buffer");
+
+		procDbgLog("Buffer start  %u", mpBuffer);
+		procDbgLog("Buffer end    %u", mpBuffer + mSzBuffer);
 
 		ok = FileBmp::create("mandelbrot.bmp", &mBmp);
 		if (!ok)
@@ -104,7 +107,7 @@ Success MandelbrotCreating::process()
 
 		userInfLog("Processing");
 
-		mpLine = mpData;
+		mpLine = mpBuffer;
 		mIdxLine = 0;
 
 		//progressPrint();
@@ -137,8 +140,8 @@ Success MandelbrotCreating::shutdown()
 {
 	mBmp.close();
 
-	if (mpData)
-		delete[] mpData;
+	if (mpBuffer)
+		delete[] mpBuffer;
 
 	return Positive;
 }
@@ -171,16 +174,20 @@ Success MandelbrotCreating::linesProcess()
 	return Positive;
 }
 
-void MandelbrotCreating::lineFill(size_t idx, char *pData, size_t len)
+void MandelbrotCreating::lineFill(size_t idxLine, char *pData, size_t len)
 {
 	size_t numPixels = len / cBytesPerPixel;
+	size_t idxPixel = 0;
 
-	(void)idx;
-	(void)pData;
-	(void)len;
-
-	if (!idx)
+	if (!idxLine)
 		procDbgLog("Pixels per line %u", numPixels);
+
+	for (; idxPixel < numPixels; ++idxPixel)
+	{
+		*pData++ = idxPixel % 256;
+		*pData++ = idxLine % 256;
+		*pData++ = 0;
+	}
 }
 
 void MandelbrotCreating::progressPrint()

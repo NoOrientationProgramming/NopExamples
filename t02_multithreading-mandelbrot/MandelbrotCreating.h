@@ -68,7 +68,7 @@ private:
 	/* member variables */
 	//uint32_t mStartMs;
 	ThreadPooling *mpPool;
-	char *mpData;
+	char *mpBuffer;
 	size_t mSzData;
 	size_t mSzLine;
 	size_t mSzPadding;
