@@ -45,6 +45,9 @@ bool bmpCreate(const char *pFilename, FileBmp *pBmp)
 
 bool bmpAppend(const char *pData, size_t len)
 {
+	(void)pData;
+	(void)len;
+
 	return true;
 }
 
