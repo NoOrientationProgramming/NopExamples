@@ -61,6 +61,7 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	Success linesProcess();
+	void lineFill(size_t idx, char *pData, size_t len);
 	void progressPrint();
 	bool servicesStart();
 

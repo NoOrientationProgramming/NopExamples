@@ -135,14 +135,18 @@ Success MandelbrotCreating::linesProcess()
 {
 	size_t numRemaining, numBurst = 53;
 	size_t lenData = mSzLine - sizeof(uint32_t);
-	char *pData = mpLine + sizeof(uint32_t);
+	char *pData;
 
 	numRemaining = mBmp.height - mIdxLine;
 	numBurst = PMIN(numRemaining, numBurst);
 
 	for (; numBurst; --numBurst)
 	{
+		pData = mpLine + sizeof(uint32_t);
+
+		lineFill(mIdxLine, pData, lenData);
 		mBmp.lineAppend(pData, lenData);
+
 		mpLine += mSzLine;
 
 		++mIdxLine;
@@ -153,6 +157,13 @@ Success MandelbrotCreating::linesProcess()
 		return Pending;
 
 	return Positive;
+}
+
+void MandelbrotCreating::lineFill(size_t idx, char *pData, size_t len)
+{
+	(void)idx;
+	(void)pData;
+	(void)len;
 }
 
 void MandelbrotCreating::progressPrint()
