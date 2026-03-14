@@ -67,7 +67,7 @@ Success Supervising::process()
 {
 	//uint32_t curTimeMs = millis();
 	//uint32_t diffMs = curTimeMs - mStartMs;
-	//Success success;
+	Success success;
 	bool ok;
 #if 0
 	dStateTrace;
@@ -84,6 +84,15 @@ Success Supervising::process()
 
 		break;
 	case StMain:
+
+		success = mpMbCreate->success();
+		if (success == Pending)
+			break;
+
+		if (success != Positive)
+			return procErrLog(-1, "could not create Mandelbrot picture");
+
+		return Positive;
 
 		break;
 	default:
