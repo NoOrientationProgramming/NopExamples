@@ -28,7 +28,6 @@
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
-		gen(StNop) \
 
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
@@ -65,9 +64,6 @@ Success MandelbrotCreating::process()
 
 		break;
 	case StMain:
-
-		break;
-	case StNop:
 
 		break;
 	default:
