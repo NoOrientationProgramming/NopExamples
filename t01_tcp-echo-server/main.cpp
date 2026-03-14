@@ -30,9 +30,6 @@ int main(int argc, char *argv[])
 	signal(SIGINT, applicationCloseRequest);
 	signal(SIGTERM, applicationCloseRequest);
 #endif
-	(void)argc;
-	(void)argv;
-
 	if (argc >= 2)
 		levelLogSet(atoi(argv[1]));
 
