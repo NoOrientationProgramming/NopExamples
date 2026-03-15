@@ -70,7 +70,7 @@ MandelbrotCreating::MandelbrotCreating()
 	cfg.zoom = 170000;
 
 	// Filling
-	cfg.numBurst = 5;
+	cfg.numBurst = 11;
 
 	mState = StStart;
 }
