@@ -143,7 +143,7 @@ void FileBmp::imageComplete(size_t szLine)
 
 	wrnLog("Image not finished. Filling up.");
 	wrnLog("Line index  %u", idxLine);
-	wrnLog("Line size   %u", szLine);
+	wrnLog("Size        %u", szLine);
 
 	char *pData;
 	bool ok;
