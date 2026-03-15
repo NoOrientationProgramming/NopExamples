@@ -203,8 +203,8 @@ bool MandelbrotCreating::lineFillersStart()
 		memset(mpLineFiller, 0, sizeof(BlockMandelHeader));
 		pFill->mpLine = mpLineFiller;
 		pFill->mIdxLine = mIdxLineFiller;
-#if 0
-		if (mIdxLineFiller > 3)
+#if 1
+		if (mIdxLineFiller)
 			pFill->procTreeDisplaySet(false);
 #endif
 		start(pFill);

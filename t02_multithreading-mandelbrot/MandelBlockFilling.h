@@ -58,42 +58,6 @@ enum FlagsFilling
 	FlagFillingPositive = 2,
 };
 
-// TODO: Move to cpp file
-struct GradientStop
-{
-	double t;
-	int r;
-	int g;
-	int b;
-};
-
-static GradientStop keysGradient[] =
-{
-	{0.00,    0,   0,   0}, // black
-	{0.05,    0,   0,  80}, // deep blue
-	{0.10,    0,   0, 150}, // blue
-	{0.15,    0,  50, 200}, // blue-cyan
-	{0.20,    0, 120, 220}, // cyan
-	{0.25,   40, 180, 255}, // light cyan
-	{0.30,  120, 220, 255}, // very light blue
-	{0.35,  200, 240, 255}, // almost white
-	{0.40,  255, 255, 255}, // white
-	{0.45,  255, 240, 180}, // warm white
-	{0.50,  255, 220, 120}, // light gold
-	{0.55,  255, 200,  60}, // gold
-	{0.60,  255, 170,   0}, // deep gold
-	{0.70,  200, 120,   0}, // bronze
-	{0.80,  120,  60,   0}, // dark bronze
-	{0.90,   60,  30,   0}, // dark brown
-	{1.00,    0,   0,   0}, // back to black
-};
-
-const size_t cNumGradients = 256;
-
-const size_t cNumKeysGradient = sizeof(keysGradient) / sizeof(keysGradient[0]);
-const size_t cScaleGradient = cNumGradients / (cNumKeysGradient - 1);
-// TODO: END
-
 class MandelBlockFilling : public Processing
 {
 
@@ -110,10 +74,6 @@ public:
 	size_t mIdxLine;
 
 	static void gradientBuild();
-
-	// TODO: Move to private section
-	static GradientStop gradient[cNumGradients];
-	// TODO: END
 
 protected:
 
