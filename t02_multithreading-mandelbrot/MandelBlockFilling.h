@@ -117,10 +117,6 @@ private:
 	char *mpData;
 
 	/* static functions */
-	static void colorLerp(MbVal t,
-			int r1, int g1, int b1,
-			int r2, int g2, int b2,
-			int &ro, int &go, int &bo);
 
 	/* static variables */
 

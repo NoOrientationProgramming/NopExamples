@@ -45,12 +45,32 @@ dProcessStateStr(ProcState);
 
 using namespace std;
 
-// TODO:
-// - class Color
-// - template lerp in LibDspc
-
 class Color
 {
+public:
+	Color(int r_ = 0, int g_ = 0, int b_ = 0)
+		: r(r_)
+		, g(g_)
+		, b(b_)
+	{}
+
+	Color operator+(const Color &other) const
+	{ return Color(r + other.r, g + other.g, b + other.b); }
+	Color operator-(const Color &other) const
+	{ return Color(r - other.r, g - other.g, b - other.b); }
+	Color operator*(double t) const
+	{
+		return Color(static_cast<int>(r * t),
+			static_cast<int>(g * t),
+			static_cast<int>(b * t));
+	}
+	Color operator/(double t) const
+	{
+		return Color(static_cast<int>(r / t),
+			static_cast<int>(g / t),
+			static_cast<int>(b / t));
+	}
+
 	int r;
 	int g;
 	int b;
@@ -59,61 +79,59 @@ class Color
 struct GradientStop
 {
 	MbVal t;
-	int r;
-	int g;
-	int b;
+	Color c;
 };
 #if 1
 static GradientStop keysGradient[] =
 {
-	{0.00,    0,   0,   0}, // black
-	{0.05,    0,   0,  80}, // deep blue
-	{0.10,    0,   0, 150}, // blue
-	{0.15,    0,  50, 200}, // blue-cyan
-	{0.20,    0, 120, 220}, // cyan
-	{0.25,   40, 180, 255}, // light cyan
-	{0.30,  120, 220, 255}, // very light blue
-	{0.35,  200, 240, 255}, // almost white
-	{0.40,  255, 255, 255}, // white
+	{0.00,  {  0,   0,   0}}, // black
+	{0.05,  {  0,   0,  80}}, // deep blue
+	{0.10,  {  0,   0, 150}}, // blue
+	{0.15,  {  0,  50, 200}}, // blue-cyan
+	{0.20,  {  0, 120, 220}}, // cyan
+	{0.25,  { 40, 180, 255}}, // light cyan
+	{0.30,  {120, 220, 255}}, // very light blue
+	{0.35,  {200, 240, 255}}, // almost white
+	{0.40,  {255, 255, 255}}, // white
 #if 1
-	{0.45,  255, 240, 180}, // warm white
-	{0.50,  255, 220, 120}, // light gold
-	{0.55,  255, 200,  60}, // gold
-	{0.60,  255, 170,   0}, // deep gold
-	{0.70,  200, 120,   0}, // bronze
-	{0.80,  120,  60,   0}, // dark bronze
-	{0.90,   60,  30,   0}, // dark brown
+	{0.45,  {255, 240, 180}}, // warm white
+	{0.50,  {255, 220, 120}}, // light gold
+	{0.55,  {255, 200,  60}}, // gold
+	{0.60,  {255, 170,   0}}, // deep gold
+	{0.70,  {200, 120,   0}}, // bronze
+	{0.80,  {120,  60,   0}}, // dark bronze
+	{0.90,  { 60,  30,   0}}, // dark brown
 #else
-	{0.45,  200, 255, 200}, // mint
-	{0.50,  140, 255, 140}, // light green
-	{0.55,   80, 230,  80}, // green
-	{0.60,   30, 200,  60}, // strong green
-	{0.70,   20, 150,  40}, // forest green
-	{0.80,   10, 100,  25}, // dark green
-	{0.90,    5,  60,  15}, // very dark green
+	{0.45,  {200, 255, 200}}, // mint
+	{0.50,  {140, 255, 140}}, // light green
+	{0.55,  { 80, 230,  80}}, // green
+	{0.60,  { 30, 200,  60}}, // strong green
+	{0.70,  { 20, 150,  40}}, // forest green
+	{0.80,  { 10, 100,  25}}, // dark green
+	{0.90,  {  5,  60,  15}}, // very dark green
 #endif
-	{1.00,    0,   0,   0}, // back to black
+	{1.00,  {  0,   0,   0}}, // back to black
 };
 #else
 static GradientStop keysGradient[] =
 {
-	{0.00,    0,   0,   0}, // black
-	{0.05,   80,  80,  80}, // deep blue
-	{0.10,  150, 150, 150}, // blue
-	{0.15,  200, 200, 200}, // blue-cyan
-	{0.20,  220, 220, 220}, // cyan
-	{0.25,  255, 255, 255}, // light cyan
-	{0.30,  255, 255, 255}, // very light blue
-	{0.35,  255, 255, 255}, // almost white
-	{0.40,  255, 255, 255}, // white
-	{0.45,  200, 200, 200}, // mint
-	{0.50,  140, 140, 140}, // light green
-	{0.55,   80,  80,  80}, // green
-	{0.60,   60,  60,  60}, // strong green
-	{0.70,   40,  40,  40}, // forest green
-	{0.80,   25,  25,  25}, // dark green
-	{0.90,   15,  15,  15}, // very dark green
-	{1.00,    0,   0,   0}, // back to black
+	{0.00,  {  0,   0,   0}}, // black
+	{0.05,  { 80,  80,  80}}, // deep blue
+	{0.10,  {150, 150, 150}}, // blue
+	{0.15,  {200, 200, 200}}, // blue-cyan
+	{0.20,  {220, 220, 220}}, // cyan
+	{0.25,  {255, 255, 255}}, // light cyan
+	{0.30,  {255, 255, 255}}, // very light blue
+	{0.35,  {255, 255, 255}}, // almost white
+	{0.40,  {255, 255, 255}}, // white
+	{0.45,  {200, 200, 200}}, // mint
+	{0.50,  {140, 140, 140}}, // light green
+	{0.55,  { 80,  80,  80}}, // green
+	{0.60,  { 60,  60,  60}}, // strong green
+	{0.70,  { 40,  40,  40}}, // forest green
+	{0.80,  { 25,  25,  25}}, // dark green
+	{0.90,  { 15,  15,  15}}, // very dark green
+	{1.00,  {  0,   0,   0}}, // back to black
 };
 #endif
 const size_t cNumGradients = 256;
@@ -249,7 +267,7 @@ void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 	MbVal cx = scaleX * idxX / w2 + offsX;
 	MbVal cy = scaleY * idxY / h2 + offsY;
 	MbVal zx, zy, mu, t, tMin, tMax;
-	int r = 0, g = 0, b = 0;
+	Color c;
 
 	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
 	GradientStop *pGrad1, *pGrad2;
@@ -276,12 +294,7 @@ void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 		pGrad1 = &gradient[idxGrad1];
 		pGrad2 = pGrad1 + 1;
 
-		colorLerp(t,
-			pGrad1->r, pGrad1->g, pGrad1->b,
-			pGrad2->r, pGrad2->g, pGrad2->b,
-			r, g, b);
-
-		//palette(mu, r, g, b);
+		c = lerp(t, pGrad1->c, pGrad2->c);
 	}
 #if 0
 	if (idxLine < 2 && !idxPixel)
@@ -298,13 +311,13 @@ void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 		procDbgLog("Idx. grad. 1    %u", idxGrad1);
 		procDbgLog("Idx. grad. 2    %u", idxGrad1 + 1);
 
-		procDbgLog("R/G/B           %d/%d/%d", r, g, b);
+		procDbgLog("R/G/B           %d/%d/%d", c.r, c.g, c.b);
 	}
 #endif
 	// Not RGB but BGR! => BMP specific
-	*pData++ = b;
-	*pData++ = g;
-	*pData++ = r;
+	*pData++ = c.b;
+	*pData++ = c.g;
+	*pData++ = c.r;
 }
 
 size_t MandelBlockFilling::mandelbrot(
@@ -397,30 +410,16 @@ void MandelBlockFilling::gradientBuild()
 			t = ((MbVal)s) / cScaleGradient;
 			t = PMAX(tMin, PMIN(tMax, t));
 
-			pGrad->t = pKey1->t + t * (pKey2->t - pKey1->t);
-
-			colorLerp(t,
-				pKey1->r, pKey1->g, pKey1->b,
-				pKey2->r, pKey2->g, pKey2->b,
-				pGrad->r, pGrad->g, pGrad->b);
+			pGrad->t = lerp(t, pKey1->t, pKey2->t);
+			pGrad->c = lerp(t, pKey1->c, pKey2->c);
 #if 0
 			if (i >= 32)
 				continue;
 
 			procDbgLog("%2u - %2u - %2u: %0.3f, %3u %3u %3u",
-				k, s, i, pGrad->t, pGrad->r, pGrad->g, pGrad->b);
+				k, s, i, pGrad->t, pGrad->c.r, pGrad->c.g, pGrad->c.b);
 #endif
 		}
 	}
-}
-
-void MandelBlockFilling::colorLerp(MbVal t,
-			int r1, int g1, int b1,
-			int r2, int g2, int b2,
-			int &ro, int &go, int &bo)
-{
-	ro = lerp(t, r1, r2);
-	go = lerp(t, g1, g2);
-	bo = lerp(t, b1, b2);
 }
 
