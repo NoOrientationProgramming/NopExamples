@@ -101,6 +101,8 @@ int main(int argc, char *argv[])
 
 	Processing::applicationClose();
 
+	filesStdClose();
+
 	return !(success == Positive);
 }
 
