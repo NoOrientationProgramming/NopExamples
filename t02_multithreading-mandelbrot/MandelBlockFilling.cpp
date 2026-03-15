@@ -51,7 +51,7 @@ struct GradientStop
 	int g;
 	int b;
 };
-
+#if 1
 static GradientStop keysGradient[] =
 {
 	{0.00,    0,   0,   0}, // black
@@ -82,7 +82,28 @@ static GradientStop keysGradient[] =
 #endif
 	{1.00,    0,   0,   0}, // back to black
 };
-
+#else
+static GradientStop keysGradient[] =
+{
+	{0.00,    0,   0,   0}, // black
+	{0.05,   80,  80,  80}, // deep blue
+	{0.10,  150, 150, 150}, // blue
+	{0.15,  200, 200, 200}, // blue-cyan
+	{0.20,  220, 220, 220}, // cyan
+	{0.25,  255, 255, 255}, // light cyan
+	{0.30,  255, 255, 255}, // very light blue
+	{0.35,  255, 255, 255}, // almost white
+	{0.40,  255, 255, 255}, // white
+	{0.45,  200, 200, 200}, // mint
+	{0.50,  140, 140, 140}, // light green
+	{0.55,   80,  80,  80}, // green
+	{0.60,   60,  60,  60}, // strong green
+	{0.70,   40,  40,  40}, // forest green
+	{0.80,   25,  25,  25}, // dark green
+	{0.90,   15,  15,  15}, // very dark green
+	{1.00,    0,   0,   0}, // back to black
+};
+#endif
 const size_t cNumGradients = 256;
 
 const size_t cNumKeysGradient = sizeof(keysGradient) / sizeof(keysGradient[0]);
