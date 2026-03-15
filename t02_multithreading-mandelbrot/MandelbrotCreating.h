@@ -76,10 +76,9 @@ private:
 	char *mpBuffer;
 	char *mpLine;
 	FileBmp mBmp;
-	size_t mSzData;
-	size_t mSzLine;
-	size_t mSzPadding;
+
 	size_t mSzBuffer;
+
 	size_t mIdxLine;
 	size_t mIdxProgress;
 

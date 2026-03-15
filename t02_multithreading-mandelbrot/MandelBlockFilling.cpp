@@ -85,14 +85,14 @@ Success MandelBlockFilling::process()
 			break;
 
 		if (success == Positive)
-			mpLine[0] |= 0x2; // success flag
+			mpLine[0] |= FlagFillingPositive;
 
 		mState = StDone;
 
 		break;
 	case StDone:
 
-		mpLine[0] |= 0x1; // done flag
+		mpLine[0] |= FlagFillingDone;
 
 		if (mIdxLine < 5)
 			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
@@ -109,12 +109,11 @@ Success MandelBlockFilling::process()
 
 Success MandelBlockFilling::lineFill()
 {
-	size_t szData = mpCfg->szLine - sizeof(BlockMandelHeader);
-	size_t numPixels = szData / cBytesPerPixel;
+	size_t numPixels = mpCfg->szData / cBytesPerPixel;
 	size_t idxPixel = 0;
 
 	char *pData = mpData;
-	char *pDataEnd = pData + szData;
+	char *pDataEnd = pData + mpCfg->szData;
 
 	if (!mIdxLine)
 		procDbgLog("Pixels per line  %u", numPixels);

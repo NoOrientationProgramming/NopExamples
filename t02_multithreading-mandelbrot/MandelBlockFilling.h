@@ -33,7 +33,9 @@ struct ConfigMandelbrot
 	// Image
 	size_t imgWidth;
 	size_t imgHeight;
+	size_t szData;
 	size_t szLine;
+	size_t szPadding;
 
 	// Mandelbrot
 	size_t numIterMax;
@@ -45,6 +47,12 @@ struct ConfigMandelbrot
 struct BlockMandelHeader
 {
 	uint32_t success;
+};
+
+enum FlagsFilling
+{
+	FlagFillingDone = 1,
+	FlagFillingPositive = 2,
 };
 
 // TODO: Move to cpp file
