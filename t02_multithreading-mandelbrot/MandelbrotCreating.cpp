@@ -92,6 +92,7 @@ Success MandelbrotCreating::process()
 	uint32_t diffMs = curTimeMs - mStartMs;
 	Success success;
 	bool ok;
+	size_t ips;
 #if 0
 	dStateTrace;
 #endif
@@ -173,7 +174,9 @@ Success MandelbrotCreating::process()
 		userInfLog("\n");
 		userInfLog("  Duration          %14u [ms]", diffMs);
 		userInfLog("  Iterations        %14u", mNumIterations);
-		userInfLog("  Iter. per second  %14u", mNumIterations / diffMs);
+		ips = (size_t)(((double)mNumIterations) / diffMs);
+		userInfLog("  Iter. per second  %14u", ips);
+		userInfLog("  Pixel * IPS       %14u", ips * cfg.imgWidth * cfg.imgHeight);
 		userInfLog("");
 
 		return Positive;
