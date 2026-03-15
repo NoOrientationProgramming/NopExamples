@@ -93,10 +93,10 @@ public:
 		return new dNoThrow MandelBlockFilling;
 	}
 
-	ConfigMandelbrot *pCfg;
+	ConfigMandelbrot *mpCfg;
 
-	char *pLine;
-	size_t idxLine;
+	char *mpLine;
+	size_t mIdxLine;
 
 	static void gradientBuild();
 
@@ -124,9 +124,19 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	Success lineFill();
+	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
+	size_t mandelbrot(
+			double cx, double cy,
+			double &zx, double &zy,
+			size_t numIterMax);
+	double fractionalIter(
+			double zx, double zy,
+			size_t numIter);
+	size_t idxGradient(double t);
 
 	/* member variables */
 	//uint32_t mStartMs;
+	char *mpData;
 
 	/* static functions */
 	static void colorLerp(double t,

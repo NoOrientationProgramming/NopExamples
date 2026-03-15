@@ -23,7 +23,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <math.h>
+
 #include "MandelBlockFilling.h"
+#include "LibBmp.h"
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
@@ -45,9 +48,10 @@ GradientStop MandelBlockFilling::gradient[cNumGradients] = {};
 MandelBlockFilling::MandelBlockFilling()
 	: Processing("MandelBlockFilling")
 	//, mStartMs(0)
-	, pCfg(NULL)
-	, pLine(NULL)
-	, idxLine(0)
+	, mpCfg(NULL)
+	, mpLine(NULL)
+	, mIdxLine(0)
+	, mpData(NULL)
 {
 	mState = StStart;
 }
@@ -66,8 +70,10 @@ Success MandelBlockFilling::process()
 	{
 	case StStart:
 
-		if (!pCfg || !pLine)
-			return procErrLog(-1, "invalid argument");
+		if (!mpCfg || !mpLine)
+			return procErrLog(-1, "invalid arguments");
+
+		mpData = mpLine + sizeof(BlockMandelHeader);
 
 		mState = StMain;
 
@@ -79,17 +85,17 @@ Success MandelBlockFilling::process()
 			break;
 
 		if (success == Positive)
-			pLine[0] |= 0x2; // success flag
+			mpLine[0] |= 0x2; // success flag
 
 		mState = StDone;
 
 		break;
 	case StDone:
 
-		pLine[0] |= 0x1; // done flag
+		mpLine[0] |= 0x1; // done flag
 
-		if (idxLine < 5)
-			procDbgLog("Line %u @ %p finished", idxLine, pLine);
+		if (mIdxLine < 5)
+			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
 
 		return Positive;
 
@@ -103,7 +109,143 @@ Success MandelBlockFilling::process()
 
 Success MandelBlockFilling::lineFill()
 {
+	size_t szData = mpCfg->szLine - sizeof(BlockMandelHeader);
+	size_t numPixels = szData / cBytesPerPixel;
+	size_t idxPixel = 0;
+
+	char *pData = mpData;
+	char *pDataEnd = pData + szData;
+
+	if (!mIdxLine)
+		procDbgLog("Pixels per line  %u", numPixels);
+
+	for (; idxPixel < numPixels; ++idxPixel)
+	{
+		colorMandelbrot(pData, mIdxLine, idxPixel);
+		pData += cBytesPerPixel;
+	}
+
+	for (; pData < pDataEnd; ++pData)
+		*pData = 0;
+
 	return Positive;
+}
+
+void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
+{
+	size_t numIterMax = 2000;
+	double offsX = -0.743643887037151;
+	double offsY = 0.131825904205330;
+	double zoom = 170000;
+
+	double w2 = mpCfg->imgWidth >> 1;
+	double h2 = mpCfg->imgHeight >> 1;
+	double idxX = idxPixel - w2;
+	double idxY = idxLine - h2;
+	double scaleX = 1.0 / zoom;
+	double scaleY = scaleX * mpCfg->imgHeight / mpCfg->imgWidth;
+	double cx = scaleX * idxX / w2 + offsX;
+	double cy = scaleY * idxY / h2 + offsY;
+	double zx, zy, mu, t;
+	int r = 0, g = 0, b = 0;
+
+	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
+	GradientStop *pGrad1, *pGrad2;
+	size_t idxGrad1;
+
+	if (numIter < numIterMax)
+	{
+		mu = fractionalIter(zx, zy, numIter);
+#if 0
+		t = mu / numIterMax;
+		//t = pow(t, 0.7);
+		t = sqrt(t);
+		//t = 1.0 - t;
+#else
+		t = mu * 0.02;
+		t = t - floor(t);
+#endif
+		t = PMAX(0.0, PMIN(1.0, t));
+
+		idxGrad1 = idxGradient(t);
+		pGrad1 = &MandelBlockFilling::gradient[idxGrad1];
+		pGrad2 = pGrad1 + 1;
+
+		colorLerp(t,
+			pGrad1->r, pGrad1->g, pGrad1->b,
+			pGrad2->r, pGrad2->g, pGrad2->b,
+			r, g, b);
+
+		//palette(mu, r, g, b);
+	}
+#if 0
+	if (idxLine < 2 && !idxPixel)
+	{
+		procDbgLog("Idx. X          %.0f", idxX);
+		procDbgLog("Idx. Y          %.0f", idxY);
+
+		procDbgLog("Complex X       %.3f", cx);
+		procDbgLog("Complex Y       %.3f", cy);
+
+		procDbgLog("Iterations      %u", numIter);
+		procDbgLog("Frac. iter.     %.3f", mu);
+		procDbgLog("Normalized      %.3f", t);
+		procDbgLog("Idx. grad. 1    %u", idxGrad1);
+		procDbgLog("Idx. grad. 2    %u", idxGrad1 + 1);
+
+		procDbgLog("R/G/B           %d/%d/%d", r, g, b);
+	}
+#endif
+	// Not RGB but BGR! => BMP specific
+	*pData++ = b;
+	*pData++ = g;
+	*pData++ = r;
+}
+
+size_t MandelBlockFilling::mandelbrot(
+			double cx, double cy,
+			double &zx, double &zy,
+			size_t numIterMax)
+{
+	size_t i = 0;
+	double xt;
+
+	zx = 0.0;
+	zy = 0.0;
+
+	for (; zx*zx + zy*zy <= 4.0 && i < numIterMax; ++i)
+	{
+		xt = zx * zx - zy * zy + cx;
+		zy = 2 * zx * zy + cy;
+		zx = xt;
+	}
+
+	return i;
+}
+
+double MandelBlockFilling::fractionalIter(
+			double zx, double zy,
+			size_t numIter)
+{
+	double mag = sqrt(zx * zx + zy * zy);
+	return numIter + 1 - log2(log2(mag));
+}
+
+size_t MandelBlockFilling::idxGradient(double t)
+{
+	GradientStop *pGrad1, *pGrad2;
+	size_t i = 0;
+
+	for (; i < cNumGradients - 1; ++i)
+	{
+		pGrad1 = &MandelBlockFilling::gradient[i];
+		pGrad2 = pGrad1 + 1;
+
+		if (t > pGrad1->t && t < pGrad2->t)
+			return i;
+	}
+
+	return 0;
 }
 
 void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)

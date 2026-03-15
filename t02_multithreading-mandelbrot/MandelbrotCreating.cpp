@@ -73,8 +73,10 @@ MandelbrotCreating::MandelbrotCreating()
 Success MandelbrotCreating::process()
 {
 	uint32_t curTimeMs = millis();
+#if 0
 	uint32_t diffMs = curTimeMs - mStartMs;
 	Success success;
+#endif
 	bool ok;
 #if 0
 	dStateTrace;
@@ -119,22 +121,20 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
-		//userInfLog("Processing");
-
 		mpLine = mpBuffer;
 		mIdxLine = 0;
+
+		MandelBlockFilling::gradientBuild();
 
 		//progressPrint();
 
 		lineFillersStart();
 
-		MandelBlockFilling::gradientBuild();
-
 		mState = StMain;
 
 		break;
 	case StMain:
-
+#if 0
 		success = linesProcess();
 		if (success == Pending)
 			break;
@@ -146,7 +146,7 @@ Success MandelbrotCreating::process()
 		userInfLog("Duration: %ums\n", diffMs);
 
 		return Positive;
-
+#endif
 		break;
 	default:
 		break;
@@ -172,11 +172,11 @@ bool MandelbrotCreating::lineFillersStart()
 			return false;
 		}
 
-		pFill->pCfg = &cfg;
+		pFill->mpCfg = &cfg;
 
 		memset(pLine, 0, sizeof(BlockMandelHeader));
-		pFill->pLine = pLine;
-		pFill->idxLine = i;
+		pFill->mpLine = pLine;
+		pFill->mIdxLine = i;
 
 		pLine += mSzLine;
 
@@ -196,7 +196,7 @@ Success MandelbrotCreating::shutdown()
 
 	return Positive;
 }
-
+#if 0
 Success MandelbrotCreating::linesProcess()
 {
 	size_t numRemaining, numBurst = 53;
@@ -229,163 +229,7 @@ Success MandelbrotCreating::linesProcess()
 
 	return Positive;
 }
-
-void MandelbrotCreating::lineFill(size_t idxLine, char *pData, size_t len)
-{
-	char *pDataEnd = pData + len;
-	size_t numPixels = len / cBytesPerPixel;
-	size_t idxPixel = 0;
-
-	if (!idxLine)
-		procDbgLog("Pixels per line  %u", numPixels);
-
-	for (; idxPixel < numPixels; ++idxPixel)
-	{
-		colorMandelbrot(pData, idxLine, idxPixel);
-		pData += cBytesPerPixel;
-	}
-
-	for (; pData < pDataEnd; ++pData)
-		*pData = 0;
-}
-
-void MandelbrotCreating::colorTest(char *pData, size_t idxLine, size_t idxPixel)
-{
-	*pData++ = idxPixel % 256;
-	*pData++ = idxLine % 256;
-	*pData++ = 0;
-}
-
-void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
-{
-	size_t numIterMax = 2000;
-	double offsX = -0.743643887037151;
-	double offsY = 0.131825904205330;
-	double zoom = 170000;
-
-	double w2 = mBmp.width >> 1;
-	double h2 = mBmp.height >> 1;
-	double idxX = idxPixel - w2;
-	double idxY = idxLine - h2;
-	double scaleX = 1.0 / zoom;
-	double scaleY = scaleX * mBmp.height / mBmp.width;
-	double cx = scaleX * idxX / w2 + offsX;
-	double cy = scaleY * idxY / h2 + offsY;
-	double zx, zy, mu, t;
-	int r = 0, g = 0, b = 0;
-
-	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
-	GradientStop *pGrad1, *pGrad2;
-	size_t idxGrad1;
-
-	if (numIter < numIterMax)
-	{
-		mu = fractionalIter(zx, zy, numIter);
-#if 0
-		t = mu / numIterMax;
-		//t = pow(t, 0.7);
-		t = sqrt(t);
-		//t = 1.0 - t;
-#else
-		t = mu * 0.02;
-		t = t - floor(t);
 #endif
-		t = PMAX(0.0, PMIN(1.0, t));
-
-		idxGrad1 = idxGradient(t);
-		pGrad1 = &MandelBlockFilling::gradient[idxGrad1];
-		pGrad2 = pGrad1 + 1;
-
-		colorLerp(t,
-			pGrad1->r, pGrad1->g, pGrad1->b,
-			pGrad2->r, pGrad2->g, pGrad2->b,
-			r, g, b);
-
-		//palette(mu, r, g, b);
-	}
-#if 0
-	if (idxLine < 2 && !idxPixel)
-	{
-		procDbgLog("Idx. X          %.0f", idxX);
-		procDbgLog("Idx. Y          %.0f", idxY);
-
-		procDbgLog("Complex X       %.3f", cx);
-		procDbgLog("Complex Y       %.3f", cy);
-
-		procDbgLog("Iterations      %u", numIter);
-		procDbgLog("Frac. iter.     %.3f", mu);
-		procDbgLog("Normalized      %.3f", t);
-		procDbgLog("Idx. grad. 1    %u", idxGrad1);
-		procDbgLog("Idx. grad. 2    %u", idxGrad1 + 1);
-
-		procDbgLog("R/G/B           %d/%d/%d", r, g, b);
-	}
-#endif
-	// Not RGB but BGR! => BMP specific
-	*pData++ = b;
-	*pData++ = g;
-	*pData++ = r;
-}
-
-size_t MandelbrotCreating::idxGradient(double t)
-{
-	GradientStop *pGrad1, *pGrad2;
-	size_t i = 0;
-
-	for (; i < cNumGradients - 1; ++i)
-	{
-		pGrad1 = &MandelBlockFilling::gradient[i];
-		pGrad2 = pGrad1 + 1;
-
-		if (t > pGrad1->t && t < pGrad2->t)
-			return i;
-	}
-
-	return 0;
-}
-
-void MandelbrotCreating::colorLerp(double t,
-			int r1, int g1, int b1,
-			int r2, int g2, int b2,
-			int &ro, int &go, int &bo)
-{
-	ro = r1 + (r2 - r1) * t;
-	go = g1 + (g2 - g1) * t;
-	bo = b1 + (b2 - b1) * t;
-}
-
-void MandelbrotCreating::palette(double t, int &r, int &g, int &b)
-{
-	double scale = 20;
-	r = (int)(128 + 127 * sin(0.016 * scale * t + 4));
-	g = (int)(128 + 127 * sin(0.013 * scale * t + 2));
-	b = (int)(128 + 127 * sin(0.01  * scale * t + 1));
-}
-
-double MandelbrotCreating::fractionalIter(double zx, double zy, size_t numIter)
-{
-	double mag = sqrt(zx * zx + zy * zy);
-	return numIter + 1 - log2(log2(mag));
-}
-
-size_t MandelbrotCreating::mandelbrot(double cx, double cy, double &zx, double &zy, size_t numIterMax)
-{
-	size_t i = 0;
-	double xt;
-
-	zx = 0.0;
-	zy = 0.0;
-
-	for (; zx*zx + zy*zy <= 4.0 && i < numIterMax; ++i)
-	{
-		xt = zx * zx - zy * zy + cx;
-		zy = 2 * zx * zy + cy;
-		zx = xt;
-	}
-
-	return i;
-}
-
 void MandelbrotCreating::progressPrint()
 {
 	++mIdxProgress;
