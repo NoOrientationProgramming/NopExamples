@@ -272,7 +272,7 @@ void MandelbrotCreating::progressPrint()
 	dInfo("\r");
 	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, mBmp.height);
 
-	fprintf(stdout, "%s\n", pBufStart);
+	fprintf(stdout, "%s\r", pBufStart);
 	fflush(stdout);
 }
 

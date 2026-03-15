@@ -155,10 +155,10 @@ Success MandelBlockFilling::lineFill()
 	numBurst = PMIN(numRemaining, mpCfg->numBurst);
 
 	char *pDataEnd = mpDataStart + mpCfg->szData;
-
+#if 0
 	if (!mIdxLine && !mIdxPixel)
 		procDbgLog("Pixels per line  %u", mNumPixel);
-
+#endif
 	for (; numBurst; --numBurst)
 	{
 		colorMandelbrot(mpData, mIdxLine, mIdxPixel);
