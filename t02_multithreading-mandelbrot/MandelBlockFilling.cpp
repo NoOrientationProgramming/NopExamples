@@ -28,6 +28,7 @@
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
+		gen(StDone) \
 
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
@@ -45,6 +46,7 @@ MandelBlockFilling::MandelBlockFilling()
 	: Processing("MandelBlockFilling")
 	//, mStartMs(0)
 	, pCfg(NULL)
+	, pLine(NULL)
 	, idxLine(0)
 {
 	mState = StStart;
@@ -56,7 +58,7 @@ Success MandelBlockFilling::process()
 {
 	//uint32_t curTimeMs = millis();
 	//uint32_t diffMs = curTimeMs - mStartMs;
-	//Success success;
+	Success success;
 #if 0
 	dStateTrace;
 #endif
@@ -64,16 +66,30 @@ Success MandelBlockFilling::process()
 	{
 	case StStart:
 
-		if (!pCfg)
-			return procErrLog(-1, "config pointer not set");
+		if (!pCfg || !pLine)
+			return procErrLog(-1, "invalid argument");
 
 		mState = StMain;
 
 		break;
 	case StMain:
 
+		success = lineFill();
+		if (success == Pending)
+			break;
+
+		if (success == Positive)
+			pLine[0] |= 0x2; // success flag
+
+		mState = StDone;
+
+		break;
+	case StDone:
+
+		pLine[0] |= 0x1; // done flag
+
 		if (idxLine < 5)
-			procDbgLog("Line %u finished", idxLine);
+			procDbgLog("Line %u @ %p finished", idxLine, pLine);
 
 		return Positive;
 
@@ -83,6 +99,11 @@ Success MandelBlockFilling::process()
 	}
 
 	return Pending;
+}
+
+Success MandelBlockFilling::lineFill()
+{
+	return Positive;
 }
 
 void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)

@@ -96,9 +96,9 @@ Success MandelbrotCreating::process()
 		mSzLine = ((mSzData + 3) & ~3);
 		mSzPadding = mSzLine - mSzData;
 
-		mSzLine += sizeof(uint32_t); // Add header
+		mSzLine += sizeof(BlockMandelHeader);
 
-		procDbgLog("Line header      %u", sizeof(uint32_t));
+		procDbgLog("Line header      %u", sizeof(BlockMandelHeader));
 		procDbgLog("Data size        %u", mSzData);
 		procDbgLog("Line padding     %u", mSzPadding);
 
@@ -158,7 +158,10 @@ Success MandelbrotCreating::process()
 bool MandelbrotCreating::lineFillersStart()
 {
 	MandelBlockFilling *pFill;
+	char *pLine = mpBuffer;
 	size_t i = 0;
+
+	cfg.szLine = mSzLine;
 
 	for (; i < cfg.imgHeight; ++i)
 	{
@@ -170,7 +173,12 @@ bool MandelbrotCreating::lineFillersStart()
 		}
 
 		pFill->pCfg = &cfg;
+
+		memset(pLine, 0, sizeof(BlockMandelHeader));
+		pFill->pLine = pLine;
 		pFill->idxLine = i;
+
+		pLine += mSzLine;
 
 		start(pFill);
 		whenFinishedRepel(pFill);

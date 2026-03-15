@@ -33,12 +33,18 @@ struct ConfigMandelbrot
 	// Image
 	size_t imgWidth;
 	size_t imgHeight;
+	size_t szLine;
 
 	// Mandelbrot
 	size_t numIterMax;
 	double posX;
 	double posY;
 	double zoom;
+};
+
+struct BlockMandelHeader
+{
+	uint32_t success;
 };
 
 // TODO: Move to cpp file
@@ -88,6 +94,8 @@ public:
 	}
 
 	ConfigMandelbrot *pCfg;
+
+	char *pLine;
 	size_t idxLine;
 
 	static void gradientBuild();
@@ -114,6 +122,8 @@ private:
 	/* member functions */
 	Success process();
 	void processInfo(char *pBuf, char *pBufEnd);
+
+	Success lineFill();
 
 	/* member variables */
 	//uint32_t mStartMs;
