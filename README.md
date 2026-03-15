@@ -24,13 +24,7 @@ If you want to use [meson and ninja](https://mesonbuild.com/) (recommended) add
 
 ### Clone the example repository
 
-`git clone https://github.com/NoOrientationProgramming/NopExamples.git`
-
-Initialize and Update the Submodules
-
-Enter the new directory with `cd NopExamples/` and execute
-
-`git submodule update --init --recursive`
+`git clone https://github.com/NoOrientationProgramming/NopExamples.git --recursive`
 
 ### Build and Run an Examples
 
@@ -41,7 +35,7 @@ or just
 
 Then execute the application by entering
 
-`./t01_tcp-echo-server/build-meson-ubuntu/app`
+`./t01_tcp-echo-server/build-native/app`
 
 ## Read the documentation
 
