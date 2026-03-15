@@ -28,7 +28,7 @@
 
 #include "Processing.h"
 
-typedef float MbVal;
+typedef double MbVal;
 
 struct ConfigMandelbrot
 {
