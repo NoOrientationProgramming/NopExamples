@@ -75,7 +75,6 @@ private:
 
 	/* member variables */
 	uint32_t mStartMs;
-	ThreadPooling *mpPool;
 	char *mpBuffer;
 	FileBmp mBmp;
 

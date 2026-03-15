@@ -49,7 +49,6 @@ MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	, nameFile()
 	, mStartMs(0)
-	, mpPool(NULL)
 	, mpBuffer(NULL)
 	, mBmp()
 	, mSzBuffer(0)
@@ -323,17 +322,19 @@ void MandelbrotCreating::progressPrint()
 
 bool MandelbrotCreating::servicesStart()
 {
-	mpPool = ThreadPooling::create();
-	if (!mpPool)
+	ThreadPooling *pPool;
+
+	pPool = ThreadPooling::create();
+	if (!pPool)
 	{
 		procWrnLog("could not create process");
 		return false;
 	}
 
-	mpPool->cntWorkerSet(3);
-	//mpPool->procTreeDisplaySet(false);
+	pPool->cntWorkerSet(3);
+	//pPool->procTreeDisplaySet(false);
 
-	start(mpPool);
+	start(pPool);
 
 	return true;
 }
