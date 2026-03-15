@@ -98,8 +98,8 @@ Success MandelBlockFilling::process()
 	case StDone:
 
 		mpLine[0] |= FlagFillingDone;
-#if 1
-		if (mIdxLine < 5000)
+#if 0
+		if (mIdxLine < 5)
 			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
 #endif
 		return Positive;

@@ -77,14 +77,16 @@ private:
 	uint32_t mStartMs;
 	ThreadPooling *mpPool;
 	char *mpBuffer;
-	char *mpLine;
 	FileBmp mBmp;
 
 	size_t mSzBuffer;
 
-	size_t mIdxFiller;
-	size_t mIdxLine;
+	size_t mIdxLineFiller;
+	size_t mIdxLineDone;
 	size_t mIdxProgress;
+
+	char *mpLineFiller;
+	char *mpLineDone;
 
 	/* static functions */
 

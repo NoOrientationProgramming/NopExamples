@@ -51,12 +51,13 @@ MandelbrotCreating::MandelbrotCreating()
 	, mStartMs(0)
 	, mpPool(NULL)
 	, mpBuffer(NULL)
-	, mpLine(NULL)
 	, mBmp()
 	, mSzBuffer(0)
-	, mIdxFiller(0)
-	, mIdxLine(0)
+	, mIdxLineFiller(0)
+	, mIdxLineDone(0)
 	, mIdxProgress(0)
+	, mpLineFiller(NULL)
+	, mpLineDone(NULL)
 {
 	// Image
 	cfg.imgWidth = 1920;
@@ -133,7 +134,7 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
-		mpLine = mpBuffer;
+		mpLineFiller = mpLineDone = mpBuffer;
 
 		MandelBlockFilling::gradientBuild();
 
@@ -180,14 +181,13 @@ bool MandelbrotCreating::lineFillersStart()
 {
 	size_t numRemaining, numBurst = 53;
 
-	numRemaining = cfg.imgHeight - mIdxFiller;
+	numRemaining = cfg.imgHeight - mIdxLineFiller;
 	if (!numRemaining)
 		return true;
 
 	numBurst = PMIN(numRemaining, numBurst);
 
 	MandelBlockFilling *pFill;
-	char *pLine = mpBuffer;
 
 	for (; numBurst; --numBurst)
 	{
@@ -200,19 +200,19 @@ bool MandelbrotCreating::lineFillersStart()
 
 		pFill->mpCfg = &cfg;
 
-		memset(pLine, 0, sizeof(BlockMandelHeader));
-		pFill->mpLine = pLine;
-		pFill->mIdxLine = mIdxFiller;
+		memset(mpLineFiller, 0, sizeof(BlockMandelHeader));
+		pFill->mpLine = mpLineFiller;
+		pFill->mIdxLine = mIdxLineFiller;
 #if 0
-		if (mIdxFiller > 3)
+		if (mIdxLineFiller > 3)
 			pFill->procTreeDisplaySet(false);
 #endif
 		start(pFill);
 		whenFinishedRepel(pFill);
 
 		// Next line
-		pLine += cfg.szLine;
-		++mIdxFiller;
+		mpLineFiller += cfg.szLine;
+		++mIdxLineFiller;
 	}
 
 	return true;
@@ -225,17 +225,15 @@ Success MandelbrotCreating::linesProcess()
 
 	while (1)
 	{
-		ok = mpLine[0] & FlagFillingDone;
+		ok = mpLineDone[0] & FlagFillingDone;
 		if (!ok)
 			break;
 
-		ok = mpLine[0] & FlagFillingPositive;
+		ok = mpLineDone[0] & FlagFillingPositive;
 		if (!ok)
-			return procErrLog(-1, "error filling line %u @ %p", mIdxLine, mpLine);
+			return procErrLog(-1, "error filling line %u @ %p", mIdxLineDone, mpLineDone);
 
-		procDbgLog("filling line %u @ %p done", mIdxLine, mpLine);
-
-		pData = mpLine + sizeof(BlockMandelHeader);
+		pData = mpLineDone + sizeof(BlockMandelHeader);
 
 		ok = mBmp.lineAppend(pData, cfg.szData);
 		if (!ok)
@@ -243,10 +241,10 @@ Success MandelbrotCreating::linesProcess()
 
 		progressPrint();
 
-		mpLine += cfg.szLine;
-		++mIdxLine;
+		mpLineDone += cfg.szLine;
+		++mIdxLineDone;
 
-		if (mIdxLine < mBmp.height)
+		if (mIdxLineDone < mBmp.height)
 			continue;
 
 		progressPrint();
@@ -260,7 +258,7 @@ Success MandelbrotCreating::linesProcess()
 void MandelbrotCreating::progressPrint()
 {
 	++mIdxProgress;
-	if (mIdxLine != 0 && mIdxLine != mBmp.height && mIdxProgress < 100)
+	if (mIdxLineDone != 0 && mIdxLineDone != mBmp.height && mIdxProgress < 100)
 		return;
 	mIdxProgress = 0;
 
@@ -272,7 +270,7 @@ void MandelbrotCreating::progressPrint()
 	pBuf[0] = 0;
 
 	dInfo("\r");
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLine, mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, mBmp.height);
 
 	fprintf(stdout, "%s\n", pBufStart);
 	fflush(stdout);
@@ -332,10 +330,10 @@ void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 #if 1
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
-	pBuf += progressStr(pBuf, pBufEnd, mIdxFiller, mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLineFiller, mBmp.height);
 	dInfo("\n");
 
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLine, mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, mBmp.height);
 	dInfo("\n");
 }
 
