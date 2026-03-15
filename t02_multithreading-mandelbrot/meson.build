@@ -20,6 +20,7 @@ srcs = [
 	'../deps/SystemCore/TcpTransfering.cpp',
 	'../deps/LibNaegCommon/ThreadPooling.cpp',
 	'../deps/LibNaegCommon/LibTime.cpp',
+	'../deps/LibNaegCommon/LibFilesys.cpp',
 	'main.cpp',
 	'Supervising.cpp',
 	'MandelbrotCreating.cpp',

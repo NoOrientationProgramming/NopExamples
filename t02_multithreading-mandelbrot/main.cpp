@@ -33,6 +33,7 @@
 #include <thread>
 
 #include "Supervising.h"
+#include "LibFilesys.h"
 
 using namespace std;
 using namespace chrono;
