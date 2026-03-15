@@ -128,7 +128,7 @@ Success MandelbrotCreating::process()
 
 		lineFillersStart();
 
-		gradientBuild();
+		MandelBlockFilling::gradientBuild();
 
 		mState = StMain;
 
@@ -248,78 +248,6 @@ void MandelbrotCreating::colorTest(char *pData, size_t idxLine, size_t idxPixel)
 	*pData++ = 0;
 }
 
-struct GradientStop
-{
-	double t;
-	int r;
-	int g;
-	int b;
-};
-
-static GradientStop keysGradient[] =
-{
-	{0.00,    0,   0,   0}, // black
-	{0.05,    0,   0,  80}, // deep blue
-	{0.10,    0,   0, 150}, // blue
-	{0.15,    0,  50, 200}, // blue-cyan
-	{0.20,    0, 120, 220}, // cyan
-	{0.25,   40, 180, 255}, // light cyan
-	{0.30,  120, 220, 255}, // very light blue
-	{0.35,  200, 240, 255}, // almost white
-	{0.40,  255, 255, 255}, // white
-	{0.45,  255, 240, 180}, // warm white
-	{0.50,  255, 220, 120}, // light gold
-	{0.55,  255, 200,  60}, // gold
-	{0.60,  255, 170,   0}, // deep gold
-	{0.70,  200, 120,   0}, // bronze
-	{0.80,  120,  60,   0}, // dark bronze
-	{0.90,   60,  30,   0}, // dark brown
-	{1.00,    0,   0,   0}, // back to black
-};
-
-const size_t cNumGradients = 256;
-
-const size_t cNumKeysGradient = sizeof(keysGradient) / sizeof(keysGradient[0]);
-const size_t cScaleGradient = cNumGradients / (cNumKeysGradient - 1);
-
-static GradientStop gradient[cNumGradients] = {};
-
-void MandelbrotCreating::gradientBuild()
-{
-	GradientStop *pKey1, *pKey2, *pGrad;
-	size_t i, s, k = 0;
-	double t;
-
-	for (; k < cNumKeysGradient - 1; ++k)
-	{
-		for (s = 0; s < cScaleGradient; ++s)
-		{
-			pKey1 = &keysGradient[k];
-			pKey2 = &keysGradient[k + 1];
-
-			i = k * cScaleGradient + s;
-			pGrad = &gradient[i];
-
-			t = ((double)s) / cScaleGradient;
-			t = PMAX(0.0, PMIN(1.0, t));
-
-			pGrad->t = pKey1->t + t * (pKey2->t - pKey1->t);
-
-			colorLerp(t,
-				pKey1->r, pKey1->g, pKey1->b,
-				pKey2->r, pKey2->g, pKey2->b,
-				pGrad->r, pGrad->g, pGrad->b);
-#if 0
-			if (i >= 32)
-				continue;
-
-			procDbgLog("%2u - %2u - %2u: %0.3f, %3u %3u %3u",
-				k, s, i, pGrad->t, pGrad->r, pGrad->g, pGrad->b);
-#endif
-		}
-	}
-}
-
 void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
 	size_t numIterMax = 2000;
@@ -339,7 +267,8 @@ void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 	int r = 0, g = 0, b = 0;
 
 	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
-	size_t idxGrad1, idxGrad2;
+	GradientStop *pGrad1, *pGrad2;
+	size_t idxGrad1;
 
 	if (numIter < numIterMax)
 	{
@@ -354,12 +283,14 @@ void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 		t = t - floor(t);
 #endif
 		t = PMAX(0.0, PMIN(1.0, t));
+
 		idxGrad1 = idxGradient(t);
-		idxGrad2 = idxGrad1 + 1;
+		pGrad1 = &MandelBlockFilling::gradient[idxGrad1];
+		pGrad2 = pGrad1 + 1;
 
 		colorLerp(t,
-			gradient[idxGrad1].r, gradient[idxGrad1].g, gradient[idxGrad1].b,
-			gradient[idxGrad2].r, gradient[idxGrad2].g, gradient[idxGrad2].b,
+			pGrad1->r, pGrad1->g, pGrad1->b,
+			pGrad2->r, pGrad2->g, pGrad2->b,
 			r, g, b);
 
 		//palette(mu, r, g, b);
@@ -377,7 +308,7 @@ void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 		procDbgLog("Frac. iter.     %.3f", mu);
 		procDbgLog("Normalized      %.3f", t);
 		procDbgLog("Idx. grad. 1    %u", idxGrad1);
-		procDbgLog("Idx. grad. 2    %u", idxGrad2);
+		procDbgLog("Idx. grad. 2    %u", idxGrad1 + 1);
 
 		procDbgLog("R/G/B           %d/%d/%d", r, g, b);
 	}
@@ -390,11 +321,15 @@ void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 
 size_t MandelbrotCreating::idxGradient(double t)
 {
+	GradientStop *pGrad1, *pGrad2;
 	size_t i = 0;
 
 	for (; i < cNumGradients - 1; ++i)
 	{
-		if (t > gradient[i].t && t < gradient[i + 1].t)
+		pGrad1 = &MandelBlockFilling::gradient[i];
+		pGrad2 = pGrad1 + 1;
+
+		if (t > pGrad1->t && t < pGrad2->t)
 			return i;
 	}
 

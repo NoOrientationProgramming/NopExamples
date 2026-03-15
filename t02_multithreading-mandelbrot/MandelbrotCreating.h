@@ -69,7 +69,6 @@ private:
 	Success linesProcess();
 	void lineFill(size_t idx, char *pData, size_t len);
 	void colorTest(char *pData, size_t idxLine, size_t idxPixel);
-	void gradientBuild();
 	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
 	size_t idxGradient(double t);
 	void colorLerp(double t,

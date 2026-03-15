@@ -39,6 +39,8 @@ dProcessStateStr(ProcState);
 
 using namespace std;
 
+GradientStop MandelBlockFilling::gradient[cNumGradients] = {};
+
 MandelBlockFilling::MandelBlockFilling()
 	: Processing("MandelBlockFilling")
 	//, mStartMs(0)
@@ -91,4 +93,50 @@ void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)
 }
 
 /* static functions */
+
+void MandelBlockFilling::gradientBuild()
+{
+	GradientStop *pKey1, *pKey2, *pGrad;
+	size_t i, s, k = 0;
+	double t;
+
+	for (; k < cNumKeysGradient - 1; ++k)
+	{
+		for (s = 0; s < cScaleGradient; ++s)
+		{
+			pKey1 = &keysGradient[k];
+			pKey2 = pKey1 + 1;
+
+			i = k * cScaleGradient + s;
+			pGrad = &gradient[i];
+
+			t = ((double)s) / cScaleGradient;
+			t = PMAX(0.0, PMIN(1.0, t));
+
+			pGrad->t = pKey1->t + t * (pKey2->t - pKey1->t);
+
+			colorLerp(t,
+				pKey1->r, pKey1->g, pKey1->b,
+				pKey2->r, pKey2->g, pKey2->b,
+				pGrad->r, pGrad->g, pGrad->b);
+#if 0
+			if (i >= 32)
+				continue;
+
+			procDbgLog("%2u - %2u - %2u: %0.3f, %3u %3u %3u",
+				k, s, i, pGrad->t, pGrad->r, pGrad->g, pGrad->b);
+#endif
+		}
+	}
+}
+
+void MandelBlockFilling::colorLerp(double t,
+			int r1, int g1, int b1,
+			int r2, int g2, int b2,
+			int &ro, int &go, int &bo)
+{
+	ro = r1 + (r2 - r1) * t;
+	go = g1 + (g2 - g1) * t;
+	bo = b1 + (b2 - b1) * t;
+}
 
