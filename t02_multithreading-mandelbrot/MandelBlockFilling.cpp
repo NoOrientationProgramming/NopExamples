@@ -32,11 +32,12 @@
 		gen(StStart) \
 		gen(StMain) \
 		gen(StDone) \
+		gen(StIdle) \
 
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
 
-#if 1
+#if 0
 #define dGenProcStateString(s) #s,
 dProcessStateStr(ProcState);
 #endif
@@ -141,7 +142,16 @@ Success MandelBlockFilling::process()
 		if (mIdxLine < 5)
 			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
 #endif
+		if (!mIdxLine)
+		{
+			mState = StIdle;
+			break;
+		}
+
 		return Positive;
+
+		break;
+	case StIdle:
 
 		break;
 	default:
@@ -301,7 +311,7 @@ size_t MandelBlockFilling::idxGradient(double t)
 
 void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)
 {
-#if 1
+#if 0
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
 	dInfo("%03u: ", mIdxLine);

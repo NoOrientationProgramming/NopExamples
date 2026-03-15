@@ -38,7 +38,7 @@
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
 
-#if 1
+#if 0
 #define dGenProcStateString(s) #s,
 dProcessStateStr(ProcState);
 #endif
@@ -210,7 +210,7 @@ bool MandelbrotCreating::fillersStart()
 		pFill->mpLine = mpLineFiller;
 		pFill->mIdxLine = mIdxLineFiller;
 #if 1
-		if (mIdxLineFiller != 534)
+		if (mIdxLineFiller)
 			pFill->procTreeDisplaySet(false);
 #endif
 #if 0
@@ -351,7 +351,7 @@ void MandelbrotCreating::showCursor()
 
 void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 {
-#if 1
+#if 0
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
 	pBuf += progressStr(pBuf, pBufEnd, mIdxLineFiller, mBmp.height);
