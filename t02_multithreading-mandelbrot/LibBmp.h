@@ -29,6 +29,37 @@
 #include <stdio.h>
 #include <mutex>
 
+class Color
+{
+public:
+	Color(int r_ = 0, int g_ = 0, int b_ = 0)
+		: r(r_)
+		, g(g_)
+		, b(b_)
+	{}
+
+	Color operator+(const Color &other) const
+	{ return Color(r + other.r, g + other.g, b + other.b); }
+	Color operator-(const Color &other) const
+	{ return Color(r - other.r, g - other.g, b - other.b); }
+	Color operator*(double t) const
+	{
+		return Color(static_cast<int>(r * t),
+			static_cast<int>(g * t),
+			static_cast<int>(b * t));
+	}
+	Color operator/(double t) const
+	{
+		return Color(static_cast<int>(r / t),
+			static_cast<int>(g / t),
+			static_cast<int>(b / t));
+	}
+
+	int r;
+	int g;
+	int b;
+};
+
 const size_t cBytesPerPixel = 3 * sizeof(char);
 
 class FileBmp
