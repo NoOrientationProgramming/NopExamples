@@ -130,6 +130,14 @@ else
 	warning('submodule tclap not found. Limited CLI options')
 endif
 
+have_avx2 = cxx.has_argument('-mavx2')
+if have_avx2
+	add_project_arguments('-mavx2', language : 'cpp')
+	add_project_arguments('-DAPP_HAS_AVX2=1', language : 'cpp')
+else
+	warning('scalar code only')
+endif
+
 # Application
 
 nameExe = 'app'
