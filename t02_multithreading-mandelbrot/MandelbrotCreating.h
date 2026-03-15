@@ -64,7 +64,7 @@ private:
 	Success shutdown();
 	void processInfo(char *pBuf, char *pBufEnd);
 
-	bool lineFillersStart();
+	bool fillersStart();
 	Success linesProcess();
 
 	void progressPrint();

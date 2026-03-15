@@ -146,7 +146,7 @@ Success MandelbrotCreating::process()
 		break;
 	case StMain:
 
-		ok = lineFillersStart();
+		ok = fillersStart();
 		if (!ok)
 			return procErrLog(-1, "could not start filler");
 
@@ -177,7 +177,7 @@ Success MandelbrotCreating::shutdown()
 	return Positive;
 }
 
-bool MandelbrotCreating::lineFillersStart()
+bool MandelbrotCreating::fillersStart()
 {
 #if 1
 	if (mIdxLineDone != mIdxLineFiller)
@@ -290,7 +290,7 @@ bool MandelbrotCreating::servicesStart()
 	}
 
 	mpPool->cntWorkerSet(3);
-	mpPool->procTreeDisplaySet(false);
+	//mpPool->procTreeDisplaySet(false);
 
 	start(mpPool);
 
