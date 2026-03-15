@@ -56,6 +56,7 @@ MandelbrotCreating::MandelbrotCreating()
 	, mIdxLineFiller(0)
 	, mIdxLineDone(0)
 	, mIdxProgress(0)
+	, mNumIterations(0)
 	, mpLineFiller(NULL)
 	, mpLineDone(NULL)
 {
@@ -158,7 +159,8 @@ Success MandelbrotCreating::process()
 			return procErrLog(-1, "could not process lines");
 
 		userInfLog("\n");
-		userInfLog("Duration: %ums\n", diffMs);
+		userInfLog("Iterations    %u", mNumIterations);
+		userInfLog("Duration      %ums\n", diffMs);
 
 		return Positive;
 
@@ -208,10 +210,19 @@ bool MandelbrotCreating::fillersStart()
 		pFill->mpLine = mpLineFiller;
 		pFill->mIdxLine = mIdxLineFiller;
 #if 1
-		if (mIdxLineFiller)
+		if (mIdxLineFiller != 534)
 			pFill->procTreeDisplaySet(false);
 #endif
+#if 0
 		start(pFill);
+#else
+#if 0
+		start(pFill, DrivenByNewInternalDriver);
+#else
+		start(pFill, DrivenByExternalDriver);
+		ThreadPooling::procAdd(pFill, 2);
+#endif
+#endif
 		whenFinishedRepel(pFill);
 
 		// Next line
@@ -224,18 +235,23 @@ bool MandelbrotCreating::fillersStart()
 
 Success MandelbrotCreating::linesProcess()
 {
+	BlockMandelHeader *pHdr;
 	char *pData;
 	bool ok;
 
 	while (1)
 	{
-		ok = mpLineDone[0] & FlagFillingDone;
+		pHdr = (BlockMandelHeader *)mpLineDone;
+
+		ok = pHdr->success & FlagFillingDone;
 		if (!ok)
 			break;
 
-		ok = mpLineDone[0] & FlagFillingPositive;
+		ok = pHdr->success & FlagFillingPositive;
 		if (!ok)
 			return procErrLog(-1, "error filling line %u @ %p", mIdxLineDone, mpLineDone);
+
+		mNumIterations += pHdr->numIter;
 
 		pData = mpLineDone + sizeof(BlockMandelHeader);
 

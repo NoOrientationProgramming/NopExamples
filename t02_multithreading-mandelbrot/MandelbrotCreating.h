@@ -84,6 +84,7 @@ private:
 	size_t mIdxLineFiller;
 	size_t mIdxLineDone;
 	size_t mIdxProgress;
+	size_t mNumIterations;
 
 	char *mpLineFiller;
 	char *mpLineDone;
