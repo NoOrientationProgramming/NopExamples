@@ -171,11 +171,11 @@ Success MandelbrotCreating::process()
 			return procErrLog(-1, "could not process lines");
 
 		userInfLog("\n");
-		userInfLog("  Duration          %14u [ms]", diffMs);
-		userInfLog("  Iterations        %14u", mNumIterations);
+		userInfLog("  Duration          %14zu [ms]", diffMs);
+		userInfLog("  Iterations        %14zu", mNumIterations);
 		ips = (size_t)(((double)mNumIterations) / diffMs);
-		userInfLog("  Iter. per second  %14u", ips);
-		userInfLog("  Pixel * IPS       %14u", ips * cfg.imgWidth * cfg.imgHeight);
+		userInfLog("  Iter. per second  %14zu", ips);
+		userInfLog("  Pixel * IPS       %14.3e", ((double)ips) * cfg.imgWidth * cfg.imgHeight);
 		userInfLog("");
 
 		return Positive;
