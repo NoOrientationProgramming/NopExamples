@@ -46,7 +46,7 @@ using namespace std;
 
 struct GradientStop
 {
-	double t;
+	MbVal t;
 	int r;
 	int g;
 	int b;
@@ -223,20 +223,20 @@ Success MandelBlockFilling::lineFill()
 
 void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
-	size_t numIterMax = 2000;
-	double offsX = -0.743643887037151;
-	double offsY = 0.131825904205330;
-	double zoom = 170000;
+	size_t numIterMax = mpCfg->numIterMax;
+	MbVal offsX = mpCfg->posX;
+	MbVal offsY = mpCfg->posY;
+	MbVal zoom = mpCfg->zoom;
 
-	double w2 = mpCfg->imgWidth >> 1;
-	double h2 = mpCfg->imgHeight >> 1;
-	double idxX = idxPixel - w2;
-	double idxY = idxLine - h2;
-	double scaleX = 1.0 / zoom;
-	double scaleY = scaleX * mpCfg->imgHeight / mpCfg->imgWidth;
-	double cx = scaleX * idxX / w2 + offsX;
-	double cy = scaleY * idxY / h2 + offsY;
-	double zx, zy, mu, t;
+	MbVal w2 = mpCfg->imgWidth >> 1;
+	MbVal h2 = mpCfg->imgHeight >> 1;
+	MbVal idxX = idxPixel - w2;
+	MbVal idxY = idxLine - h2;
+	MbVal scaleX = 1.0 / zoom;
+	MbVal scaleY = scaleX * mpCfg->imgHeight / mpCfg->imgWidth;
+	MbVal cx = scaleX * idxX / w2 + offsX;
+	MbVal cy = scaleY * idxY / h2 + offsY;
+	MbVal zx, zy, mu, t, tMin, tMax;
 	int r = 0, g = 0, b = 0;
 
 	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
@@ -255,7 +255,10 @@ void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 		t = mu * 0.02;
 		t = t - floor(t);
 #endif
-		t = PMAX(0.0, PMIN(1.0, t));
+		tMin = 0.0;
+		tMax = 1.0;
+
+		t = PMAX(tMin, PMIN(tMax, t));
 
 		idxGrad1 = idxGradient(t);
 		pGrad1 = &gradient[idxGrad1];
@@ -293,12 +296,12 @@ void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 }
 
 size_t MandelBlockFilling::mandelbrot(
-			double cx, double cy,
-			double &zx, double &zy,
+			MbVal cx, MbVal cy,
+			MbVal &zx, MbVal &zy,
 			size_t numIterMax)
 {
 	size_t i = 0;
-	double xx, yy, xy;
+	MbVal xx, yy, xy;
 
 	zx = 0.0;
 	zy = 0.0;
@@ -323,15 +326,15 @@ size_t MandelBlockFilling::mandelbrot(
 	return i;
 }
 
-double MandelBlockFilling::fractionalIter(
-			double zx, double zy,
+MbVal MandelBlockFilling::fractionalIter(
+			MbVal zx, MbVal zy,
 			size_t numIter)
 {
-	double mag = sqrt(zx * zx + zy * zy);
+	MbVal mag = sqrt(zx * zx + zy * zy);
 	return numIter + 1 - log2(log2(mag));
 }
 
-size_t MandelBlockFilling::idxGradient(double t)
+size_t MandelBlockFilling::idxGradient(MbVal t)
 {
 	GradientStop *pGrad1, *pGrad2;
 	size_t i = 0;
@@ -364,7 +367,7 @@ void MandelBlockFilling::gradientBuild()
 {
 	GradientStop *pKey1, *pKey2, *pGrad;
 	size_t i, s, k = 0;
-	double t;
+	MbVal t, tMin, tMax;
 
 	for (; k < cNumKeysGradient - 1; ++k)
 	{
@@ -376,8 +379,11 @@ void MandelBlockFilling::gradientBuild()
 			i = k * cScaleGradient + s;
 			pGrad = &gradient[i];
 
-			t = ((double)s) / cScaleGradient;
-			t = PMAX(0.0, PMIN(1.0, t));
+			tMin = 0.0;
+			tMax = 1.0;
+
+			t = ((MbVal)s) / cScaleGradient;
+			t = PMAX(tMin, PMIN(tMax, t));
 
 			pGrad->t = pKey1->t + t * (pKey2->t - pKey1->t);
 
@@ -396,7 +402,7 @@ void MandelBlockFilling::gradientBuild()
 	}
 }
 
-void MandelBlockFilling::colorLerp(double t,
+void MandelBlockFilling::colorLerp(MbVal t,
 			int r1, int g1, int b1,
 			int r2, int g2, int b2,
 			int &ro, int &go, int &bo)

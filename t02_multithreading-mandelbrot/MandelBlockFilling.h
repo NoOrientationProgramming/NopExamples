@@ -28,6 +28,8 @@
 
 #include "Processing.h"
 
+typedef float MbVal;
+
 struct ConfigMandelbrot
 {
 	// Image
@@ -39,9 +41,9 @@ struct ConfigMandelbrot
 
 	// Mandelbrot
 	size_t numIterMax;
-	double posX;
-	double posY;
-	double zoom;
+	MbVal posX;
+	MbVal posY;
+	MbVal zoom;
 
 	// Filling
 	size_t numBurst;
@@ -98,13 +100,13 @@ private:
 	Success lineFill();
 	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
 	size_t mandelbrot(
-			double cx, double cy,
-			double &zx, double &zy,
+			MbVal cx, MbVal cy,
+			MbVal &zx, MbVal &zy,
 			size_t numIterMax);
-	double fractionalIter(
-			double zx, double zy,
+	MbVal fractionalIter(
+			MbVal zx, MbVal zy,
 			size_t numIter);
-	size_t idxGradient(double t);
+	size_t idxGradient(MbVal t);
 
 	/* member variables */
 	//uint32_t mStartMs;
@@ -115,7 +117,7 @@ private:
 	char *mpData;
 
 	/* static functions */
-	static void colorLerp(double t,
+	static void colorLerp(MbVal t,
 			int r1, int g1, int b1,
 			int r2, int g2, int b2,
 			int &ro, int &go, int &bo);

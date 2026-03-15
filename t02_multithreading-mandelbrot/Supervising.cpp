@@ -161,7 +161,7 @@ bool Supervising::servicesStart()
 	pMandel->numIterMax = 2000;
 	pMandel->posX = -0.743643887037151;
 	pMandel->posY = 0.131825904205330;
-	pMandel->zoom = 170000;
+	pMandel->zoom = 17000;
 
 	start(mpMbCreate);
 
