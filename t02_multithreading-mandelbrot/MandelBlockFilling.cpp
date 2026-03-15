@@ -51,6 +51,8 @@ MandelBlockFilling::MandelBlockFilling()
 	, mpCfg(NULL)
 	, mpLine(NULL)
 	, mIdxLine(0)
+	, mNumPixel(0)
+	, mIdxPixel(0)
 	, mpData(NULL)
 {
 	mState = StStart;
@@ -75,6 +77,9 @@ Success MandelBlockFilling::process()
 
 		mpData = mpLine + sizeof(BlockMandelHeader);
 
+		mNumPixel = mpCfg->szData / cBytesPerPixel;
+		mIdxPixel = 0;
+
 		mState = StMain;
 
 		break;
@@ -93,10 +98,10 @@ Success MandelBlockFilling::process()
 	case StDone:
 
 		mpLine[0] |= FlagFillingDone;
-
-		if (mIdxLine < 5)
+#if 1
+		if (mIdxLine < 5000)
 			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
-
+#endif
 		return Positive;
 
 		break;
@@ -109,20 +114,27 @@ Success MandelBlockFilling::process()
 
 Success MandelBlockFilling::lineFill()
 {
-	size_t numPixels = mpCfg->szData / cBytesPerPixel;
-	size_t idxPixel = 0;
+	size_t numRemaining, numBurst;
+
+	numRemaining = mNumPixel - mIdxPixel;
+	numBurst = PMIN(numRemaining, mpCfg->numBurst);
 
 	char *pData = mpData;
 	char *pDataEnd = pData + mpCfg->szData;
 
-	if (!mIdxLine)
-		procDbgLog("Pixels per line  %u", numPixels);
+	if (!mIdxLine && !mIdxPixel)
+		procDbgLog("Pixels per line  %u", mNumPixel);
 
-	for (; idxPixel < numPixels; ++idxPixel)
+	for (; numBurst; --numBurst)
 	{
-		colorMandelbrot(pData, mIdxLine, idxPixel);
+		colorMandelbrot(pData, mIdxLine, mIdxPixel);
+
 		pData += cBytesPerPixel;
+		++mIdxPixel;
 	}
+
+	if (mIdxPixel < mNumPixel)
+		return Pending;
 
 	for (; pData < pDataEnd; ++pData)
 		*pData = 0;
@@ -252,6 +264,9 @@ void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)
 #if 1
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
+	dInfo("%03u: ", mIdxLine);
+	pBuf += progressStr(pBuf, pBufEnd, mIdxPixel, mNumPixel);
+	dInfo("\n");
 }
 
 /* static functions */

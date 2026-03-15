@@ -46,7 +46,7 @@ public:
 
 protected:
 
-	virtual ~MandelbrotCreating() {}
+	virtual ~MandelbrotCreating();
 
 private:
 
@@ -65,10 +65,13 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	bool lineFillersStart();
-
 	Success linesProcess();
+
 	void progressPrint();
 	bool servicesStart();
+
+	void hideCursor();
+	void showCursor();
 
 	/* member variables */
 	uint32_t mStartMs;
@@ -79,6 +82,7 @@ private:
 
 	size_t mSzBuffer;
 
+	size_t mIdxFiller;
 	size_t mIdxLine;
 	size_t mIdxProgress;
 

@@ -24,6 +24,9 @@
 */
 
 #include <math.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include "MandelbrotCreating.h"
 #include "LibTime.h"
@@ -51,16 +54,22 @@ MandelbrotCreating::MandelbrotCreating()
 	, mpLine(NULL)
 	, mBmp()
 	, mSzBuffer(0)
+	, mIdxFiller(0)
 	, mIdxLine(0)
 	, mIdxProgress(0)
 {
+	// Image
 	cfg.imgWidth = 1920;
 	cfg.imgHeight = 1200;
 
+	// Mandelbrot
 	cfg.numIterMax = 2000;
 	cfg.posX = -0.743643887037151;
 	cfg.posY = 0.131825904205330;
 	cfg.zoom = 170000;
+
+	// Filling
+	cfg.numBurst = 5;
 
 	mState = StStart;
 }
@@ -125,18 +134,20 @@ Success MandelbrotCreating::process()
 			return procErrLog(-1, "could not create BMP file");
 
 		mpLine = mpBuffer;
-		mIdxLine = 0;
 
 		MandelBlockFilling::gradientBuild();
 
-		//progressPrint();
-
-		lineFillersStart();
+		hideCursor();
+		progressPrint();
 
 		mState = StMain;
 
 		break;
 	case StMain:
+
+		ok = lineFillersStart();
+		if (!ok)
+			return procErrLog(-1, "could not start filler");
 
 		success = linesProcess();
 		if (success == Pending)
@@ -158,13 +169,27 @@ Success MandelbrotCreating::process()
 	return Pending;
 }
 
+Success MandelbrotCreating::shutdown()
+{
+	mBmp.close();
+	showCursor();
+	return Positive;
+}
+
 bool MandelbrotCreating::lineFillersStart()
 {
+	size_t numRemaining, numBurst = 53;
+
+	numRemaining = cfg.imgHeight - mIdxFiller;
+	if (!numRemaining)
+		return true;
+
+	numBurst = PMIN(numRemaining, numBurst);
+
 	MandelBlockFilling *pFill;
 	char *pLine = mpBuffer;
-	size_t i = 0;
 
-	for (; i < cfg.imgHeight; ++i)
+	for (; numBurst; --numBurst)
 	{
 		pFill = MandelBlockFilling::create();
 		if (!pFill)
@@ -177,54 +202,59 @@ bool MandelbrotCreating::lineFillersStart()
 
 		memset(pLine, 0, sizeof(BlockMandelHeader));
 		pFill->mpLine = pLine;
-		pFill->mIdxLine = i;
-
-		pLine += cfg.szLine;
-
+		pFill->mIdxLine = mIdxFiller;
+#if 0
+		if (mIdxFiller > 3)
+			pFill->procTreeDisplaySet(false);
+#endif
 		start(pFill);
 		whenFinishedRepel(pFill);
+
+		// Next line
+		pLine += cfg.szLine;
+		++mIdxFiller;
 	}
 
 	return true;
 }
 
-Success MandelbrotCreating::shutdown()
-{
-	mBmp.close();
-	return Positive;
-}
-
 Success MandelbrotCreating::linesProcess()
 {
+	char *pData;
 	bool ok;
 
-	ok = mpLine[0] & FlagFillingDone;
-	if (!ok)
-		return Pending;
+	while (1)
+	{
+		ok = mpLine[0] & FlagFillingDone;
+		if (!ok)
+			break;
 
-	ok = mpLine[0] & FlagFillingPositive;
-	if (!ok)
-		return procErrLog(-1, "error filling line %u @ %p", mIdxLine, mpLine);
+		ok = mpLine[0] & FlagFillingPositive;
+		if (!ok)
+			return procErrLog(-1, "error filling line %u @ %p", mIdxLine, mpLine);
 
-	char *pData;
+		procDbgLog("filling line %u @ %p done", mIdxLine, mpLine);
 
-	pData = mpLine + sizeof(BlockMandelHeader);
+		pData = mpLine + sizeof(BlockMandelHeader);
 
-	ok = mBmp.lineAppend(pData, cfg.szData);
-	if (!ok)
-		return procErrLog(-1, "could not append line");
+		ok = mBmp.lineAppend(pData, cfg.szData);
+		if (!ok)
+			return procErrLog(-1, "could not append line");
 
-	progressPrint();
+		progressPrint();
 
-	mpLine += cfg.szLine;
-	++mIdxLine;
+		mpLine += cfg.szLine;
+		++mIdxLine;
 
-	if (mIdxLine < mBmp.height)
-		return Pending;
+		if (mIdxLine < mBmp.height)
+			continue;
 
-	progressPrint();
+		progressPrint();
 
-	return Positive;
+		return Positive;
+	}
+
+	return Pending;
 }
 
 void MandelbrotCreating::progressPrint()
@@ -244,7 +274,7 @@ void MandelbrotCreating::progressPrint()
 	dInfo("\r");
 	pBuf += progressStr(pBuf, pBufEnd, mIdxLine, mBmp.height);
 
-	fprintf(stdout, "%s\r", pBufStart);
+	fprintf(stdout, "%s\n", pBufStart);
 	fflush(stdout);
 }
 
@@ -258,10 +288,43 @@ bool MandelbrotCreating::servicesStart()
 	}
 
 	mpPool->cntWorkerSet(3);
+	mpPool->procTreeDisplaySet(false);
 
 	start(mpPool);
 
 	return true;
+}
+
+void MandelbrotCreating::hideCursor()
+{
+#ifdef _WIN32
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO info;
+
+	info.dwSize = 100;
+	info.bVisible = FALSE;
+
+	SetConsoleCursorInfo(consoleHandle, &info);
+#else
+	fprintf(stdout, "\033[?25l");
+	fflush(stdout);
+#endif
+}
+
+void MandelbrotCreating::showCursor()
+{
+#ifdef _WIN32
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO info;
+
+	info.dwSize = 100;
+	info.bVisible = TRUE;
+
+	SetConsoleCursorInfo(consoleHandle, &info);
+#else
+	fprintf(stdout, "\033[?25h");
+	fflush(stdout);
+#endif
 }
 
 void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
@@ -269,7 +332,11 @@ void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 #if 1
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
+	pBuf += progressStr(pBuf, pBufEnd, mIdxFiller, mBmp.height);
+	dInfo("\n");
+
 	pBuf += progressStr(pBuf, pBufEnd, mIdxLine, mBmp.height);
+	dInfo("\n");
 }
 
 /* static functions */

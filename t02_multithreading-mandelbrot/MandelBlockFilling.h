@@ -42,6 +42,9 @@ struct ConfigMandelbrot
 	double posX;
 	double posY;
 	double zoom;
+
+	// Filling
+	size_t numBurst;
 };
 
 struct BlockMandelHeader
@@ -144,6 +147,8 @@ private:
 
 	/* member variables */
 	//uint32_t mStartMs;
+	size_t mNumPixel;
+	size_t mIdxPixel;
 	char *mpData;
 
 	/* static functions */
