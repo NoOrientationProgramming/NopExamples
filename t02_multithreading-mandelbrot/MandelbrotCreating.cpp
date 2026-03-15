@@ -259,6 +259,10 @@ Success MandelbrotCreating::linesProcess()
 
 	while (1)
 	{
+		// Prevent read from uninizialized area
+		if (mIdxLineDone == mIdxLineFiller)
+			break;
+
 		pHdr = (BlockMandelHeader *)mpLineDone;
 
 		ok = pHdr->success & FlagFillingDone;
