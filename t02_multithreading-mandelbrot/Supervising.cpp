@@ -151,6 +151,8 @@ bool Supervising::servicesStart()
 		return false;
 	}
 
+	mpMbCreate->nameFile = "mandelbrot_1";
+
 	start(mpMbCreate);
 
 	return true;

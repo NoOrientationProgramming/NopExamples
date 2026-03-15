@@ -40,6 +40,8 @@ public:
 		return new dNoThrow MandelbrotCreating;
 	}
 
+	std::string nameFile;
+
 protected:
 
 	virtual ~MandelbrotCreating() {}

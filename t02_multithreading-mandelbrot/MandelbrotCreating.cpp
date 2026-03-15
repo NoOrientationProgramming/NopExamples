@@ -44,6 +44,7 @@ using namespace std;
 
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
+	, nameFile()
 	, mStartMs(0)
 	, mpPool(NULL)
 	, mpBuffer(NULL)
@@ -108,7 +109,8 @@ Success MandelbrotCreating::process()
 		procDbgLog("Buffer start  %p", mpBuffer);
 		procDbgLog("Buffer end    %p", mpBuffer + mSzBuffer);
 
-		ok = FileBmp::create("mandelbrot.bmp", &mBmp);
+		nameFile += ".bmp";
+		ok = FileBmp::create(nameFile.c_str(), &mBmp);
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
