@@ -98,21 +98,21 @@ Success MandelbrotCreating::process()
 
 		mSzLine += sizeof(uint32_t); // Add header
 
-		procDbgLog("Line header   %u", sizeof(uint32_t));
-		procDbgLog("Data size     %u", mSzData);
-		procDbgLog("Line padding  %u", mSzPadding);
+		procDbgLog("Line header      %u", sizeof(uint32_t));
+		procDbgLog("Data size        %u", mSzData);
+		procDbgLog("Line padding     %u", mSzPadding);
 
-		procDbgLog("Line size     %u", mSzLine);
+		procDbgLog("Line size        %u", mSzLine);
 
 		mSzBuffer = mSzLine * mBmp.height;
-		procDbgLog("Buffer size   %u", mSzBuffer);
+		procDbgLog("Buffer size      %u", mSzBuffer);
 
 		mpBuffer = new dNoThrow char[mSzBuffer];
 		if (!mpBuffer)
 			return procErrLog(-1, "could not allocate data buffer");
 
-		procDbgLog("Buffer start  %p", mpBuffer);
-		procDbgLog("Buffer end    %p", mpBuffer + mSzBuffer);
+		procDbgLog("Buffer start     %p", mpBuffer);
+		procDbgLog("Buffer end       %p", mpBuffer + mSzBuffer);
 
 		nameFile += ".bmp";
 		ok = FileBmp::create(nameFile.c_str(), &mBmp);
@@ -203,7 +203,7 @@ void MandelbrotCreating::lineFill(size_t idxLine, char *pData, size_t len)
 	size_t idxPixel = 0;
 
 	if (!idxLine)
-		procDbgLog("Pixels per line %u", numPixels);
+		procDbgLog("Pixels per line  %u", numPixels);
 
 	for (; idxPixel < numPixels; ++idxPixel)
 	{

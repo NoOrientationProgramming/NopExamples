@@ -121,10 +121,10 @@ void FileBmp::close()
 	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
 
 	dbgLog("Updating headers");
-	dbgLog("Size file       %u", szFile);
-	dbgLog("Width           %u", width);
-	dbgLog("Height written  %u", idxLine);
-	dbgLog("Size data       %u", szData);
+	dbgLog("Size file        %u", szFile);
+	dbgLog("Width            %u", width);
+	dbgLog("Height written   %u", idxLine);
+	dbgLog("Size data        %u", szData);
 
 	fseek(pFile, 2, SEEK_SET);
 	fwrite(&szFile, sizeof(szFile), 1, pFile);
@@ -148,8 +148,8 @@ void FileBmp::imageComplete(size_t szLine)
 		return;
 
 	wrnLog("Image not finished. Filling up.");
-	wrnLog("Line index  %u", idxLine);
-	wrnLog("Size        %u", szLine);
+	wrnLog("Line index       %u", idxLine);
+	wrnLog("Size             %u", szLine);
 
 	size_t numLinesRemaining;
 	char *pData;
