@@ -298,18 +298,26 @@ size_t MandelBlockFilling::mandelbrot(
 			size_t numIterMax)
 {
 	size_t i = 0;
-	double xt;
+	double xx, yy, xy;
 
 	zx = 0.0;
 	zy = 0.0;
 
-	for (; zx*zx + zy*zy <= 4.0 && i < numIterMax; ++i)
+	while (i < numIterMax)
 	{
-		xt = zx * zx - zy * zy + cx;
-		zy = 2 * zx * zy + cy;
-		zx = xt;
+		xx = zx * zx;
+		yy = zy * zy;
+
+		if (xx + yy > 4.0)
+			break;
+
+		xy = zx * zy;
+
+		zx = xx - yy + cx;
+		zy = 2 * xy + cy;
 
 		++mpHdr->numIter;
+		++i;
 	}
 
 	return i;
