@@ -40,6 +40,8 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	if (!pFilename || !pBmp)
 		return false;
 
+	Guard lock(pBmp->mMtxFile);
+
 	if (pBmp->pFile)
 		return false;
 
@@ -52,7 +54,6 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	// Object
 	pBmp->pFile = pFile;
 	pBmp->idxLine = 0;
-	pBmp->dataOk = 0;
 
 	// Headers
 	uint8_t buf[cSzHeaderDib];
@@ -86,6 +87,94 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 
 bool FileBmp::lineAppend(const char *pData, size_t len)
 {
+	Guard lock(mMtxFile);
+	return lineAppendUnlocked(pData, len);
+}
+
+void FileBmp::close()
+{
+	Guard lock(mMtxFile);
+
+	if (!pFile)
+		return;
+
+	if (!width || !height)
+	{
+		fclose(pFile);
+		pFile = NULL;
+		return;
+	}
+
+	size_t szData = width * cBytesPerPixel; // Size of data per line
+	size_t szLine = ((szData + 3) & ~3);
+	uint32_t szFile;
+
+	imageComplete(szLine);
+
+	szData = szLine * idxLine; // Size of data for all (written) lines
+	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
+
+	dbgLog("Updating headers");
+	dbgLog("Size file       %u", szFile);
+	dbgLog("Width           %u", width);
+	dbgLog("Height written  %u", idxLine);
+	dbgLog("Size data       %u", szData);
+
+	fseek(pFile, 2, SEEK_SET);
+	fwrite(&szFile, sizeof(szFile), 1, pFile);
+
+	fseek(pFile, cSzHeaderBmp + 4, SEEK_SET);
+	fwrite(&width, sizeof(width), 1, pFile);
+
+	fseek(pFile, cSzHeaderBmp + 8, SEEK_SET);
+	fwrite(&idxLine, sizeof(idxLine), 1, pFile);
+
+	fseek(pFile, cSzHeaderBmp + 20, SEEK_SET);
+	fwrite(&szData, sizeof(szData), 1, pFile);
+
+	fclose(pFile);
+	pFile = NULL;
+}
+
+void FileBmp::imageComplete(size_t szLine)
+{
+	if (idxLine >= height)
+		return;
+
+	wrnLog("Image not finished. Filling up.");
+	wrnLog("Line index  %u", idxLine);
+	wrnLog("Line size   %u", szLine);
+
+	char *pData;
+	bool ok;
+
+	pData = new dNoThrow char[szLine];
+	if (!pData)
+	{
+		wrnLog("could not allocate data buffer");
+		return;
+	}
+
+	memset(pData, 12, szLine);
+
+	while (idxLine < height)
+	{
+		ok = lineAppendUnlocked(pData, szLine);
+		if (ok)
+			continue;
+
+		wrnLog("could not append line");
+		break;
+	}
+
+	delete[] pData;
+}
+
+bool FileBmp::lineAppendUnlocked(const char *pData, size_t len)
+{
+	if (idxLine >= height)
+		return false;
+
 	if (!pFile || !pData || !len || (len & 3))
 		return false;
 
@@ -96,53 +185,8 @@ bool FileBmp::lineAppend(const char *pData, size_t len)
 		wrnLog("Writing line: %u (%u) @ %p -> %p", idxLine, len, pData, pFile);
 #endif
 	fwrite(pData, sizeof(*pData), len, pFile);
-
 	++idxLine;
-	dataOk = idxLine == height;
 
 	return true;
-}
-
-void FileBmp::close()
-{
-	if (!pFile)
-		return;
-
-	if (!width || !height || !dataOk)
-	{
-		if (!dataOk) wrnLog("Data NOT OK. Line index: %u", idxLine);
-
-		fclose(pFile);
-		pFile = NULL;
-		return;
-	}
-
-	size_t szData = width * cBytesPerPixel; // Data per line
-	size_t szLine = ((szData + 3) & ~3);
-	uint32_t szFile;
-
-	szData = szLine * height; // Data all lines
-	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
-
-	dbgLog("Updating headers");
-	dbgLog("Size file   %u", szFile);
-	dbgLog("Width       %u", width);
-	dbgLog("Height      %u", height);
-	dbgLog("Size data   %u", szData);
-
-	fseek(pFile, 2, SEEK_SET);
-	fwrite(&szFile, 4, 1, pFile);
-
-	fseek(pFile, cSzHeaderBmp + 4, SEEK_SET);
-	fwrite(&width, 4, 1, pFile);
-
-	fseek(pFile, cSzHeaderBmp + 8, SEEK_SET);
-	fwrite(&height, 4, 1, pFile);
-
-	fseek(pFile, cSzHeaderBmp + 20, SEEK_SET);
-	fwrite(&szData, 4, 1, pFile);
-
-	fclose(pFile);
-	pFile = NULL;
 }
 

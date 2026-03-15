@@ -27,12 +27,21 @@
 #define LIB_BMP_H
 
 #include <stdio.h>
+#include <mutex>
 
 const size_t cBytesPerPixel = 3 * sizeof(char);
 
 class FileBmp
 {
 public:
+	FileBmp()
+		: pFile(NULL)
+		, width(0)
+		, height(0)
+		, idxLine(0)
+		, mMtxFile()
+	{}
+
 	virtual ~FileBmp() { this->close(); }
 
 	bool lineAppend(const char *pData, size_t len);
@@ -41,10 +50,15 @@ public:
 	FILE *pFile;
 	uint32_t width;
 	uint32_t height;
-	size_t idxLine;
-	bool dataOk;
+	uint32_t idxLine;
 
 	static bool create(const char *pFilename, FileBmp *pBmp);
+
+private:
+	void imageComplete(size_t szLine);
+	bool lineAppendUnlocked(const char *pData, size_t len);
+
+	std::mutex mMtxFile;
 };
 
 #endif
