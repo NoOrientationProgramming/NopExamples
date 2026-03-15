@@ -109,6 +109,12 @@ void FileBmp::close()
 	size_t szLine = ((szData + 3) & ~3);
 	uint32_t szFile;
 
+	/*
+	 * Try to be as tolerant as possible to any situation.
+	 * Do not overreact on errors!
+	 * In this case we fill up the remaining
+	 * lines if they weren't written by the user.
+	 */
 	imageComplete(szLine);
 
 	szData = szLine * idxLine; // Size of data for all (written) lines
@@ -145,6 +151,7 @@ void FileBmp::imageComplete(size_t szLine)
 	wrnLog("Line index  %u", idxLine);
 	wrnLog("Size        %u", szLine);
 
+	size_t numLinesRemaining;
 	char *pData;
 	bool ok;
 
@@ -157,7 +164,16 @@ void FileBmp::imageComplete(size_t szLine)
 
 	memset(pData, 12, szLine);
 
-	while (idxLine < height)
+	/*
+	 * Important:
+	 * We are in an unusual situation.
+	 * We could check idxLine and height,
+	 * but we can control the remaining lines
+	 * variable by ourselves.
+	 */
+	numLinesRemaining = height - idxLine;
+
+	for (; numLinesRemaining; --numLinesRemaining)
 	{
 		ok = lineAppendUnlocked(pData, szLine);
 		if (ok)
