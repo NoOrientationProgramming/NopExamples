@@ -28,7 +28,6 @@
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
-		gen(StNop) \
 
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
@@ -71,8 +70,10 @@ Success MandelBlockFilling::process()
 		break;
 	case StMain:
 
-		break;
-	case StNop:
+		if (idxLine < 5)
+			procDbgLog("Line %u finished", idxLine);
+
+		return Positive;
 
 		break;
 	default:
