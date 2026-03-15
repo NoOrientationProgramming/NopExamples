@@ -147,7 +147,7 @@ void FileBmp::imageComplete(size_t szLine)
 	if (idxLine >= height)
 		return;
 
-	wrnLog("Image not finished. Filling up.");
+	wrnLog("Image not finished. Filling up");
 	wrnLog("Line index       %u", idxLine);
 	wrnLog("Size             %u", szLine);
 
