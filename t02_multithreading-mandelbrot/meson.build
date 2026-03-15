@@ -21,6 +21,8 @@ srcs = [
 	'../deps/LibNaegCommon/ThreadPooling.cpp',
 	'../deps/LibNaegCommon/LibTime.cpp',
 	'../deps/LibNaegCommon/LibFilesys.cpp',
+	'../deps/LibNaegCommon/LibDspc.cpp',
+	'../deps/LibNaegCommon/Res.cpp',
 	'main.cpp',
 	'Supervising.cpp',
 	'MandelbrotCreating.cpp',

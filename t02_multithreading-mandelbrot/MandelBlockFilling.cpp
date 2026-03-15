@@ -27,6 +27,7 @@
 
 #include "MandelBlockFilling.h"
 #include "LibBmp.h"
+#include "LibDspc.h"
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
@@ -47,6 +48,13 @@ using namespace std;
 // TODO:
 // - class Color
 // - template lerp in LibDspc
+
+class Color
+{
+	int r;
+	int g;
+	int b;
+};
 
 struct GradientStop
 {
@@ -411,8 +419,8 @@ void MandelBlockFilling::colorLerp(MbVal t,
 			int r2, int g2, int b2,
 			int &ro, int &go, int &bo)
 {
-	ro = r1 + (r2 - r1) * t;
-	go = g1 + (g2 - g1) * t;
-	bo = b1 + (b2 - b1) * t;
+	ro = lerp(t, r1, r2);
+	go = lerp(t, g1, g2);
+	bo = lerp(t, b1, b2);
 }
 
