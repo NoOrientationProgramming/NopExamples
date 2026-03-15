@@ -64,6 +64,8 @@ private:
 	Success shutdown();
 	void processInfo(char *pBuf, char *pBufEnd);
 
+	bool lineFillersStart();
+
 	Success linesProcess();
 	void lineFill(size_t idx, char *pData, size_t len);
 	void colorTest(char *pData, size_t idxLine, size_t idxPixel);

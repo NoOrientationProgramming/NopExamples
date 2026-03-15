@@ -126,6 +126,8 @@ Success MandelbrotCreating::process()
 
 		//progressPrint();
 
+		lineFillersStart();
+
 		gradientBuild();
 
 		mState = StMain;
@@ -151,6 +153,30 @@ Success MandelbrotCreating::process()
 	}
 
 	return Pending;
+}
+
+bool MandelbrotCreating::lineFillersStart()
+{
+	MandelBlockFilling *pFill;
+	size_t i = 0;
+
+	for (; i < cfg.imgHeight; ++i)
+	{
+		pFill = MandelBlockFilling::create();
+		if (!pFill)
+		{
+			procErrLog(-1, "could not create process");
+			return false;
+		}
+
+		pFill->pCfg = &cfg;
+		pFill->idxLine = i;
+
+		start(pFill);
+		whenFinishedRepel(pFill);
+	}
+
+	return true;
 }
 
 Success MandelbrotCreating::shutdown()
