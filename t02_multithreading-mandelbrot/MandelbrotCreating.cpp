@@ -65,6 +65,14 @@ MandelbrotCreating::MandelbrotCreating()
 	mState = StStart;
 }
 
+MandelbrotCreating::~MandelbrotCreating()
+{
+	if (!mpBuffer)
+		return;
+
+	delete[] mpBuffer;
+}
+
 /* member functions */
 
 Success MandelbrotCreating::process()
@@ -183,10 +191,6 @@ bool MandelbrotCreating::lineFillersStart()
 Success MandelbrotCreating::shutdown()
 {
 	mBmp.close();
-
-	if (mpBuffer)
-		delete[] mpBuffer;
-
 	return Positive;
 }
 
