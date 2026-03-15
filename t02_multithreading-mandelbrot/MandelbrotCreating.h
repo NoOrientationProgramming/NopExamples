@@ -27,6 +27,7 @@
 #define MANDELBROT_CREATING_H
 
 #include "Processing.h"
+#include "MandelBlockFilling.h"
 #include "ThreadPooling.h"
 #include "LibBmp.h"
 
@@ -41,6 +42,7 @@ public:
 	}
 
 	std::string nameFile;
+	ConfigMandelbrot cfg;
 
 protected:
 
