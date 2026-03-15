@@ -28,6 +28,11 @@
 
 #include "Processing.h"
 
+struct ConfigMandelbrot
+{
+	size_t numIterations;
+};
+
 class MandelBlockFilling : public Processing
 {
 
@@ -37,6 +42,8 @@ public:
 	{
 		return new dNoThrow MandelBlockFilling;
 	}
+
+	ConfigMandelbrot *pCfg;
 
 protected:
 

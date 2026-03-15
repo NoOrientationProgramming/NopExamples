@@ -43,6 +43,7 @@ using namespace std;
 MandelBlockFilling::MandelBlockFilling()
 	: Processing("MandelBlockFilling")
 	//, mStartMs(0)
+	, pCfg(NULL)
 {
 	mState = StStart;
 }
@@ -60,6 +61,9 @@ Success MandelBlockFilling::process()
 	switch (mState)
 	{
 	case StStart:
+
+		if (!pCfg)
+			return procErrLog(-1, "config pointer not set");
 
 		mState = StMain;
 
