@@ -44,6 +44,7 @@ MandelBlockFilling::MandelBlockFilling()
 	: Processing("MandelBlockFilling")
 	//, mStartMs(0)
 	, pCfg(NULL)
+	, idxLine(0)
 {
 	mState = StStart;
 }

@@ -57,6 +57,14 @@ MandelbrotCreating::MandelbrotCreating()
 	, mIdxLine(0)
 	, mIdxProgress(0)
 {
+	cfg.imgWidth = 1920;
+	cfg.imgHeight = 1200;
+
+	cfg.numIterMax = 2000;
+	cfg.posX = -0.743643887037151;
+	cfg.posY = 0.131825904205330;
+	cfg.zoom = 170000;
+
 	mState = StStart;
 }
 
@@ -80,13 +88,10 @@ Success MandelbrotCreating::process()
 		ok = servicesStart();
 		if (!ok)
 			return procErrLog(-1, "could not start services");
-#if 1
-		mBmp.width = 1920;
-		mBmp.height = 1200;
-#else
-		mBmp.width = 3840;
-		mBmp.height = 2400;
-#endif
+
+		mBmp.width = cfg.imgWidth;
+		mBmp.height = cfg.imgHeight;
+
 		mSzData = mBmp.width * cBytesPerPixel;
 		mSzLine = ((mSzData + 3) & ~3);
 		mSzPadding = mSzLine - mSzData;
@@ -291,23 +296,22 @@ void MandelbrotCreating::gradientBuild()
 
 void MandelbrotCreating::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
 {
+	size_t numIterMax = 2000;
 	double offsX = -0.743643887037151;
 	double offsY = 0.131825904205330;
-	double scaleIter = 1.2;
-	double scale = 170000;
+	double zoom = 170000;
 
 	double w2 = mBmp.width >> 1;
 	double h2 = mBmp.height >> 1;
 	double idxX = idxPixel - w2;
 	double idxY = idxLine - h2;
-	double scaleX = 1.0 / scale;
+	double scaleX = 1.0 / zoom;
 	double scaleY = scaleX * mBmp.height / mBmp.width;
 	double cx = scaleX * idxX / w2 + offsX;
 	double cy = scaleY * idxY / h2 + offsY;
 	double zx, zy, mu, t;
 	int r = 0, g = 0, b = 0;
 
-	size_t numIterMax = scaleIter * mBmp.width;
 	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
 	size_t idxGrad1, idxGrad2;
 

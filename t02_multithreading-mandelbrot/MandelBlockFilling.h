@@ -30,7 +30,15 @@
 
 struct ConfigMandelbrot
 {
-	size_t numIterations;
+	// Image
+	size_t imgWidth;
+	size_t imgHeight;
+
+	// Mandelbrot
+	size_t numIterMax;
+	double posX;
+	double posY;
+	double zoom;
 };
 
 class MandelBlockFilling : public Processing
@@ -44,6 +52,7 @@ public:
 	}
 
 	ConfigMandelbrot *pCfg;
+	size_t idxLine;
 
 protected:
 

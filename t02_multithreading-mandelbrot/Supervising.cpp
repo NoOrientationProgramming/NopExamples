@@ -153,6 +153,16 @@ bool Supervising::servicesStart()
 
 	mpMbCreate->nameFile = "mandelbrot_1";
 
+	ConfigMandelbrot *pMandel = &mpMbCreate->cfg;
+
+	pMandel->imgWidth = 1920;
+	pMandel->imgHeight = 1200;
+
+	pMandel->numIterMax = 2000;
+	pMandel->posX = -0.743643887037151;
+	pMandel->posY = 0.131825904205330;
+	pMandel->zoom = 170000;
+
 	start(mpMbCreate);
 
 	return true;
