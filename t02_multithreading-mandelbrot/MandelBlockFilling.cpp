@@ -44,6 +44,10 @@ dProcessStateStr(ProcState);
 
 using namespace std;
 
+// TODO:
+// - class Color
+// - template lerp in LibDspc
+
 struct GradientStop
 {
 	MbVal t;
