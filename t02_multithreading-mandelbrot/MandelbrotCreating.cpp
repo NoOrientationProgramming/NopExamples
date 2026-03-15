@@ -230,7 +230,7 @@ bool MandelbrotCreating::fillersStart()
 #if 0
 		start(pFill);
 #else
-#if 0
+#if 1
 		start(pFill, DrivenByNewInternalDriver);
 #else
 		start(pFill, DrivenByExternalDriver);
