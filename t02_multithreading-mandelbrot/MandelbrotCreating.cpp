@@ -70,7 +70,7 @@ MandelbrotCreating::MandelbrotCreating()
 	cfg.zoom = 170000;
 
 	// Filling
-	cfg.numBurst = 11;
+	cfg.numBurst = 51;
 
 	mState = StStart;
 }
@@ -179,6 +179,10 @@ Success MandelbrotCreating::shutdown()
 
 bool MandelbrotCreating::lineFillersStart()
 {
+#if 1
+	if (mIdxLineDone != mIdxLineFiller)
+		return true;
+#endif
 	size_t numRemaining, numBurst = 53;
 
 	numRemaining = cfg.imgHeight - mIdxLineFiller;
