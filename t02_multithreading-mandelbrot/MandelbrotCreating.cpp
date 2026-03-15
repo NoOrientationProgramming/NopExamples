@@ -139,6 +139,18 @@ Success MandelbrotCreating::process()
 
 		MandelBlockFilling::gradientBuild();
 
+		userInfLog("");
+
+		userInfLog("  Image width       %14u [pixel]", cfg.imgWidth);
+		userInfLog("  Image height      %14u [pixel]", cfg.imgHeight);
+		userInfLog("");
+
+		userInfLog("  Max. iter. per pixel        %u", cfg.numIterMax);
+		userInfLog("  Pos X             %14.3f", cfg.posX);
+		userInfLog("  Pos Y             %14.3f", cfg.posY);
+		userInfLog("  Zoom              %14.0f", cfg.zoom);
+		userInfLog("");
+
 		hideCursor();
 		progressPrint();
 
@@ -159,8 +171,10 @@ Success MandelbrotCreating::process()
 			return procErrLog(-1, "could not process lines");
 
 		userInfLog("\n");
-		userInfLog("Iterations    %u", mNumIterations);
-		userInfLog("Duration      %ums\n", diffMs);
+		userInfLog("  Duration          %14u [ms]", diffMs);
+		userInfLog("  Iterations        %14u", mNumIterations);
+		userInfLog("  Iter. per second  %14u", mNumIterations / diffMs);
+		userInfLog("");
 
 		return Positive;
 
@@ -293,7 +307,7 @@ void MandelbrotCreating::progressPrint()
 
 	pBuf[0] = 0;
 
-	dInfo("\r");
+	dInfo("\r  ");
 	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, mBmp.height);
 
 	fprintf(stdout, "%s\r", pBufStart);
