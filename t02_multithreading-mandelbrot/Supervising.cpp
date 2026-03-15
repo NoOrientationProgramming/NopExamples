@@ -171,7 +171,7 @@ bool Supervising::servicesStart()
 void Supervising::processInfo(char *pBuf, char *pBufEnd)
 {
 #if 1
-	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
+	dInfo("State\t\t\t\t%s\n", ProcStateString[mState]);
 #endif
 }
 
