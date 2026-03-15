@@ -220,7 +220,11 @@ bool MandelbrotCreating::fillersStart()
 		start(pFill, DrivenByNewInternalDriver);
 #else
 		start(pFill, DrivenByExternalDriver);
+#if 1
+		ThreadPooling::procAdd(pFill);
+#else
 		ThreadPooling::procAdd(pFill, 2);
+#endif
 #endif
 #endif
 		whenFinishedRepel(pFill);
