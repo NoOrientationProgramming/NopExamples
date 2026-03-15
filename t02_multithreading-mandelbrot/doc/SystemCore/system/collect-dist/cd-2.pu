@@ -1,0 +1,105 @@
+
+@startuml
+
+' skinparam linetype ortho
+
+database "Environment" as pEnv1 {
+  database "Payment" as sPayCust_1
+  database "Payment" as sPayCust_2
+  database "Product" as sProd_1
+  database "Product" as sProd_2
+
+  node "Customers" as pCust
+
+  pCust ..> sPayCust_1
+  pCust ..> sPayCust_2
+
+  pCust <-- sProd_1
+  pCust <-- sProd_2
+}
+
+component "Transporting() /\nDistributing()" as pDistExt
+
+component "Company" as pComp {
+
+  component "Warehouse" as pWh {
+    database "Storage" as sStore1
+    database "Storage" as sStore2
+
+    component "Shipping Department\nSending()" as pSend
+    component "Product Divisions\nProducing()" as pProd
+    component "Receiving Department\nCollecting()" as pRcv
+
+    frame "Warehouse Office" as pWhOff
+
+    pSend <-- sStore2
+    sStore2 <-- pProd
+    pProd <-- sStore1
+    sStore1 <-- pRcv
+
+    pSend <..> pWhOff
+    pProd <.> pWhOff
+    pWhOff <..> pRcv
+  }
+
+  component "Office Building" as pOffice {
+  component "Sales Department" as pDepSales {
+    frame "Sales Office\nCollecting()" as pSales
+    frame "Marketing()" as pMark
+
+    pSales <.> pMark
+  }
+
+  database "Bank Account" as sBa
+
+  node "All Departments" as iAny
+
+  component "Purchasing Department" as pDepPurch {
+    frame "Purchasing() /\nDistributing()" as pPurch
+  }
+  }
+
+  ' ---------------------
+
+  pSales <..> pWhOff
+  pWhOff <..> pPurch
+
+  pSales ..> sBa
+  sBa ..> pPurch
+  sBa .> iAny
+}
+
+database "Environment" as pEnv2 {
+  database "Payment" as sPayPurch_1
+  database "Payment" as sPayPurch_2
+  database "Part" as sPart_1
+  database "Part" as sPart_2
+
+  node "Suppliers" as pSupp
+
+  sPayPurch_1 ..> pSupp
+  sPayPurch_2 ..> pSupp
+
+  sPart_1 <-- pSupp
+  sPart_2 <-- pSupp
+}
+
+sProd_1 .r[hidden]. sPayCust_1
+
+sPayCust_1 ..> pSales
+sPayCust_2 ..> pSales
+
+sProd_1 <-- pDistExt
+sProd_2 <-- pDistExt
+pDistExt <-- pSend
+
+pPurch ..> sPayPurch_1
+pPurch ..> sPayPurch_2
+
+pRcv <-- sPart_1
+pRcv <-- sPart_2
+
+footer **Collecting() and Distributing()** Customers - Company - Suppliers\n(C) DSP-Crowd Electronics GmbH
+
+@enduml
+

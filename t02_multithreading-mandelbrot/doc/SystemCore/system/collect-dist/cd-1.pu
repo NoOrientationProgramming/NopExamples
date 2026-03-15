@@ -1,0 +1,79 @@
+
+@startuml
+
+' skinparam linetype ortho
+
+database "Environment" as pEnv {
+  database "O2" as sO2_1_1
+  database "O2" as sO2_1_2
+  database "CO2" as sCO2_1_1
+  database "CO2" as sCO2_1_2
+}
+
+component "Body" as pBody {
+component "Lung" as pLung {
+  frame "Collecting()" as pColl1
+  frame "Distributing()" as pDist1
+}
+
+component "Heart" as pHeart {
+  frame "Chamber\nOxygenated" as pCh1
+  frame "Chamber\nDeOxygenated" as pCh2
+}
+
+component "Bloodstream" as pBloodStr {
+  frame "Transporting()" as pTrans1
+  frame "Transporting()" as pTrans2
+}
+
+component "Blood vessel" as pBloodVes {
+  frame "Distributing()" as pDist2
+  frame "Collecting()" as pColl2
+}
+
+component "Consumers" as pCons {
+  database "O2" as sO2_2_1
+  database "O2" as sO2_2_2
+  database "CO2" as sCO2_2_1
+  database "CO2" as sCO2_2_2
+  database "States" as pStat
+
+  frame "Working()" as pWork
+}
+}
+
+sO2_1_1 --> pColl1
+sO2_1_2 --> pColl1
+
+sCO2_1_1 <-- pDist1
+sCO2_1_2 <-- pDist1
+
+pDist1 -r[hidden]- pColl1
+
+pColl1 --> pCh1
+pDist1 <-- pCh2
+
+pCh1 --> pTrans1
+pCh2 <-- pTrans2
+
+pTrans1 --> pDist2
+pTrans2 <-- pColl2
+
+pDist2 --> sO2_2_1
+pDist2 --> sO2_2_2
+
+pColl2 --> sCO2_2_1
+pColl2 --> sCO2_2_2
+
+sO2_2_1 --> pWork
+sO2_2_2 --> pWork
+
+sCO2_2_1 <-- pWork
+sCO2_2_2 <-- pWork
+
+pWork <-> pStat
+
+footer **Collecting() and Distributing()** Environment - Body (Animal / Human)\n(C) DSP-Crowd Electronics GmbH
+
+@enduml
+
