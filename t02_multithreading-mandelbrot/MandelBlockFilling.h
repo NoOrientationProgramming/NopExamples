@@ -149,6 +149,7 @@ private:
 	//uint32_t mStartMs;
 	size_t mNumPixel;
 	size_t mIdxPixel;
+	char *mpDataStart;
 	char *mpData;
 
 	/* static functions */
