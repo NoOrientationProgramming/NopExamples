@@ -110,7 +110,11 @@ Success MandelBlockFilling::process()
 		if (!mpCfg || !mpLine)
 			return procErrLog(-1, "invalid arguments");
 
+		mpHdr = (BlockMandelHeader *)mpLine;
 		mpData = mpDataStart = mpLine + sizeof(BlockMandelHeader);
+
+		mpHdr->success = 0;
+		mpHdr->numIter = 0;
 
 		mNumPixel = mpCfg->szData / cBytesPerPixel;
 		mIdxPixel = 0;
@@ -125,14 +129,14 @@ Success MandelBlockFilling::process()
 			break;
 
 		if (success == Positive)
-			mpLine[0] |= FlagFillingPositive;
+			mpHdr->success |= FlagFillingPositive;
 
 		mState = StDone;
 
 		break;
 	case StDone:
 
-		mpLine[0] |= FlagFillingDone;
+		mpHdr->success |= FlagFillingDone;
 #if 0
 		if (mIdxLine < 5)
 			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
@@ -263,6 +267,8 @@ size_t MandelBlockFilling::mandelbrot(
 		xt = zx * zx - zy * zy + cx;
 		zy = 2 * zx * zy + cy;
 		zx = xt;
+
+		++mpHdr->numIter;
 	}
 
 	return i;

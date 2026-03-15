@@ -50,6 +50,7 @@ struct ConfigMandelbrot
 struct BlockMandelHeader
 {
 	uint32_t success;
+	uint32_t numIter;
 };
 
 enum FlagsFilling
@@ -109,6 +110,7 @@ private:
 	//uint32_t mStartMs;
 	size_t mNumPixel;
 	size_t mIdxPixel;
+	BlockMandelHeader *mpHdr;
 	char *mpDataStart;
 	char *mpData;
 
