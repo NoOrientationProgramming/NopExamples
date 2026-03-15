@@ -148,7 +148,7 @@ Success MandelbrotCreating::process()
 		userInfLog("  Max. iter. per pixel        %u", cfg.numIterMax);
 		userInfLog("  Pos X             %14.3f", cfg.posX);
 		userInfLog("  Pos Y             %14.3f", cfg.posY);
-		userInfLog("  Zoom              %14.0f", cfg.zoom);
+		userInfLog("  Zoom              %14.3e", cfg.zoom);
 		userInfLog("");
 
 		hideCursor();
@@ -172,9 +172,9 @@ Success MandelbrotCreating::process()
 
 		userInfLog("\n");
 		userInfLog("  Duration          %14zu [ms]", diffMs);
-		userInfLog("  Iterations        %14zu", mNumIterations);
+		userInfLog("  Iterations        %14.3e", (double)mNumIterations);
 		ips = (size_t)(((double)mNumIterations) / diffMs);
-		userInfLog("  Iter. per second  %14zu", ips);
+		userInfLog("  Iter. per second  %14.3e", (double)ips);
 		userInfLog("  Pixel * IPS       %14.3e", ((double)ips) * cfg.imgWidth * cfg.imgHeight);
 		userInfLog("");
 
