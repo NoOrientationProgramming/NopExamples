@@ -157,6 +157,12 @@ bool Supervising::servicesStart()
 
 	pMandel->imgWidth = 1920;
 	pMandel->imgHeight = 1200;
+	//pMandel->imgWidth = 2560;
+	//pMandel->imgHeight = 1600;
+	//pMandel->imgWidth = 3840;
+	//pMandel->imgHeight = 2400;
+	//pMandel->imgWidth = 7680;
+	//pMandel->imgHeight = 4800;
 
 	pMandel->numIterMax = 2000;
 	pMandel->posX = -0.743643887037151;
