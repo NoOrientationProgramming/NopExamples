@@ -26,6 +26,8 @@
 #ifndef MANDELBROT_CREATING_H
 #define MANDELBROT_CREATING_H
 
+#include <string>
+
 #include "Processing.h"
 #include "MandelBlockFilling.h"
 #include "ThreadPooling.h"
