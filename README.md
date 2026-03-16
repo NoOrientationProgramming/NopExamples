@@ -24,7 +24,7 @@ If you want to use [meson and ninja](https://mesonbuild.com/) (recommended) add
 
 ### Clone the example repository
 
-`git clone https://github.com/fractal-programming/NopExamples.git --recursive`
+`git clone https://github.com/fractal-programming/FrapExamples.git --recursive`
 
 ### Build and Run an Examples
 

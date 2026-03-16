@@ -19,8 +19,8 @@ enter username and password
 # pip3 install meson ninja
 
 $ cd ~
-$ git clone https://github.com/fractal-programming/NopExamples.git
-$ cd NopExamples/
+$ git clone https://github.com/fractal-programming/FrapExamples.git
+$ cd FrapExamples/
 $ git submodule update --init --recursive
 
 $ cd t6_t5_monitoring/
