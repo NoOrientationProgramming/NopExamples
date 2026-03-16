@@ -34,7 +34,7 @@ srcs = [
 
 args = [
 	'-DCONFIG_PROC_HAVE_LOG=1',
-	'-DCONFIG_PROC_HAVE_CORE_LOG=1',
+	'-DCONFIG_PROC_HAVE_CORE_LOG=0',
 ]
 
 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
