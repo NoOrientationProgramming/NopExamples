@@ -5,7 +5,7 @@
 [![Discord](https://img.shields.io/discord/960639692213190719?style=plastic&color=purple&logo=discord)](https://discord.gg/FBVKJTaY)
 [![Twitch Status](https://img.shields.io/twitch/status/Naegolus?label=twitch.tv%2FNaegolus&logo=Twitch&logoColor=%2300ff00&style=plastic&color=purple)](https://twitch.tv/Naegolus)
 
-Real-life examples based on the [SystemCore](https://github.com/fractal-programming/SystemCore#processing-start).
+Real-life examples based on the [SystemCore](https://github.com/fractal-programming/SystemCore#system-core-start).
 
 Status
 - In progress
