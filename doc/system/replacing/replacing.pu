@@ -4,7 +4,7 @@
 database "1. Existing()\nold process" as sOld {
   database "a" as a1
   database "b" as b1
-  component "OldProcessing()" as op1
+  frame "OldProcessing()" as op1
   
   a1 -> op1
   op1 -> b1
@@ -13,7 +13,7 @@ database "1. Existing()\nold process" as sOld {
 database "7. Existing()\nnew process" as sNew {
   database "a" as a7
   database "b" as b7
-  component "NewProcessing()" as np7
+  frame "NewProcessing()" as np7
   
   a7 -> np7
   np7 -> b7
@@ -32,8 +32,8 @@ component "Replacing()" as pRep {
 database "2. New process created" as sCreated {
   database "a" as a2
   database "b" as b2
-  component "OldProcessing()" as op2
-  component "NewProcessing()" as np2
+  frame "OldProcessing()" as op2
+  frame "NewProcessing()" as np2
   
   a2 -> np2
   a2 --> op2
@@ -43,8 +43,8 @@ database "2. New process created" as sCreated {
 database "3. Copy" as sCopy {
   database "a" as a3
   database "b" as b3
-  component "OldProcessing()" as op3
-  component "NewProcessing()" as np3
+  frame "OldProcessing()" as op3
+  frame "NewProcessing()" as np3
   
   a3 -> np3
   a3 --> op3
@@ -55,8 +55,8 @@ database "3. Copy" as sCopy {
 database "4. New process improved" as sImp {
   database "a" as a4
   database "b" as b4
-  component "OldProcessing()" as op4
-  component "NewProcessing()" as np4 #LightSteelBlue
+  frame "OldProcessing()" as op4
+  frame "NewProcessing()" as np4 #LightSteelBlue
   
   a4 -> np4
   a4 --> op4
@@ -67,8 +67,8 @@ database "4. New process improved" as sImp {
 database "5. New process finished\nold process used" as sNewButOld {
   database "a" as a5
   database "b" as b5
-  component "OldProcessing()" as op5
-  component "NewProcessing()" as np5
+  frame "OldProcessing()" as op5
+  frame "NewProcessing()" as np5
   
   a5 -> np5
   a5 --> op5
@@ -78,8 +78,8 @@ database "5. New process finished\nold process used" as sNewButOld {
 component "6. New process finished\nnew process used" as sNewAndNew {
   database "a" as a6
   database "b" as b6
-  component "OldProcessing()" as op6
-  component "NewProcessing()" as np6
+  frame "OldProcessing()" as op6
+  frame "NewProcessing()" as np6
   
   a6 -> np6
   np6 -> b6
