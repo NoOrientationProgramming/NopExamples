@@ -1,9 +1,7 @@
 
 @startuml
 
-' top to bottom direction
-
-database "1. Existing() old process" as s1 {
+database "1. Existing()\nold process" as sOld {
   database "a" as a1
   database "b" as b1
   component "OldProcessing()" as op1
@@ -12,73 +10,7 @@ database "1. Existing() old process" as s1 {
   op1 -> b1
 }
 
-component "Replacing()" as rp {
-
-component "2. Creating() new process" as s2 {
-  database "a" as a2
-  database "b" as b2
-  component "OldProcessing()" as op2
-  component "NewProcessing()" as np2
-  
-  a2 -> op2
-  op2 -> b2
-  
-  a2 -u-> np2
-}
-
-component "3. Copying() old process" as s3 {
-  database "a" as a3
-  database "b" as b3
-  component "OldProcessing()" as op3
-  component "NewProcessing()" as np3
-  
-  a3 -> op3
-  op3 -> b3
-  
-  a3 -u-> np3
-  op3 -u-> np3
-}
-
-component "4. Improving() new process until it's Dominating()\nby Comparing()" as s4 {
-  database "a" as a4
-  database "b" as b4
-  component "OldProcessing()" as op4
-  component "NewProcessing()" as np4 #LightSteelBlue
-  
-  a4 -> op4
-  op4 -> b4
-  
-  a4 -u-> np4
-  op4 <-u-> np4
-}
-
-component "5. Admiring() new process" as s5 {
-  database "a" as a5
-  database "b" as b5
-  component "OldProcessing()" as op5
-  component "NewProcessing()" as np5
-  
-  a5 -> op5
-  op5 -> b5
-  
-  a5 -u-> np5
-}
-
-component "6. Switching() to new process" as s6 {
-  database "a" as a6
-  database "b" as b6
-  component "OldProcessing()" as op6
-  component "NewProcessing()" as np6
-  
-  a6 -> np6
-  np6 -> b6
-  
-  a6 -d-> op6
-}
-
-}
-
-database "7. Existing() new process" as s7 {
+database "7. Existing()\nnew process" as sNew {
   database "a" as a7
   database "b" as b7
   component "NewProcessing()" as np7
@@ -87,15 +19,103 @@ database "7. Existing() new process" as s7 {
   np7 -> b7
 }
 
-op1 -[hidden]d- np2
-op2 -[hidden]d- np3
-op3 -[hidden]d- np4
-op4 -[hidden]d- np5
-op5 -[hidden]d- np6
-op5 -[hidden]d- np7
+actor "Developer\nUnOccupied" as sDev1
+actor "Developer\nUnOccupied" as sDev2
 
-s1 -d-> s2
-s6 -d-> s7
+component "Developing()" as pDev {
+
+actor "Developer\nUnOccupied" as sDevUnOcc1
+actor "Developer\nUnOccupied" as sDevUnOcc2
+
+component "Replacing()" as pRep {
+
+database "2. New process created" as sCreated {
+  database "a" as a2
+  database "b" as b2
+  component "OldProcessing()" as op2
+  component "NewProcessing()" as np2
+  
+  a2 -> np2
+  a2 --> op2
+  op2 -> b2
+}
+
+database "3. Copy" as sCopy {
+  database "a" as a3
+  database "b" as b3
+  component "OldProcessing()" as op3
+  component "NewProcessing()" as np3
+  
+  a3 -> np3
+  a3 --> op3
+  op3 -> b3
+  np3 <-- op3
+}
+
+database "4. New process improved" as sImp {
+  database "a" as a4
+  database "b" as b4
+  component "OldProcessing()" as op4
+  component "NewProcessing()" as np4 #LightSteelBlue
+  
+  a4 -> np4
+  a4 --> op4
+  op4 -> b4
+  np4 <--> op4
+}
+
+database "5. New process finished\nold process used" as sNewButOld {
+  database "a" as a5
+  database "b" as b5
+  component "OldProcessing()" as op5
+  component "NewProcessing()" as np5
+  
+  a5 -> np5
+  a5 --> op5
+  op5 -> b5
+}
+
+component "6. New process finished\nnew process used" as sNewAndNew {
+  database "a" as a6
+  database "b" as b6
+  component "OldProcessing()" as op6
+  component "NewProcessing()" as np6
+  
+  a6 -> np6
+  np6 -> b6
+  a6 --> op6
+}
+
+component "Creating()\nnew process" as pCreate
+component "Copying()\nold process" as pCopy
+component "Improving() / Comparing()\nuntil it's\nDominating()" as pImp
+component "Beautifying()\nnew process" as pFin
+component "Switching()\nto new process" as pSwitch
+component "Releasing()" as pRel
+
+pCreate --> sCreated
+sCreated --> pCopy
+pCopy --> sCopy
+sCopy --> pImp
+pImp --> sImp
+sImp --> pFin
+pFin --> sNewButOld
+sNewButOld --> pSwitch
+pSwitch --> sNewAndNew
+sNewAndNew --> pRel
+
+}
+
+pRel -> sDevUnOcc2
+sDevUnOcc1 -> pCreate
+
+}
+
+sOld --> pCreate
+pRel --> sNew
+
+sDev1 -> sDevUnOcc1
+sDevUnOcc2 --> sDev2
 
 footer **Replacing()** Overview \n(C) DSP-Crowd Electronics GmbH
 
