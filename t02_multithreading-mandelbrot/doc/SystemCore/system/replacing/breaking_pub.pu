@@ -1,0 +1,39 @@
+
+@startuml
+
+component "Company A" as pComp1 {
+  person "Dev" as pDev1
+  frame "Presenting()" as pPres
+
+  pDev1 <-> pPres
+}
+
+frame "New" as pNew {
+  database "Func A\nFunc B\nFunc C2" as sFunc2
+  database "Breaking\nChange\nInfo" as sInfo
+}
+
+database "Func A\nFunc B\nFunc C1\nFunc D" as sFunc1
+
+component "Company B" as pComp2 {
+  person "Dev" as pDev2
+  frame "Calculating()" as pCalc
+
+  pDev2 <-> pCalc
+}
+
+sInfo .r[hidden]. sFunc2
+sFunc2 .r[hidden]. sFunc1
+
+pDev1 <-- sInfo
+sInfo <-- pDev2
+
+sFunc2 <-- pCalc
+
+pPres <-- sFunc1
+sFunc1 <-- pCalc
+
+footer **Replacing()** Breaking Changes - Public\n(C) DSP-Crowd Electronics GmbH
+
+@enduml
+
