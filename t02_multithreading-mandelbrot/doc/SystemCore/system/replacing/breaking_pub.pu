@@ -8,7 +8,7 @@ component "Company A" as pComp1 {
   pDev1 <-> pPres
 }
 
-frame "New" as pNew {
+rectangle "New" as pNew {
   database "Func A\nFunc B\nFunc C2" as sFunc2
   database "Breaking\nChange\nInfo" as sInfo
 }
