@@ -2,7 +2,7 @@
 @startuml
 
 component "Company A" as pComp1 {
-  person "Dev" as pDev1
+  actor "Dev" as pDev1
   frame "Presenting()" as pPres
 
   pDev1 <-> pPres
@@ -16,7 +16,7 @@ frame "New" as pNew {
 database "Func A\nFunc B\nFunc C1\nFunc D" as sFunc1
 
 component "Company B" as pComp2 {
-  person "Dev" as pDev2
+  actor "Dev" as pDev2
   frame "Calculating()" as pCalc
 
   pDev2 <-> pCalc
