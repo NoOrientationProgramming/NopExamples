@@ -19,13 +19,13 @@ database "7. Existing()\nnew process" as sNew {
   np7 -> b7
 }
 
-actor "Developer\nUnOccupied" as sDev1
-actor "Developer\nUnOccupied" as sDev2
+actor "Developer" as sDev1
+actor "Developer\nSmarter" as sDev2
 
 component "Developing()" as pDev {
 
-actor "Developer\nUnOccupied" as sDevUnOcc1
-actor "Developer\nUnOccupied" as sDevUnOcc2
+actor "Developer\nOccupied" as sDevUnOcc1
+actor "Developer\nOccupied" as sDevUnOcc2
 
 component "Replacing()" as pRep {
 
@@ -84,11 +84,12 @@ component "6. New process finished\nnew process used" as sNewAndNew {
   a6 -> np6
   np6 -> b6
   a6 --> op6
+  op6 .r[hidden]. b6
 }
 
 component "Creating()\nnew process" as pCreate
 component "Copying()\nold process" as pCopy
-component "Improving() / Comparing()\nuntil it's\nDominating()" as pImp
+component "Improving() / Comparing()\nuntil it's Dominating()" as pImp
 component "Beautifying()\nnew process" as pFin
 component "Switching()\nto new process" as pSwitch
 component "Releasing()" as pRel
