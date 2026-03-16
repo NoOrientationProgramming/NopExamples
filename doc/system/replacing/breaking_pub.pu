@@ -2,24 +2,33 @@
 @startuml
 
 component "Company A" as pComp1 {
-  actor "Dev" as pDev1
+
+  database "Screen" as sScreen
+
+  actor "Dev" as pAct1
+  component "Developing()" as pDev1
   frame "Presenting()" as pPres
 
-  pDev1 <-> pPres
+  pAct1 <-> pDev1
+  pDev1 -> pPres
+  pPres -> sScreen
 }
 
-rectangle "New" as pNew {
+rectangle "Release" as sRel {
   database "Func A\nFunc B\nFunc C2" as sFunc2
-  database "Breaking\nChange\nInfo" as sInfo
+  file "Release\nNotes" as sInfo
 }
 
 database "Func A\nFunc B\nFunc C1\nFunc D" as sFunc1
 
 component "Company B" as pComp2 {
-  actor "Dev" as pDev2
+
+  actor "Dev" as pAct2
+  component "Developing()" as pDev2
   frame "Calculating()" as pCalc
 
-  pDev2 <-> pCalc
+  pAct2 <-> pDev2
+  pDev2 -> pCalc
 }
 
 sInfo .r[hidden]. sFunc2
