@@ -6,7 +6,7 @@ component "Company" as pComp1 {
 database "Screen" as sScreen
 database "Func A\nFunc B\nFunc C2" as sFunc2
 database "Func A\nFunc B\nFunc C1\nFunc D" as sFunc1
-file "Info" as sInfo
+file "Info\n<<Often missing>>" as sInfo
 
 actor "Dev" as pAct1
 component "Developing()" as pDev1
