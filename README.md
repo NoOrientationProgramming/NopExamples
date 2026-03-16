@@ -1,11 +1,11 @@
 
-![GitHub](https://img.shields.io/github/license/NoOrientationProgramming/ProcessingExamples?style=plastic)
-<!-- ![Lines of code](https://img.shields.io/tokei/lines/github/NoOrientationProgramming/ProcessingExamples?style=plastic) -->
+![GitHub](https://img.shields.io/github/license/fractal-programming/ProcessingExamples?style=plastic)
+<!-- ![Lines of code](https://img.shields.io/tokei/lines/github/fractal-programming/ProcessingExamples?style=plastic) -->
 
 [![Discord](https://img.shields.io/discord/960639692213190719?style=plastic&color=purple&logo=discord)](https://discord.gg/FBVKJTaY)
 [![Twitch Status](https://img.shields.io/twitch/status/Naegolus?label=twitch.tv%2FNaegolus&logo=Twitch&logoColor=%2300ff00&style=plastic&color=purple)](https://twitch.tv/Naegolus)
 
-Real-life examples based on the [SystemCore](https://github.com/NoOrientationProgramming/SystemCore#processing-start).
+Real-life examples based on the [SystemCore](https://github.com/fractal-programming/SystemCore#processing-start).
 
 Status
 - In progress
@@ -24,7 +24,7 @@ If you want to use [meson and ninja](https://mesonbuild.com/) (recommended) add
 
 ### Clone the example repository
 
-`git clone https://github.com/NoOrientationProgramming/NopExamples.git --recursive`
+`git clone https://github.com/fractal-programming/NopExamples.git --recursive`
 
 ### Build and Run an Examples
 
@@ -45,5 +45,5 @@ Every example will have its own README file for further information explaining w
 
 If you want to use the core in your own project then simply add the repository as a submodule like this
 
-`git submodule add https://github.com/NoOrientationProgramming/SystemCore.git`
+`git submodule add https://github.com/fractal-programming/SystemCore.git`
 
