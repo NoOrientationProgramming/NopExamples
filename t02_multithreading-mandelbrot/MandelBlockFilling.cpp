@@ -62,7 +62,6 @@ static GradientStop keysGradient[] =
 	{0.30,  {120, 220, 255}}, // very light blue
 	{0.35,  {200, 240, 255}}, // almost white
 	{0.40,  {255, 255, 255}}, // white
-#if 1
 	{0.45,  {255, 240, 180}}, // warm white
 	{0.50,  {255, 220, 120}}, // light gold
 	{0.55,  {255, 200,  60}}, // gold
@@ -70,15 +69,6 @@ static GradientStop keysGradient[] =
 	{0.70,  {200, 120,   0}}, // bronze
 	{0.80,  {120,  60,   0}}, // dark bronze
 	{0.90,  { 60,  30,   0}}, // dark brown
-#else
-	{0.45,  {200, 255, 200}}, // mint
-	{0.50,  {140, 255, 140}}, // light green
-	{0.55,  { 80, 230,  80}}, // green
-	{0.60,  { 30, 200,  60}}, // strong green
-	{0.70,  { 20, 150,  40}}, // forest green
-	{0.80,  { 10, 100,  25}}, // dark green
-	{0.90,  {  5,  60,  15}}, // very dark green
-#endif
 	{1.00,  {  0,   0,   0}}, // back to black
 };
 #else
