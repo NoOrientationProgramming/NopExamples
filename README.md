@@ -7,12 +7,12 @@
 
 Real-life examples based on the [SystemCore](https://github.com/fractal-programming/SystemCore#system-core-start).
 
-Status
-- In progress
-
 Built with **Fractal System Architecture (FSA)**
 
 Learn more: https://github.com/fractal-programming
+
+Status
+- In progress
 
 ## Run the Examples
 
