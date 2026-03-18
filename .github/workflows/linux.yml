@@ -8,9 +8,6 @@ jobs:
 
   linux-native-build-run:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: tools/hello-world
     steps:
 
 # Toolchain + git
