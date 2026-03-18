@@ -6,6 +6,17 @@ project(
 	default_options : ['cpp_std=c++11'],
 )
 
+# Dependencies
+
+deps = []
+deps += dependency('threads')
+
+if host_machine.system() == 'windows'
+	deps += cxx.find_library('ws2_32')
+endif
+
+# Application
+
 myApp = executable(
 	'app',
 	[
@@ -23,7 +34,7 @@ myApp = executable(
 		'../deps/SystemCore',
 	]),
 	dependencies : [
-		dependency('threads'),
+		deps,
 	],
 	cpp_args : [
 		'-std=gnu++11',

@@ -28,6 +28,25 @@ target_compile_options(app PRIVATE
     -DCONFIG_PROC_HAVE_CORE_LOG=1
 )
 
+# -------------------------------
+# Dependencies
+# -------------------------------
 find_package(Threads REQUIRED)
-target_link_libraries(app PRIVATE Threads::Threads)
+
+if(WIN32 AND NOT MSVC)
+    # Link ws2_32 on MinGW/Clang on Windows
+    set(PLATFORM_LIBS ws2_32)
+endif()
+
+# -------------------------------
+# Executable
+# -------------------------------
+set(EXE_NAME app)
+if(WIN32)
+    set(EXE_NAME App)
+endif()
+
+add_executable(${EXE_NAME} ${SRC})
+
+target_link_libraries(${EXE_NAME} PRIVATE Threads::Threads ${PLATFORM_LIBS})
 
