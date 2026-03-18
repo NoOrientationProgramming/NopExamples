@@ -1,13 +1,108 @@
 
 project(
 	'TCP Echo Server',
-	'c',
 	'cpp',
-	default_options : ['cpp_std=c++11'],
 )
 
 fs = import('fs')
 cxx = meson.get_compiler('cpp')
+
+# Sources
+
+srcs = [
+	'../deps/SystemCore/Processing.cpp',
+	'../deps/SystemCore/Log.cpp',
+	'../deps/SystemCore/SystemDebugging.cpp',
+	'../deps/SystemCore/SystemCommanding.cpp',
+	'../deps/SystemCore/TcpListening.cpp',
+	'../deps/SystemCore/TcpTransfering.cpp',
+	'main.cpp',
+	'Supervising.cpp',
+	'UserInteracting.cpp',
+]
+
+# Arguments
+
+args = [
+	'-DCONFIG_PROC_HAVE_LOG=1',
+	'-DCONFIG_PROC_HAVE_CORE_LOG=1',
+]
+
+# https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
+warningsGcc = [
+	'-Wall',
+	'-Wextra',
+	'-Wpedantic',
+	'-Werror',
+	'-Wfatal-errors',
+	'-Wreorder',
+	'-Wswitch-enum',
+	'-Wuseless-cast',
+	'-Wparentheses',
+	'-Wshift-overflow',
+	'-Wsign-compare',
+	'-Wzero-as-null-pointer-constant',
+	'-Wcast-align',
+	'-Wcast-qual',
+	'-Wcatch-value',
+	'-Wchar-subscripts',
+	'-Wswitch-default',
+	'-Wctor-dtor-privacy',
+	'-Wduplicated-branches',
+	'-Wduplicated-cond',
+	'-Wempty-body',
+	'-Wextra-semi',
+	'-Wfloat-equal',
+	'-Wformat',
+	'-Wformat-extra-args',
+	'-Wimplicit-fallthrough',
+	'-Wmissing-field-initializers',
+	'-Wnull-dereference',
+	'-Wshadow',
+]
+
+warningsClang = [
+	'-Wall',
+	'-Wextra',
+	'-Wpedantic',
+	'-Werror',
+	'-Wno-gnu-zero-variadic-macro-arguments',
+	'-Wshadow',
+	'-Wsign-conversion',
+	'-Wnull-dereference',
+	'-Wdouble-promotion',
+	'-Wimplicit-fallthrough',
+	'-Wcast-qual',
+	'-Wcast-align',
+	'-Wnon-virtual-dtor',
+	'-Woverloaded-virtual',
+	'-Wfloat-equal',
+	'-Wswitch-enum',
+	'-Wmissing-declarations',
+	'-Wunreachable-code',
+	'-Wdocumentation',
+	'-Wthread-safety',
+]
+
+if host_machine.system() == 'windows'
+	args += '-D_WIN32_WINNT=_WIN32_WINNT_WIN10'
+	args += '-DWINVER=_WIN32_WINNT_WIN10'
+
+	# wrestool -l CodeOrb.exe
+	if cxx.get_id() != 'msvc'
+		args += '-D__STDCPP_THREADS__=1'
+	endif
+else
+	args += '-std=gnu++11'
+endif
+
+if cxx.get_id() == 'msvc'
+	args += '/std:c++17'
+elif cxx.get_id() == 'gcc'
+	args += warningsGcc
+elif cxx.get_id() == 'clang'
+	args += warningsClang
+endif
 
 # Dependencies
 
@@ -23,15 +118,7 @@ endif
 myApp = executable(
 	'app',
 	[
-		'../deps/SystemCore/Processing.cpp',
-		'../deps/SystemCore/Log.cpp',
-		'../deps/SystemCore/TcpListening.cpp',
-		'../deps/SystemCore/TcpTransfering.cpp',
-		'../deps/SystemCore/SystemCommanding.cpp',
-		'../deps/SystemCore/SystemDebugging.cpp',
-		'main.cpp',
-		'Supervising.cpp',
-		'UserInteracting.cpp',
+		srcs,
 	],
 	include_directories : include_directories([
 		'../deps/SystemCore',
@@ -40,9 +127,7 @@ myApp = executable(
 		deps,
 	],
 	cpp_args : [
-		'-std=gnu++11',
-		'-DCONFIG_PROC_HAVE_LOG=1',
-		'-DCONFIG_PROC_HAVE_CORE_LOG=1',
+		args,
 	],
 )
 
