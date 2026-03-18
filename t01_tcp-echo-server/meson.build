@@ -6,6 +6,9 @@ project(
 	default_options : ['cpp_std=c++11'],
 )
 
+fs = import('fs')
+cxx = meson.get_compiler('cpp')
+
 # Dependencies
 
 deps = []
