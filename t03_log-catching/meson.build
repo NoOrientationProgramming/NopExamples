@@ -1,6 +1,6 @@
 
 project(
-	'Log-Catching',
+	'Application log catcher',
 	'c',
 	'cpp',
 	default_options : ['cpp_std=c++11'],
@@ -9,120 +9,151 @@ project(
 fs = import('fs')
 cxx = meson.get_compiler('cpp')
 
-srcsCore = [
-	'Processing.cpp',
-	'Log.cpp',
-	'TcpListening.cpp',
-	'TcpTransfering.cpp',
-	'SystemDebugging.cpp',
-	'SystemCommanding.cpp',
-]
+# Sources
 
-srcsCommon = [
-	'LibFilesys.cpp',
-]
-
-srcsSpecific = [
+srcs = [
+	'../deps/SystemCore/Processing.cpp',
+	'../deps/SystemCore/Log.cpp',
+	'../deps/SystemCore/SystemDebugging.cpp',
+	'../deps/SystemCore/SystemCommanding.cpp',
+	'../deps/SystemCore/TcpListening.cpp',
+	'../deps/SystemCore/TcpTransfering.cpp',
 	'main.cpp',
 	'LcSupervising.cpp',
 	'LogCatching.cpp',
 ]
 
-srcs = []
-srcs += srcsSpecific
-
-foreach f : srcsCore
-	srcs += join_paths('../deps/SystemCore', f)
-endforeach
-
-foreach f : srcsCommon
-	srcs += join_paths('../deps/LibNaegCommon', f)
-endforeach
-
-incs = [
-	'../deps/SystemCore',
-	'../deps/LibNaegCommon',
-]
-
-incsAbs = []
-foreach p : incs
-	incsAbs += include_directories(p)
-endforeach
-
-deps = []
-deps += dependency('tclap')
+# Arguments
 
 args = [
-	'-DdPackageName="' + meson.project_name() + '"',
-	'-DdAppName="log-catching"',
-	'-DHAVE_SSTREAM',
 	'-DCONFIG_PROC_HAVE_LOG=1',
-	'-DCONFIG_PROC_HAVE_CORE_LOG=1',
-	'-DCONFIG_PROC_SHOW_ADDRESS_IN_ID=0',
-	'-DCONFIG_PROC_INFO_BUFFER_SIZE=1024',
-	'-DCONFIG_PROC_DISABLE_TREE_DEFAULT=0',
-	'-std=gnu++11',
+	'-DCONFIG_PROC_HAVE_CORE_LOG=0',
 ]
 
-args += '-Os'
-
-if cxx.get_id() == 'clang'
-	args += '-gdwarf-4'
-endif
-
-warnings = []
-
 # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html
-if cxx.get_id() == 'gcc'
-	warnings = [
-		'-Wall',
-		'-Wextra',
-		'-Wpedantic',
-		'-Werror',
-		'-Wfatal-errors',
-		'-Wreorder',
-		'-Wswitch-enum',
-		'-Wuseless-cast',
-		'-Wparentheses',
-		'-Wshift-overflow',
-		'-Wsign-compare',
-		'-Wzero-as-null-pointer-constant',
-		'-Wcast-align',
-		'-Wcast-qual',
-		'-Wcatch-value',
-		'-Wchar-subscripts',
-		'-Wswitch-default',
-		'-Wctor-dtor-privacy',
-		'-Wno-prio-ctor-dtor',
-		'-Wduplicated-branches',
-		'-Wduplicated-cond',
-		'-Wempty-body',
-		'-Wextra-semi',
-		'-Wfloat-equal',
-		'-Wformat',
-		'-Wformat-extra-args',
-		'-Wimplicit-fallthrough',
-		'-Wmissing-field-initializers',
-		'-Wnull-dereference',
-		'-Wshadow',
-	]
+warningsGcc = [
+	'-Wall',
+	'-Wextra',
+	'-Wpedantic',
+	'-Werror',
+	'-Wfatal-errors',
+	'-Wreorder',
+	'-Wswitch-enum',
+	'-Wuseless-cast',
+	'-Wparentheses',
+	'-Wshift-overflow',
+	'-Wsign-compare',
+	'-Wzero-as-null-pointer-constant',
+	'-Wcast-align',
+	'-Wcast-qual',
+	'-Wcatch-value',
+	'-Wchar-subscripts',
+	'-Wswitch-default',
+	'-Wctor-dtor-privacy',
+	'-Wduplicated-branches',
+	'-Wduplicated-cond',
+	'-Wempty-body',
+	'-Wextra-semi',
+	'-Wfloat-equal',
+	'-Wformat',
+	'-Wformat-extra-args',
+	'-Wimplicit-fallthrough',
+	'-Wmissing-field-initializers',
+	'-Wnull-dereference',
+	'-Wshadow',
+]
+
+warningsClang = [
+	'-Wall',
+	'-Wextra',
+	'-Wpedantic',
+	'-Werror',
+	'-Wno-gnu-zero-variadic-macro-arguments',
+	'-Wshadow',
+	'-Wsign-conversion',
+	'-Wnull-dereference',
+	'-Wdouble-promotion',
+	'-Wimplicit-fallthrough',
+	'-Wcast-qual',
+	'-Wcast-align',
+	'-Wnon-virtual-dtor',
+	'-Woverloaded-virtual',
+	'-Wfloat-equal',
+	'-Wswitch-enum',
+	'-Wmissing-declarations',
+	'-Wunreachable-code',
+	'-Wdocumentation',
+	'-Wthread-safety',
+]
+
+if host_machine.system() == 'windows'
+	args += '-D_WIN32_WINNT=_WIN32_WINNT_WIN10'
+	args += '-DWINVER=_WIN32_WINNT_WIN10'
+
+	# wrestool -l CodeOrb.exe
+	if cxx.get_id() != 'msvc'
+		args += '-D__STDCPP_THREADS__=1'
+	endif
+else
+	args += '-std=gnu++11'
 endif
 
-args += warnings
+if cxx.get_id() == 'msvc'
+	args += '/std:c++17'
+elif cxx.get_id() == 'gcc'
+	args += warningsGcc
+elif cxx.get_id() == 'clang'
+	args += warningsClang
+endif
+
+# Dependencies
+
+deps = []
+deps += dependency('threads')
+
+if host_machine.system() == 'windows'
+	deps += cxx.find_library('ws2_32')
+endif
+
+if fs.is_dir('../deps/tclap_loc')
+	message('submodule tclap found')
+
+	incTclap = include_directories(['../deps/tclap_loc/include'], is_system: true)
+	deps += declare_dependency(include_directories: incTclap)
+	args += '-DAPP_HAS_TCLAP=1'
+else
+	warning('submodule tclap not found. Limited CLI options')
+endif
+
+have_avx2 = cxx.has_argument('-mavx2')
+if have_avx2
+	add_project_arguments('-mavx2', language : 'cpp')
+	add_project_arguments('-DAPP_HAS_AVX2=1', language : 'cpp')
+else
+	warning('scalar code only')
+endif
+
+# Application
+
+nameExe = 'app'
+if host_machine.system() == 'windows'
+	nameExe = 'App'
+endif
 
 myApp = executable(
-	'app',
-	srcs,
-	include_directories : [
-		incsAbs,
+	nameExe,
+	[
+		srcs,
 	],
+	include_directories : include_directories([
+		'../deps/SystemCore',
+		'../deps/LibNaegCommon',
+	]),
 	dependencies : [
 		deps,
 	],
 	cpp_args : [
 		args,
-	],
-	link_args : [
 	],
 )
 

@@ -30,7 +30,6 @@
 #include <signal.h>
 
 #include "LogCatching.h"
-#include "LibFilesys.h"
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
