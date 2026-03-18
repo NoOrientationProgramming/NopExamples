@@ -256,6 +256,7 @@ bool MandelbrotCreating::fillersStart()
 Success MandelbrotCreating::linesProcess()
 {
 	BlockMandelHeader *pHdr;
+	size_t numIterations;
 	char *pData;
 	bool ok;
 
@@ -275,7 +276,8 @@ Success MandelbrotCreating::linesProcess()
 		if (!ok)
 			return procErrLog(-1, "error filling line %u @ %p", mIdxLineDone, mpLineDone);
 
-		mNumIterations += pHdr->numIter;
+		memcpy(&numIterations, pHdr->numIter, sizeof(numIterations));
+		mNumIterations += numIterations;
 
 		pData = mpLineDone + sizeof(BlockMandelHeader);
 

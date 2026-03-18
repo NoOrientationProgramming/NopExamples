@@ -108,6 +108,7 @@ MandelBlockFilling::MandelBlockFilling()
 	, mIdxLine(0)
 	, mNumPixel(0)
 	, mIdxPixel(0)
+	, mNumIter(0)
 	, mpDataStart(NULL)
 	, mpData(NULL)
 {
@@ -134,8 +135,7 @@ Success MandelBlockFilling::process()
 		mpHdr = (BlockMandelHeader *)mpLine;
 		mpData = mpDataStart = mpLine + sizeof(BlockMandelHeader);
 
-		mpHdr->success = 0;
-		mpHdr->numIter = 0;
+		memset(mpHdr, 0, sizeof(*mpHdr));
 
 		mNumPixel = mpCfg->szData / cBytesPerPixel;
 		mIdxPixel = 0;
@@ -151,6 +151,8 @@ Success MandelBlockFilling::process()
 
 		if (success == Positive)
 			mpHdr->success |= FlagFillingPositive;
+
+		memcpy(mpHdr->numIter, &mNumIter, sizeof(mpHdr->numIter));
 
 		mState = StDone;
 
@@ -303,7 +305,7 @@ size_t MandelBlockFilling::mandelbrot(
 		zx = xx - yy + cx;
 		zy = 2 * xy + cy;
 
-		++mpHdr->numIter;
+		++mNumIter;
 		++i;
 	}
 
