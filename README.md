@@ -16,15 +16,11 @@ Status
 
 ## Run the Examples
 
-### Install the required Build Tools
+### Supported Build Tools
 
-On Debian, Ubuntu and derivatives execute the following with root permissions
-
-`apt install build-essential`
-
-If you want to use [meson and ninja](https://mesonbuild.com/) (recommended) add
-
-`apt install meson ninja-build`
+- [Meson](https://mesonbuild.com/)
+- [CMake](https://cmake.org/)
+- [Make](https://www.gnu.org/software/make/)
 
 ### Clone the example repository
 
@@ -32,14 +28,34 @@ If you want to use [meson and ninja](https://mesonbuild.com/) (recommended) add
 
 ### Build and Run an Examples
 
-Type
-`./meson.sh t01_tcp-echo-server`
-or just
-`./meson.sh t01`
+#### Go into the example directory and create a build folder
+```
+cd t01_tcp-echo-server
+mkdir -p build
+cd build
+```
 
-Then execute the application by entering
+#### Build the application with your preferred build tool
 
-`./t01_tcp-echo-server/build-native/app`
+**Meson**
+```
+meson setup . ..
+meson compile
+```
+
+**CMake**
+```
+cmake ..
+make -j
+```
+
+**Make**
+```
+make -f ../Makefile -j
+```
+
+#### Then execute the application by entering
+`./app`
 
 ## Read the documentation
 
