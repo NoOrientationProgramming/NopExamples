@@ -47,5 +47,6 @@ jobs:
             meson setup --cross-file ../../tools-dev/cross/meson-cross-${{ matrix.target }}.txt . ..
             meson compile
             rm -rf *
+            cd ../..
           done
 

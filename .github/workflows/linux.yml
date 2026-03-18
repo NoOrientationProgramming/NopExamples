@@ -47,5 +47,6 @@ jobs:
             make -f ../Makefile -j
             ./app
             rm -rf *
+            cd ../..
           done
 
