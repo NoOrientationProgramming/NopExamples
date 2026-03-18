@@ -55,7 +55,15 @@ int main(int argc, char *argv[])
 	signal(SIGTERM, applicationCloseRequest);
 #endif
 	if (argc >= 2)
+	{
+		if (!strcmp(argv[1], "--help"))
+		{
+			cout << "This is a help dummy" << endl;
+			return 0;
+		}
+
 		levelLogSet(atoi(argv[1]));
+	}
 
 	pApp = Supervising::create();
 	if (!pApp)
