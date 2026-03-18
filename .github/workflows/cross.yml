@@ -8,9 +8,6 @@ jobs:
 
   cross-build-run:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: tools/hello-world
     strategy:
       matrix:
         target: [arm, riscv, mingw]
@@ -22,13 +19,13 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install build tools cross
+      - name: Install build tools
         run: |
           sudo apt update
           sudo apt install -y \
             gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
             gcc-riscv64-linux-gnu g++-riscv64-linux-gnu \
-            mingw-w64
+            mingw-w64 build-essential cmake
 
       - name: Setup mingw
         if: matrix.target == 'mingw'
@@ -41,8 +38,24 @@ jobs:
 
 # Build
 
-      - name: Setup build directory meson ${{ matrix.target }}
-        run: meson setup --cross-file ../cross/meson-cross-${{ matrix.target }}.txt build-meson-${{ matrix.target }}
-      - name: Build application meson ${{ matrix.target }}
-        run: ninja -C build-meson-${{ matrix.target }} -j$(nproc)
+      - name: Build all examples for ${{ matrix.target }}
+        run: |
+          for example in t01_tcp-echo-server t02_multithreading-mandelbrot t03_log-catching; do
+            mkdir -p $example/build-${{ matrix.target }}
+            cd $example/build-${{ matrix.target }}
+            echo "=== Building $example for ${{ matrix.target }} with meson ==="
+            meson setup --cross-file ../../../cross/meson-cross-${{ matrix.target }}.txt . ..
+            meson compile
+            ./app
+            rm -rf *
+            echo "=== Building $example for ${{ matrix.target }} with cmake ==="
+            cmake ..
+            make -j
+            ./app
+            rm -rf *
+            echo "=== Building $example for ${{ matrix.target }} with make ==="
+            make -f ../Makefile -j
+            ./app
+            rm -rf *
+          done
 
