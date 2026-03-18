@@ -46,7 +46,6 @@ jobs:
             echo "=== Building $example for ${{ matrix.target }} with meson ==="
             meson setup --cross-file ../../tools-dev/cross/meson-cross-${{ matrix.target }}.txt . ..
             meson compile
-            ./app
             rm -rf *
           done
 
