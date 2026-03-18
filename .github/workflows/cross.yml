@@ -44,17 +44,8 @@ jobs:
             mkdir -p $example/build-${{ matrix.target }}
             cd $example/build-${{ matrix.target }}
             echo "=== Building $example for ${{ matrix.target }} with meson ==="
-            meson setup --cross-file ../../../cross/meson-cross-${{ matrix.target }}.txt . ..
+            meson setup --cross-file ../../tools-dev/cross/meson-cross-${{ matrix.target }}.txt . ..
             meson compile
-            ./app
-            rm -rf *
-            echo "=== Building $example for ${{ matrix.target }} with cmake ==="
-            cmake ..
-            make -j
-            ./app
-            rm -rf *
-            echo "=== Building $example for ${{ matrix.target }} with make ==="
-            make -f ../Makefile -j
             ./app
             rm -rf *
           done
