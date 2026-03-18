@@ -162,7 +162,7 @@ bool Supervising::servicesStart()
 
 void Supervising::usersAdd()
 {
-	int peerFd = mpList->nextPeerFd();
+	SOCKET peerFd = mpList->nextPeerFd();
 	if (peerFd == INVALID_SOCKET)
 		return;
 
