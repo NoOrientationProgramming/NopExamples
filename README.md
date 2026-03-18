@@ -10,6 +10,10 @@ Real-life examples based on the [SystemCore](https://github.com/fractal-programm
 Status
 - In progress
 
+Built with **Fractal System Architecture (FSA)**
+
+Learn more: https://github.com/fractal-programming
+
 ## Run the Examples
 
 ### Install the required Build Tools
