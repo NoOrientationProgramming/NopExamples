@@ -1,0 +1,48 @@
+
+name: ARM, RISC-V & MinGW
+
+on:
+  workflow_dispatch
+
+jobs:
+
+  cross-build-run:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tools/hello-world
+    strategy:
+      matrix:
+        target: [arm, riscv, mingw]
+    steps:
+
+# Toolchain + git
+
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - name: Install build tools cross
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            gcc-arm-linux-gnueabihf g++-arm-linux-gnueabihf \
+            gcc-riscv64-linux-gnu g++-riscv64-linux-gnu \
+            mingw-w64
+
+      - name: Setup mingw
+        if: matrix.target == 'mingw'
+        run: sudo update-alternatives --set x86_64-w64-mingw32-g++ /usr/bin/x86_64-w64-mingw32-g++-posix
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.10'
+      - name: Install build tools
+        run: python -m pip install meson ninja
+
+# Build
+
+      - name: Setup build directory meson ${{ matrix.target }}
+        run: meson setup --cross-file ../cross/meson-cross-${{ matrix.target }}.txt build-meson-${{ matrix.target }}
+      - name: Build application meson ${{ matrix.target }}
+        run: ninja -C build-meson-${{ matrix.target }} -j$(nproc)
+
