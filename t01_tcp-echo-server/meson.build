@@ -16,6 +16,8 @@ srcs = [
 	'../deps/SystemCore/SystemCommanding.cpp',
 	'../deps/SystemCore/TcpListening.cpp',
 	'../deps/SystemCore/TcpTransfering.cpp',
+	'../deps/LibNaegCommon/LibDspc.cpp',
+	'../deps/LibNaegCommon/Res.cpp',
 	'main.cpp',
 	'Supervising.cpp',
 	'UserInteracting.cpp',
@@ -24,6 +26,9 @@ srcs = [
 # Arguments
 
 args = [
+	'-DdPackageName="' + meson.project_name() + '"',
+	'-DdAppName="app"',
+	'-DdVersion="app-v1.26.3.1"',
 	'-DCONFIG_PROC_HAVE_LOG=1',
 	'-DCONFIG_PROC_HAVE_CORE_LOG=1',
 ]
@@ -137,6 +142,7 @@ myApp = executable(
 	],
 	include_directories : include_directories([
 		'../deps/SystemCore',
+		'../deps/LibNaegCommon',
 	]),
 	dependencies : [
 		deps,

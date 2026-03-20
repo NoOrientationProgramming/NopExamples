@@ -28,6 +28,8 @@
 #include "Supervising.h"
 #include "SystemDebugging.h"
 
+#include "env.h"
+
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
@@ -150,12 +152,11 @@ bool Supervising::servicesStart()
 		return false;
 	}
 
-	uint16_t port = 5000;
-	mpList->portSet(port);
+	mpList->portSet(env.portListening);
 
 	start(mpList); // start in main thread
 
-	cout << "Listening on " << port << endl;
+	cout << "Listening on " << env.portListening << endl;
 
 	return true;
 }
