@@ -31,6 +31,9 @@ srcs = [
 # Arguments
 
 args = [
+	'-DdPackageName="' + meson.project_name() + '"',
+	'-DdAppName="app"',
+	'-DdVersion="app-v1.26.3.1"',
 	'-DCONFIG_PROC_HAVE_LOG=1',
 	'-DCONFIG_PROC_HAVE_CORE_LOG=0',
 ]

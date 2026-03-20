@@ -136,7 +136,7 @@ if host_machine.system() == 'windows'
 endif
 
 myApp = executable(
-	'app',
+	nameExe,
 	[
 		srcs,
 	],

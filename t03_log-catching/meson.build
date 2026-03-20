@@ -16,6 +16,8 @@ srcs = [
 	'../deps/SystemCore/SystemCommanding.cpp',
 	'../deps/SystemCore/TcpListening.cpp',
 	'../deps/SystemCore/TcpTransfering.cpp',
+	'../deps/LibNaegCommon/LibDspc.cpp',
+	'../deps/LibNaegCommon/Res.cpp',
 	'main.cpp',
 	'LcSupervising.cpp',
 	'LogCatching.cpp',
@@ -24,6 +26,9 @@ srcs = [
 # Arguments
 
 args = [
+	'-DdPackageName="' + meson.project_name() + '"',
+	'-DdAppName="app"',
+	'-DdVersion="app-v1.26.3.1"',
 	'-DCONFIG_PROC_HAVE_LOG=1',
 	'-DCONFIG_PROC_HAVE_CORE_LOG=0',
 ]
@@ -121,14 +126,6 @@ if fs.is_dir('../deps/tclap_loc')
 	args += '-DAPP_HAS_TCLAP=1'
 else
 	warning('submodule tclap not found. Limited CLI options')
-endif
-
-have_avx2 = cxx.has_argument('-mavx2')
-if have_avx2
-	add_project_arguments('-mavx2', language : 'cpp')
-	add_project_arguments('-DAPP_HAS_AVX2=1', language : 'cpp')
-else
-	warning('scalar code only')
 endif
 
 # Application
