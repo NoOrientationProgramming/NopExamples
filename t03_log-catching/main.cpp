@@ -23,46 +23,63 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <signal.h>
-#include <tclap/CmdLine.h>
-#include <iostream>
+#ifndef APP_HAS_TCLAP
+#define APP_HAS_TCLAP 0
+#endif
 
+#ifdef __unix__
+#include "signal.h"
+#endif
+#include <iostream>
+#include <thread>
+#if APP_HAS_TCLAP
+#include <tclap/CmdLine.h>
+#endif
+
+#if APP_HAS_TCLAP
 #include "TclapOutput.h"
-#include "LcSupervising.h"
-#include "LogCatching.h"
+#endif
+#include "Supervising.h"
+#include "LibDspc.h"
+
+#include "env.h"
 
 using namespace std;
+using namespace chrono;
+#if APP_HAS_TCLAP
 using namespace TCLAP;
+#endif
 
-mutex envMtx;
+#define dNumLinesDefault "100"
 
-LcSupervising *pApp = NULL;
+Environment env;
+Supervising *pApp = NULL;
 
+#if APP_HAS_TCLAP
 class AppHelpOutput : public TclapOutput {};
+#endif
 
-/*
-Literature
-- http://man7.org/linux/man-pages/man7/signal.7.html
-  - for enums: kill -l
-  - sys/signal.h
-  SIGHUP  1     hangup
-  SIGINT  2     interrupt
-  SIGQUIT 3     quit
-  SIGILL  4     illegal instruction (not reset when caught)
-  SIGTRAP 5     trace trap (not reset when caught)
-  SIGABRT 6     abort()
-  SIGPOLL 7     pollable event ([XSR] generated, not supported)
-  SIGFPE  8     floating point exception
-  SIGKILL 9     kill (cannot be caught or ignored)
-- https://www.usna.edu/Users/cs/aviv/classes/ic221/s16/lec/19/lec.html
-- http://www.alexonlinux.com/signal-handling-in-linux
-*/
+// OS signal handler => Tell the application what to do on Ctrl-C
+#if defined(_WIN32)
+BOOL WINAPI applicationCloseRequest(DWORD signal)
+{
+	if (signal != CTRL_C_EVENT)
+		return FALSE;
+
+	cout << endl;
+	pApp->unusedSet();
+
+	return TRUE;
+}
+#else
 void applicationCloseRequest(int signum)
 {
 	(void)signum;
+
 	cout << endl;
 	pApp->unusedSet();
 }
+#endif
 
 void licensesPrint()
 {
@@ -78,9 +95,40 @@ void licensesPrint()
 
 int main(int argc, char *argv[])
 {
-	CmdLine cmd("Command description message", ' ', "unknown");
+	// Register OS signal handlers
+#if defined(_WIN32)
+	// https://learn.microsoft.com/en-us/windows/console/setconsolectrlhandler
+	BOOL okWin = SetConsoleCtrlHandler(applicationCloseRequest, TRUE);
+	if (!okWin)
+	{
+		errLog(-1, "could not set ctrl handler");
+		return 1;
+	}
+#else
+	// http://man7.org/linux/man-pages/man7/signal.7.html
+	signal(SIGINT, applicationCloseRequest);
+	signal(SIGTERM, applicationCloseRequest);
+#endif
+	env.haveTclap = 1;
+	env.daemonDebug = false;
+	env.verbosity = 3;
+#if defined(__unix__)
+	env.coreDump = false;
+#endif
+	env.numLines = atoi(dNumLinesDefault);
+
+#if APP_HAS_TCLAP
+	int res;
+
+	CmdLine cmd("Command description message", ' ', appVersion());
 
 	AppHelpOutput aho;
+#if 1
+	aho.package = dPackageName;
+	aho.versionApp = dVersion;
+	aho.nameApp = dAppName;
+	aho.copyright = " (C) 2025 DSP-Crowd Electronics GmbH";
+#endif
 	cmd.setOutput(&aho);
 
 	SwitchArg argDebug("d", "debug", "Enable debugging daemon", false);
@@ -89,8 +137,12 @@ int main(int argc, char *argv[])
 	cmd.add(argVerbosity);
 	SwitchArg argLicenses("", "licenses", "Show dependencies", false);
 	cmd.add(argLicenses);
-
-	ValueArg<int> argNumLines("n", "num-lines", "Number of lines to be saved", false, 100, "int");
+#if defined(__unix__)
+	SwitchArg argCoreDump("", "core-dump", "Enable core dumps", false);
+	cmd.add(argCoreDump);
+#endif
+	ValueArg<int> argNumLines("n", "num-lines", "Number of lines to be saved. Default: " dNumLinesDefault,
+								false, env.numLines, "int");
 	cmd.add(argNumLines);
 
 	ValueArg<string> argNameBase("b", "name-base", "Basename of the output file", false, "app", "string");
@@ -98,11 +150,23 @@ int main(int argc, char *argv[])
 
 	cmd.parse(argc, argv);
 
-	levelLogSet(argVerbosity.getValue());
+	env.daemonDebug = argDebug.getValue();
 
-	/* https://www.gnu.org/software/libc/manual/html_node/Termination-Signals.html */
-	signal(SIGINT, applicationCloseRequest);
-	signal(SIGTERM, applicationCloseRequest);
+	res = argVerbosity.getValue();
+	if (res > 0 && res < 6)
+		env.verbosity = res;
+#if defined(__unix__)
+	env.coreDump = argCoreDump.getValue();
+#endif
+	res = argNumLines.getValue();
+	if (res > 0)
+		env.numLines = res;
+
+	env.nameBase = argNameBase.getValue();
+#else
+	env.haveTclap = 0;
+#endif
+	levelLogSet(argVerbosity.getValue());
 
 	if (argLicenses.getValue())
 	{
@@ -110,28 +174,19 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	pApp = LcSupervising::create();
+	pApp = Supervising::create();
 	if (!pApp)
 	{
-		errLog(-1, "could not create process");
+		cerr << "could not create process" << endl;
 		return 1;
 	}
 
-	pApp->mDebug = argDebug.getValue();
-
-	LogCatching::numLines = argNumLines.getValue();
-	LogCatching::nameBase = argNameBase.getValue();
-
-	pApp->procTreeDisplaySet(true);
-
-	size_t coreBurst;
-
 	while (1)
 	{
-		for (coreBurst = 0; coreBurst < 16; ++coreBurst)
+		for (size_t coreBurst = 0; coreBurst < 13; ++coreBurst)
 			pApp->treeTick();
 
-		this_thread::sleep_for(chrono::milliseconds(2));
+		this_thread::sleep_for(chrono::milliseconds(7));
 
 		if (pApp->progress())
 			continue;
@@ -145,6 +200,5 @@ int main(int argc, char *argv[])
 	Processing::applicationClose();
 
 	return !(success == Positive);
-
 }
 

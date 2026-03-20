@@ -23,21 +23,21 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "LcSupervising.h"
+#include "Supervising.h"
 #include "SystemDebugging.h"
 #include "LogCatching.h"
 
 using namespace std;
 
-LcSupervising::LcSupervising()
-	: Processing("LcSupervising")
+Supervising::Supervising()
+	: Processing("Supervising")
 	, mDebug(false)
 	, mpApp(NULL)
 {}
 
 /* member functions */
 
-Success LcSupervising::initialize()
+Success Supervising::initialize()
 {
 	if (mDebug)
 	{
@@ -61,7 +61,7 @@ Success LcSupervising::initialize()
 	return Positive;
 }
 
-Success LcSupervising::process()
+Success Supervising::process()
 {
 	return mpApp->success();
 }

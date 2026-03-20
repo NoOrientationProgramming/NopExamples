@@ -54,7 +54,7 @@ using namespace TCLAP;
 const int cPortMax = 64000;
 
 Environment env;
-Processing *pApp = NULL;
+Supervising *pApp = NULL;
 
 #if APP_HAS_TCLAP
 class AppHelpOutput : public TclapOutput {};
@@ -82,6 +82,18 @@ void applicationCloseRequest(int signum)
 }
 #endif
 
+void licensesPrint()
+{
+	cout << endl;
+	cout << "This program uses the following external components" << endl;
+	cout << endl;
+
+	cout << "TCLAP" << endl;
+	cout << "https://tclap.sourceforge.net/" << endl;
+	cout << "MIT" << endl;
+	cout << endl;
+}
+
 int main(int argc, char *argv[])
 {
 	// Register OS signal handlers
@@ -99,7 +111,8 @@ int main(int argc, char *argv[])
 	signal(SIGTERM, applicationCloseRequest);
 #endif
 	env.haveTclap = 1;
-	env.verbosity = 0;
+	env.daemonDebug = false;
+	env.verbosity = 3;
 #if defined(__unix__)
 	env.coreDump = false;
 #endif
@@ -119,17 +132,23 @@ int main(int argc, char *argv[])
 #endif
 	cmd.setOutput(&aho);
 
-	ValueArg<int> argVerbosity("v", "verbosity", "Verbosity: high => more output", false, 0, "uint8");
+	SwitchArg argDebug("d", "debug", "Enable debugging daemon", false);
+	cmd.add(argDebug);
+	ValueArg<int> argVerbosity("v", "verbosity", "Verbosity: high => more output", false, 3, "int");
 	cmd.add(argVerbosity);
+	SwitchArg argLicenses("", "licenses", "Show dependencies", false);
+	cmd.add(argLicenses);
 #if defined(__unix__)
 	SwitchArg argCoreDump("", "core-dump", "Enable core dumps", false);
 	cmd.add(argCoreDump);
 #endif
-	ValueArg<uint16_t> argPortListening("", "port-listening", "Listening port of TCP server. Default: " dPortListeningDefault,
-								false, env.portListening, "uint16");
+	ValueArg<int> argPortListening("", "port-listening", "Listening port of TCP server. Default: " dPortListeningDefault,
+								false, env.portListening, "int");
 	cmd.add(argPortListening);
 
 	cmd.parse(argc, argv);
+
+	env.daemonDebug = argDebug.getValue();
 
 	res = argVerbosity.getValue();
 	if (res > 0 && res < 6)
@@ -142,20 +161,14 @@ int main(int argc, char *argv[])
 		env.portListening = res;
 #else
 	env.haveTclap = 0;
-	env.verbosity = 2;
-
-	if (argc >= 2)
-	{
-		if (!strcmp(argv[1], "--help"))
-		{
-			cout << "This is a help dummy" << endl;
-			return 0;
-		}
-
-		env.verbosity = atoi(argv[1]);
-	}
 #endif
-	levelLogSet(env.verbosity);
+	levelLogSet(argVerbosity.getValue());
+
+	if (argLicenses.getValue())
+	{
+		licensesPrint();
+		return 0;
+	}
 
 	pApp = Supervising::create();
 	if (!pApp)
@@ -166,8 +179,10 @@ int main(int argc, char *argv[])
 
 	while (1)
 	{
-		pApp->treeTick();
-		this_thread::sleep_for(chrono::milliseconds(10));
+		for (size_t coreBurst = 0; coreBurst < 13; ++coreBurst)
+			pApp->treeTick();
+
+		this_thread::sleep_for(chrono::milliseconds(7));
 
 		if (pApp->progress())
 			continue;

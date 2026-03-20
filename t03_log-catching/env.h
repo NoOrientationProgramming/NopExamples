@@ -30,7 +30,8 @@ struct Environment
 #if defined(__unix__)
 	bool coreDump;
 #endif
-	uint16_t portListening;
+	size_t numLines;
+	std::string nameBase;
 };
 
 extern Environment env;

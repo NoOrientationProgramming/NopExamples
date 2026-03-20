@@ -23,32 +23,32 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LC_SUPERVISING_H
-#define LC_SUPERVISING_H
+#ifndef SUPERVISING_H
+#define SUPERVISING_H
 
 #include "Processing.h"
 
-class LcSupervising : public Processing
+class Supervising : public Processing
 {
 
 public:
 
-	static LcSupervising *create()
+	static Supervising *create()
 	{
-		return new (std::nothrow) LcSupervising;
+		return new (std::nothrow) Supervising;
 	}
 
 	bool mDebug;
 
 protected:
 
-	LcSupervising();
-	virtual ~LcSupervising() {}
+	Supervising();
+	virtual ~Supervising() {}
 
 private:
 
-	LcSupervising(const LcSupervising &) : Processing("") {}
-	LcSupervising &operator=(const LcSupervising &) { return *this; }
+	Supervising(const Supervising &) : Processing("") {}
+	Supervising &operator=(const Supervising &) { return *this; }
 
 	/*
 	 * Naming of functions:  objectVerb()

@@ -31,6 +31,8 @@
 
 #include "LogCatching.h"
 
+#include "env.h"
+
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
@@ -45,9 +47,6 @@ dProcessStateStr(ProcState);
 #endif
 
 using namespace std;
-
-uint32_t LogCatching::numLines = 0;
-string LogCatching::nameBase = "";
 
 LogCatching *LogCatching::pLog = NULL;
 
@@ -158,7 +157,7 @@ Success LogCatching::linesFetch()
 		mFragmentLine = "";
 		++mCntLines;
 
-		if (mLines.size() > numLines)
+		if (mLines.size() > env.numLines)
 			mLines.pop_front();
 
 		pBuf = pFound;
@@ -197,7 +196,7 @@ bool LogCatching::logSave(bool triggeredByUser)
 
 	//strftime(buf, sizeof(buf), "%y%m%d-%H%M%S_", infoTime);
 	snprintf(buf, sizeof(buf), "%ld_", now);
-	nameFile = string(buf) + nameBase;
+	nameFile = string(buf) + env.nameBase;
 
 	if (triggeredByUser)
 		nameFile += "_usr";

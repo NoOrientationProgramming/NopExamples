@@ -41,9 +41,6 @@ public:
 		return new (std::nothrow) LogCatching;
 	}
 
-	static uint32_t numLines;
-	static std::string nameBase;
-
 protected:
 
 	LogCatching();
