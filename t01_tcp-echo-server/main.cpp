@@ -27,10 +27,13 @@
 #define APP_HAS_TCLAP 0
 #endif
 
-#ifdef __unix__
-#include "signal.h"
+#if defined(_WIN32)
+#include <windows.h>
+#else
+#include <signal.h>
 #endif
 #include <iostream>
+#include <chrono>
 #include <thread>
 #if APP_HAS_TCLAP
 #include <tclap/CmdLine.h>
@@ -182,18 +185,18 @@ int main(int argc, char *argv[])
 		for (size_t coreBurst = 0; coreBurst < 13; ++coreBurst)
 			pApp->treeTick();
 
-		this_thread::sleep_for(chrono::milliseconds(7));
+		if (!pApp->progress())
+			break;
 
-		if (pApp->progress())
-			continue;
-
-		break;
+		this_thread::sleep_for(milliseconds(15));
 	}
 
 	Success success = pApp->success();
 	Processing::destroy(pApp);
 
 	Processing::applicationClose();
+
+	filesStdClose();
 
 	return !(success == Positive);
 }

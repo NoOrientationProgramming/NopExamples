@@ -23,6 +23,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef APP_HAS_TCLAP
+#define APP_HAS_TCLAP 0
+#endif
+
 #if defined(_WIN32)
 #include <windows.h>
 #else
@@ -31,15 +35,32 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#if APP_HAS_TCLAP
+#include <tclap/CmdLine.h>
+#endif
 
+#if APP_HAS_TCLAP
+#include "TclapOutput.h"
+#endif
 #include "Supervising.h"
-#include "LibFilesys.h"
+#include "LibDspc.h"
+
+#include "env.h"
 
 using namespace std;
 using namespace chrono;
+#if APP_HAS_TCLAP
+using namespace TCLAP;
+#endif
 
+Environment env;
 Supervising *pApp = NULL;
 
+#if APP_HAS_TCLAP
+class AppHelpOutput : public TclapOutput {};
+#endif
+
+// OS signal handler => Tell the application what to do on Ctrl-C
 #if defined(_WIN32)
 BOOL WINAPI applicationCloseRequest(DWORD signal)
 {
@@ -61,8 +82,21 @@ void applicationCloseRequest(int signum)
 }
 #endif
 
+void licensesPrint()
+{
+	cout << endl;
+	cout << "This program uses the following external components" << endl;
+	cout << endl;
+
+	cout << "TCLAP" << endl;
+	cout << "https://tclap.sourceforge.net/" << endl;
+	cout << "MIT" << endl;
+	cout << endl;
+}
+
 int main(int argc, char *argv[])
 {
+	// Register OS signal handlers
 #if defined(_WIN32)
 	// https://learn.microsoft.com/en-us/windows/console/setconsolectrlhandler
 	BOOL okWin = SetConsoleCtrlHandler(applicationCloseRequest, TRUE);
@@ -76,25 +110,74 @@ int main(int argc, char *argv[])
 	signal(SIGINT, applicationCloseRequest);
 	signal(SIGTERM, applicationCloseRequest);
 #endif
-	if (argc >= 2)
-		levelLogSet(atoi(argv[1]));
+	env.haveTclap = 1;
+	env.daemonDebug = false;
+	env.verbosity = 3;
+#if defined(__unix__)
+	env.coreDump = false;
+#endif
+
+#if APP_HAS_TCLAP
+	int res;
+
+	CmdLine cmd("Command description message", ' ', appVersion());
+
+	AppHelpOutput aho;
+#if 1
+	aho.package = dPackageName;
+	aho.versionApp = dVersion;
+	aho.nameApp = dAppName;
+	aho.copyright = " (C) 2025 DSP-Crowd Electronics GmbH";
+#endif
+	cmd.setOutput(&aho);
+
+	SwitchArg argDebug("d", "debug", "Enable debugging daemon", false);
+	cmd.add(argDebug);
+	ValueArg<int> argVerbosity("v", "verbosity", "Verbosity: high => more output", false, 3, "int");
+	cmd.add(argVerbosity);
+	SwitchArg argLicenses("", "licenses", "Show dependencies", false);
+	cmd.add(argLicenses);
+#if defined(__unix__)
+	SwitchArg argCoreDump("", "core-dump", "Enable core dumps", false);
+	cmd.add(argCoreDump);
+#endif
+	cmd.parse(argc, argv);
+
+	env.daemonDebug = argDebug.getValue();
+
+	res = argVerbosity.getValue();
+	if (res > 0 && res < 6)
+		env.verbosity = res;
+#if defined(__unix__)
+	env.coreDump = argCoreDump.getValue();
+#endif
+#else
+	env.haveTclap = 0;
+#endif
+	levelLogSet(argVerbosity.getValue());
+
+	if (argLicenses.getValue())
+	{
+		licensesPrint();
+		return 0;
+	}
 
 	pApp = Supervising::create();
 	if (!pApp)
 	{
-		errLog(-1, "could not create process");
+		cerr << "could not create process" << endl;
 		return 1;
 	}
 
 	while (1)
 	{
-		for (int i = 0; i < 12; ++i)
+		for (size_t coreBurst = 0; coreBurst < 13; ++coreBurst)
 			pApp->treeTick();
 
 		if (!pApp->progress())
 			break;
 
-		this_thread::sleep_for(chrono::milliseconds(15));
+		this_thread::sleep_for(milliseconds(15));
 	}
 
 	Success success = pApp->success();
