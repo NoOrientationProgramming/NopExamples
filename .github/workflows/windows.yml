@@ -53,7 +53,7 @@ jobs:
             cmake ..
             cmake --build . --config Release
 
-            .\App.exe --help
+            .\Release\App.exe --help
 
             Remove-Item * -Recurse -Force
 
