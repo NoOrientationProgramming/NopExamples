@@ -113,7 +113,11 @@ Success LogCatching::linesFetch()
 
 	lenReq = sizeof(buf) - 1;
 
+#if defined(__unix__)
 	lenRead = read(STDIN_FILENO, buf, lenReq);
+#else
+	lenRead = 0;
+#endif
 #if 0
 	if (!lenRead)
 		break;
