@@ -52,12 +52,7 @@ meson compile
 **CMake**
 ```
 cmake ..
-make -j
-```
-
-**Make**
-```
-make -f ../Makefile -j
+cmake --build .
 ```
 
 #### Then execute the application by entering
