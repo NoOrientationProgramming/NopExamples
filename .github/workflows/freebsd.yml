@@ -28,7 +28,7 @@ jobs:
               ./app --help
               rm -rf *
               cmake ..
-              make -j
+              cmake --build .
               ./app --help
               rm -rf *
               make -f ../Makefile -j
