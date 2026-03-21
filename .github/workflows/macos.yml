@@ -16,12 +16,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install build tools
-        run: |
-          sudo apt update
-          sudo apt install -y \
-            build-essential cmake
-
       - uses: actions/setup-python@v6
         with:
           python-version: '3.10'
