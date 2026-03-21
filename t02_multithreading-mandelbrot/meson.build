@@ -133,12 +133,14 @@ else
 	warning('Submodule tclap not found. Limited CLI options')
 endif
 
-have_avx2 = cxx.has_argument('-mavx2')
-if have_avx2
-	add_project_arguments('-mavx2', language : 'cpp')
-	add_project_arguments('-DAPP_HAS_AVX2=1', language : 'cpp')
-else
-	warning('Scalar code only')
+if cxx.get_id() == 'gcc'
+	have_avx2 = cxx.has_argument('-mavx2')
+	if have_avx2
+		add_project_arguments('-mavx2', language : 'cpp')
+		add_project_arguments('-DAPP_HAS_AVX2=1', language : 'cpp')
+	else
+		warning('Scalar code only')
+	endif
 endif
 
 # Application
