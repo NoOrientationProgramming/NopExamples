@@ -1,6 +1,7 @@
 
+<h2 id="frap-examples-start" style="display:none;"></h2>
+
 ![GitHub](https://img.shields.io/github/license/fractal-programming/FrapExamples?style=plastic)
-<!-- ![Lines of code](https://img.shields.io/tokei/lines/github/fractal-programming/ProcessingExamples?style=plastic) -->
 
 ![Windows](https://img.shields.io/github/actions/workflow/status/fractal-programming/FrapExamples/windows.yml?style=plastic&logo=github&label=Windows)
 ![Linux](https://img.shields.io/github/actions/workflow/status/fractal-programming/FrapExamples/linux.yml?style=plastic&logo=linux&logoColor=white&label=Linux)
