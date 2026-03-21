@@ -9,7 +9,11 @@ CXXFLAGS = -std=gnu++11 -Wall -Wextra \
     -I../../deps/SystemCore \
     -I../../deps/LibNaegCommon \
 
-LDFLAGS = -pthread
+ifeq ($(OS),Windows_NT)
+    LDFLAGS += -lws2_32
+else
+    LDFLAGS += -pthread
+endif
 
 SRC = \
     ../../deps/SystemCore/Processing.cpp \
