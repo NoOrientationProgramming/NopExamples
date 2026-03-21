@@ -16,6 +16,7 @@ srcs = [
 	'../deps/SystemCore/SystemCommanding.cpp',
 	'../deps/SystemCore/TcpListening.cpp',
 	'../deps/SystemCore/TcpTransfering.cpp',
+	'../deps/LibNaegCommon/LibFilesys.cpp',
 	'../deps/LibNaegCommon/LibDspc.cpp',
 	'../deps/LibNaegCommon/Res.cpp',
 	'main.cpp',
