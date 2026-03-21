@@ -17,12 +17,23 @@ jobs:
           prepare: |
             pkg install -y python git meson ninja cmake
           run: |
-            git clone https://github.com/fractal-programming/SystemCore.git --recursive
-            cd SystemCore/tools/hello-world
-            meson setup build-meson-native
-            ninja -C build-meson-native -j$(nproc)
-            ./build-meson-native/introducing
-            cmake -S . -B build-cmake-native
-            cmake --build build-cmake-native/ -j$(nproc)
-            ./build-cmake-native/introducing
+            git clone https://github.com/fractal-programming/FrapExamples.git --recursive
+            cd FrapExamples
+            for example in t01_tcp-echo-server t02_multithreading-mandelbrot t03_log-catching; do
+              mkdir -p $example/build-native
+              cd $example/build-native
+              echo "=== Building $example ==="
+              meson setup . ..
+              meson compile
+              ./app --help
+              rm -rf *
+              cmake ..
+              make -j
+              ./app --help
+              rm -rf *
+              make -f ../Makefile -j
+              ./app --help
+              rm -rf *
+              cd ../..
+            done
 

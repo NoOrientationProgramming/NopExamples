@@ -43,7 +43,7 @@ jobs:
           for example in t01_tcp-echo-server t02_multithreading-mandelbrot t03_log-catching; do
             mkdir -p $example/build-${{ matrix.target }}
             cd $example/build-${{ matrix.target }}
-            echo "=== Building $example for ${{ matrix.target }} with meson ==="
+            echo "=== Building $example for ${{ matrix.target }} ==="
             meson setup --cross-file ../../tools-dev/cross/meson-cross-${{ matrix.target }}.txt . ..
             meson compile
             rm -rf *

@@ -35,7 +35,7 @@ jobs:
           for example in t01_tcp-echo-server t02_multithreading-mandelbrot t03_log-catching; do
             mkdir -p $example/build-native
             cd $example/build-native
-            echo "=== Building $example with meson ==="
+            echo "=== Building $example ==="
             meson setup . ..
             meson compile
             ./app --help
