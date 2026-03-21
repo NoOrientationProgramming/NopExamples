@@ -91,7 +91,7 @@ Success MandelbrotCreating::process()
 	uint32_t diffMs = curTimeMs - mStartMs;
 	Success success;
 	bool ok;
-	size_t ips;
+	size_t ips, maskLine = 3;
 #if 0
 	dStateTrace;
 #endif
@@ -109,7 +109,7 @@ Success MandelbrotCreating::process()
 		mBmp.height = cfg.imgHeight;
 
 		cfg.szData = mBmp.width * cBytesPerPixel;
-		cfg.szLine = ((cfg.szData + 3) & ~3);
+		cfg.szLine = ((cfg.szData + maskLine) & ~maskLine);
 		cfg.szPadding = cfg.szLine - cfg.szData;
 
 		cfg.szLine += sizeof(BlockMandelHeader);
@@ -316,7 +316,7 @@ void MandelbrotCreating::progressPrint()
 	pBuf[0] = 0;
 
 	dInfo("\r  ");
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, (int)mBmp.height);
 
 	fprintf(stdout, "%s\r", pBufStart);
 	fflush(stdout);
@@ -378,10 +378,10 @@ void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 #if 0
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLineFiller, mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLineFiller, (int)mBmp.height);
 	dInfo("\n");
 
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, (int)mBmp.height);
 	dInfo("\n");
 }
 
