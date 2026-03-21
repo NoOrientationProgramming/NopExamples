@@ -205,8 +205,8 @@ bool LogCatching::logSave(bool triggeredByUser)
 	}
 
 	list<string>::iterator iter;
-	uint32_t w = (uint32_t)to_string(mCntLines).size();
-	uint32_t idxLine = (uint32_t)(mCntLines - mLines.size());
+	int w = (int)to_string(mCntLines).size();
+	int idxLine = (int)(mCntLines - mLines.size());
 
 	iter = mLines.begin();
 	for (; iter != mLines.end(); ++iter, ++idxLine)
