@@ -120,7 +120,7 @@ int main(int argc, char *argv[])
 #if defined(__unix__)
 	env.coreDump = false;
 #endif
-	env.numLines = atoi(dNumLinesDefault);
+	env.numLines = (size_t)atoi(dNumLinesDefault);
 
 #if APP_HAS_TCLAP
 	int res;
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 #endif
 	res = argNumLines.getValue();
 	if (res > 0)
-		env.numLines = res;
+		env.numLines = (size_t)res;
 
 	env.nameBase = argNameBase.getValue();
 #else
