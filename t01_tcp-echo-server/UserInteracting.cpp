@@ -45,7 +45,7 @@ using namespace std;
 
 extern bool shutdownRequested;
 
-UserInteracting::UserInteracting(int fdPeer)
+UserInteracting::UserInteracting(SOCKET fdPeer)
 	: Processing("UserInteracting")
 	, mStateSd(StSdStart)
 	, mFdPeer(fdPeer)

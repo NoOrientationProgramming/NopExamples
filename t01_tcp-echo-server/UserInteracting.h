@@ -36,12 +36,12 @@ class UserInteracting : public Processing
 
 public:
 
-	static UserInteracting *create(int fdPeer)
+	static UserInteracting *create(SOCKET fdPeer)
 	{
 		return new dNoThrow UserInteracting(fdPeer);
 	}
 
-	UserInteracting(int fdPeer);
+	UserInteracting(SOCKET fdPeer);
 
 protected:
 
@@ -59,7 +59,7 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	uint32_t mStateSd;
-	int mFdPeer;
+	SOCKET mFdPeer;
 	TcpTransfering *mpConn;
 	std::string mMsgLast;
 	bool mQuitByUser;
