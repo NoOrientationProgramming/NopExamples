@@ -30,22 +30,40 @@ jobs:
 # Build
 
       - name: Build all examples
+        shell: pwsh
         run: |
-          for example in t01_tcp-echo-server t02_multithreading-mandelbrot t03_log-catching; do
-            mkdir -p $example/build-native
-            cd $example/build-native
-            echo "=== Building $example with meson ==="
+          $examples = "t01_tcp-echo-server","t02_multithreading-mandelbrot","t03_log-catching"
+
+          foreach ($example in $examples) {
+            Write-Host "=== Building $example ==="
+
+            $buildDir = "$example/build-native"
+            New-Item -ItemType Directory -Force $buildDir | Out-Null
+            Set-Location $buildDir
+
+            # --- Meson ---
             meson setup . ..
             meson compile
-            ./App.exe --help
-            rm -rf *
+
+            .\App.exe --help
+
+            Remove-Item * -Recurse -Force
+
+            # --- CMake ---
             cmake ..
-            make -j
-            ./App.exe --help
-            rm -rf *
-            make -f ../Makefile -j
-            ./App.exe --help
-            rm -rf *
-            cd ../..
-          done
+            cmake --build . --config Release
+
+            .\App.exe --help
+
+            Remove-Item * -Recurse -Force
+
+            # --- Makefile ---
+            if (Get-Command make -ErrorAction SilentlyContinue) {
+                make -f ../Makefile -j
+                .\App.exe --help
+                Remove-Item * -Recurse -Force
+            }
+
+            Set-Location ../..
+          }
 
