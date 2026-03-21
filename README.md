@@ -27,7 +27,6 @@ Status
 
 - [Meson](https://mesonbuild.com/)
 - [CMake](https://cmake.org/)
-- [Make](https://www.gnu.org/software/make/)
 
 ### Clone the example repository
 
