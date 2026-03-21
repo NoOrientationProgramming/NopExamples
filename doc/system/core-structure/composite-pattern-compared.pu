@@ -1,0 +1,26 @@
+@startuml
+
+' skinparam linetype ortho
+skinparam minClassWidth 200
+skinparam class {
+	BackgroundColor White
+	ArrowColor Black
+	BorderColor Black
+}
+
+class "Client" as cClient {}
+abstract class "Component" as cComponent {}
+class "Leaf" as cLeaf {}
+class "Composite" as cComposite {}
+
+cClient .> cComponent
+cComponent <|-- cLeaf
+cComponent <|-- cComposite
+cComposite o-u- "*" cComponent
+
+' pAbstract <|-- pConcrete
+
+footer **Composite Pattern** Compared to Processing()\n(C) DSP-Crowd Electronics GmbH
+
+@enduml
+
