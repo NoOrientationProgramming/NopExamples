@@ -199,9 +199,15 @@ bool LogCatching::logSave(bool triggeredByUser)
 
 	//procWrnLog("Saving to file: %s", nameFile.c_str());
 
-	FILE *pFile = fopen(nameFile.c_str(), "w");
+	FILE *pFile;
 
+#if defined(_WIN32)
+	errno_t numErr = ::fopen_s(&pFile, nameFile.c_str(), "w");
+	if (numErr)
+#else
+	pFile = fopen(nameFile.c_str(), "w");
 	if (!pFile)
+#endif
 	{
 		procErrLog(-1, "error opening file: %s (%d)", errnoToStr(errno).c_str(), errno);
 		return false;
