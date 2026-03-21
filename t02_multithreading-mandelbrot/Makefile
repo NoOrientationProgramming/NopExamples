@@ -11,10 +11,10 @@ LDFLAGS = -pthread
 SRC = \
     ../../deps/SystemCore/Processing.cpp \
     ../../deps/SystemCore/Log.cpp \
+    ../../deps/SystemCore/SystemDebugging.cpp \
+    ../../deps/SystemCore/SystemCommanding.cpp \
     ../../deps/SystemCore/TcpListening.cpp \
     ../../deps/SystemCore/TcpTransfering.cpp \
-    ../../deps/SystemCore/SystemCommanding.cpp \
-    ../../deps/SystemCore/SystemDebugging.cpp \
     ../../deps/LibNaegCommon/ThreadPooling.cpp \
     ../../deps/LibNaegCommon/LibTime.cpp \
     ../../deps/LibNaegCommon/LibFilesys.cpp \

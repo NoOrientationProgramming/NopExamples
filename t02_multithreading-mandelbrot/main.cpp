@@ -143,6 +143,12 @@ int main(int argc, char *argv[])
 #endif
 	cmd.parse(argc, argv);
 
+	if (argLicenses.getValue())
+	{
+		licensesPrint();
+		return 0;
+	}
+
 	env.daemonDebug = argDebug.getValue();
 
 	res = argVerbosity.getValue();
@@ -152,15 +158,12 @@ int main(int argc, char *argv[])
 	env.coreDump = argCoreDump.getValue();
 #endif
 #else
+	(void)argc;
+	(void)argv;
+
 	env.haveTclap = 0;
 #endif
-	levelLogSet(argVerbosity.getValue());
-
-	if (argLicenses.getValue())
-	{
-		licensesPrint();
-		return 0;
-	}
+	levelLogSet(env.verbosity);
 
 	pApp = Supervising::create();
 	if (!pApp)
