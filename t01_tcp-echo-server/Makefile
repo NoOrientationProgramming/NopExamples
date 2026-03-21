@@ -1,6 +1,6 @@
 
 CXX = g++
-CXXFLAGS = -std=gnu++17 -Wall -Wextra \
+CXXFLAGS = -std=gnu++11 -Wall -Wextra \
     -DdPackageName="\"TCPEchoServer\"" \
     -DdAppName="\"app\"" \
     -DdVersion="\"app-v1.26.3.1\"" \
@@ -43,7 +43,7 @@ TARGET = app
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CXX) $(OBJ) -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $@ $(LDFLAGS)
 
 %.o: ../%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@

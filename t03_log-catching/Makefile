@@ -43,7 +43,7 @@ TARGET = app
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CXX) $(OBJ) -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $@ $(LDFLAGS)
 
 %.o: ../%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
