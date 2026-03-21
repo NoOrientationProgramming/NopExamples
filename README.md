@@ -1,6 +1,12 @@
 
-![GitHub](https://img.shields.io/github/license/fractal-programming/ProcessingExamples?style=plastic)
+![GitHub](https://img.shields.io/github/license/fractal-programming/FrapExamples?style=plastic)
 <!-- ![Lines of code](https://img.shields.io/tokei/lines/github/fractal-programming/ProcessingExamples?style=plastic) -->
+
+![Windows](https://img.shields.io/github/actions/workflow/status/fractal-programming/FrapExamples/windows.yml?style=plastic&logo=github&label=Windows)
+![Linux](https://img.shields.io/github/actions/workflow/status/fractal-programming/FrapExamples/linux.yml?style=plastic&logo=linux&logoColor=white&label=Linux)
+![macOS](https://img.shields.io/github/actions/workflow/status/fractal-programming/FrapExamples/macos.yml?style=plastic&logo=apple&label=macOS)
+![FreeBSD](https://img.shields.io/github/actions/workflow/status/fractal-programming/FrapExamples/freebsd.yml?style=plastic&logo=freebsd&label=FreeBSD)
+![ARM, RISC-V & MinGW](https://img.shields.io/github/actions/workflow/status/fractal-programming/FrapExamples/cross.yml?style=plastic&logo=gnu&label=ARM%2C%20RISC-V%20%26%20MinGW)
 
 [![Discord](https://img.shields.io/discord/960639692213190719?style=plastic&color=purple&logo=discord)](https://discord.gg/FBVKJTaY)
 [![Twitch Status](https://img.shields.io/twitch/status/Naegolus?label=twitch.tv%2FNaegolus&logo=Twitch&logoColor=%2300ff00&style=plastic&color=purple)](https://twitch.tv/Naegolus)
