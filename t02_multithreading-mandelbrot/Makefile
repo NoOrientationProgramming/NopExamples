@@ -1,6 +1,9 @@
 
 CXX = g++
 CXXFLAGS = -std=gnu++11 -Wall -Wextra \
+    -DdPackageName="\"MultithreadedMandelbrot\"" \
+    -DdAppName="\"app\"" \
+    -DdVersion="\"app-v1.26.3.1\"" \
     -DCONFIG_PROC_HAVE_LOG=1 \
     -DCONFIG_PROC_HAVE_CORE_LOG=1 \
     -I../../deps/SystemCore \
@@ -27,6 +30,17 @@ SRC = \
     ../LibBmp.cpp \
 
 OBJ = $(notdir $(SRC:.cpp=.o))
+
+TCLAP_DIR := ../../deps/tclap_loc/include/tclap
+
+ifneq ("$(wildcard $(TCLAP_DIR)/CmdLine.h)","")
+    $(info Submodule tclap found)
+
+    CXXFLAGS += -I../../deps/tclap_loc/include
+    CXXFLAGS += -DAPP_HAS_TCLAP=1
+else
+    $(warning Submodule tclap not found. Limited CLI options)
+endif
 
 TARGET = app
 
