@@ -27,10 +27,12 @@
 #define APP_HAS_TCLAP 0
 #endif
 
-#if defined(_WIN32)
-#include <windows.h>
-#else
+#if defined(__unix__)
 #include <signal.h>
+#endif
+#if defined(_WIN32)
+#include <winsock2.h>
+#include <windows.h>
 #endif
 #include <iostream>
 #include <chrono>
