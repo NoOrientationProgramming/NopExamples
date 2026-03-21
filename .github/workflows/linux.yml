@@ -38,14 +38,14 @@ jobs:
             echo "=== Building $example with meson ==="
             meson setup . ..
             meson compile
-            ./app
+            ./app --help
             rm -rf *
             cmake ..
             make -j
-            ./app
+            ./app --help
             rm -rf *
             make -f ../Makefile -j
-            ./app
+            ./app --help
             rm -rf *
             cd ../..
           done
