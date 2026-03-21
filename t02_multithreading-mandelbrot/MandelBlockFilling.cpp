@@ -343,7 +343,7 @@ void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
 	dInfo("%03u: ", mIdxLine);
-	pBuf += progressStr(pBuf, pBufEnd, mIdxPixel, mNumPixel);
+	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxPixel, (int)mNumPixel);
 	dInfo("\n");
 }
 
