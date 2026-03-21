@@ -30,19 +30,25 @@ jobs:
       - name: Install build tools
         run: python -m pip install meson ninja
 
-# Native meson
+# Build
 
-      - name: Setup build directory meson
-        run: meson setup build-meson-native
-      - name: Build application meson
-        run: ninja -C build-meson-native
-      - name: Start application meson
-        run: ./build-meson-native/introducing
-
-      - name: Setup build directory cmake native
-        run: cmake -S . -B build-cmake-native
-      - name: Build application cmake native
-        run: cmake --build build-cmake-native/
-      - name: Start application cmake
-        run: ./build-cmake-native/Debug/introducing
+      - name: Build all examples
+        run: |
+          for example in t01_tcp-echo-server t02_multithreading-mandelbrot t03_log-catching; do
+            mkdir -p $example/build-native
+            cd $example/build-native
+            echo "=== Building $example with meson ==="
+            meson setup . ..
+            meson compile
+            ./App.exe --help
+            rm -rf *
+            cmake ..
+            make -j
+            ./App.exe --help
+            rm -rf *
+            make -f ../Makefile -j
+            ./App.exe --help
+            rm -rf *
+            cd ../..
+          done
 

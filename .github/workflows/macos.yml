@@ -24,7 +24,7 @@ jobs:
 
 # Build
 
-      - name: Build all examples for ${{ matrix.target }}
+      - name: Build all examples
         run: |
           for example in t01_tcp-echo-server t02_multithreading-mandelbrot t03_log-catching; do
             mkdir -p $example/build-native
