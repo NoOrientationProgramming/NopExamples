@@ -18,8 +18,6 @@ cComponent <|-- cLeaf
 cComponent <|-- cComposite
 cComposite o-u- "*" cComponent
 
-' pAbstract <|-- pConcrete
-
 footer **Composite Pattern** Compared to Processing()\n(C) DSP-Crowd Electronics GmbH
 
 @enduml
