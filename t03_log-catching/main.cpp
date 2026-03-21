@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 	cmd.add(argCoreDump);
 #endif
 	ValueArg<int> argNumLines("n", "num-lines", "Number of lines to be saved. Default: " dNumLinesDefault,
-								false, env.numLines, "int");
+								false, (int)env.numLines, "int");
 	cmd.add(argNumLines);
 
 	ValueArg<string> argNameBase("b", "name-base", "Basename of the output file", false, "app", "string");
