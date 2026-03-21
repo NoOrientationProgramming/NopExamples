@@ -219,8 +219,8 @@ void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 	MbVal offsY = mpCfg->posY;
 	MbVal zoom = mpCfg->zoom;
 
-	MbVal w2 = mpCfg->imgWidth >> 1;
-	MbVal h2 = mpCfg->imgHeight >> 1;
+	MbVal w2 = (MbVal)(mpCfg->imgWidth >> 1);
+	MbVal h2 = (MbVal)(mpCfg->imgHeight >> 1);
 	MbVal idxX = idxPixel - w2;
 	MbVal idxY = idxLine - h2;
 	MbVal scaleX = 1.0 / zoom;
