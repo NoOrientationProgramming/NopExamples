@@ -32,7 +32,7 @@ TCLAP_DIR := ../../deps/tclap_loc/include/tclap
 ifneq ("$(wildcard $(TCLAP_DIR)/CmdLine.h)","")
     $(info Submodule tclap found)
 
-    CXXFLAGS += -I../../deps/tclap_loc/include
+    CXXFLAGS += -isystem../../deps/tclap_loc/include
     CXXFLAGS += -DAPP_HAS_TCLAP=1
 else
     $(warning Submodule tclap not found. Limited CLI options)
@@ -43,7 +43,7 @@ TARGET = app
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o $@ $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $@
 
 %.o: ../%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
