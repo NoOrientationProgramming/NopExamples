@@ -124,13 +124,13 @@ if host_machine.system() == 'windows'
 endif
 
 if fs.is_dir('../deps/tclap_loc')
-	message('submodule tclap found')
+	message('Submodule tclap found')
 
 	incTclap = include_directories(['../deps/tclap_loc/include'], is_system: true)
 	deps += declare_dependency(include_directories: incTclap)
 	args += '-DAPP_HAS_TCLAP=1'
 else
-	warning('submodule tclap not found. Limited CLI options')
+	warning('Submodule tclap not found. Limited CLI options')
 endif
 
 have_avx2 = cxx.has_argument('-mavx2')
@@ -138,7 +138,7 @@ if have_avx2
 	add_project_arguments('-mavx2', language : 'cpp')
 	add_project_arguments('-DAPP_HAS_AVX2=1', language : 'cpp')
 else
-	warning('scalar code only')
+	warning('Scalar code only')
 endif
 
 # Application
