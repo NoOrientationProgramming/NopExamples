@@ -316,7 +316,7 @@ void MandelbrotCreating::progressPrint()
 	pBuf[0] = 0;
 
 	dInfo("\r  ");
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, (int)mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineDone, (int)mBmp.height);
 
 	fprintf(stdout, "%s\r", pBufStart);
 	fflush(stdout);
@@ -378,10 +378,10 @@ void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 #if 0
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLineFiller, (int)mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineFiller, (int)mBmp.height);
 	dInfo("\n");
 
-	pBuf += progressStr(pBuf, pBufEnd, mIdxLineDone, (int)mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineDone, (int)mBmp.height);
 	dInfo("\n");
 }
 
