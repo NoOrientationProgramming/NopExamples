@@ -195,7 +195,7 @@ bool LogCatching::logSave(bool triggeredByUser)
 	//infoTime = localtime(&now);
 
 	//strftime(buf, sizeof(buf), "%y%m%d-%H%M%S_", infoTime);
-	snprintf(buf, sizeof(buf), "%ld_", now);
+	snprintf(buf, sizeof(buf), "%lld_", now);
 	nameFile = string(buf) + env.nameBase;
 
 	if (triggeredByUser)
