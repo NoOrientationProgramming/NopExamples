@@ -94,6 +94,21 @@ elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         -Wformat -Wformat-extra-args -Wimplicit-fallthrough
         -Wmissing-field-initializers -Wnull-dereference -Wshadow
     )
+
+    # =========================
+    # Optional AVX2 submodule
+    # =========================
+
+    include(CheckCXXCompilerFlag)
+
+    check_cxx_compiler_flag("-mavx2" HAVE_AVX2)
+
+    if (HAVE_AVX2)
+        target_compile_options(${EXE_NAME} PRIVATE -mavx2)
+        target_compile_definitions(${EXE_NAME} PRIVATE APP_HAS_AVX2=1)
+    else()
+        message(WARNING "Scalar code only")
+    endif()
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(${EXE_NAME} PRIVATE
         -Wall -Wextra -Wpedantic -Werror
@@ -131,16 +146,3 @@ else()
     message(WARNING "Submodule tclap not found. Limited CLI options")
 endif()
 
-# =========================
-# Optional AVX2 submodule
-# =========================
-include(CheckCXXCompilerFlag)
-
-check_cxx_compiler_flag("-mavx2" HAVE_AVX2)
-
-if (HAVE_AVX2)
-    target_compile_options(${EXE_NAME} PRIVATE -mavx2)
-    target_compile_definitions(${EXE_NAME} PRIVATE APP_HAS_AVX2=1)
-else()
-    message(WARNING "Scalar code only")
-endif()
