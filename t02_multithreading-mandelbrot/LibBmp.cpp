@@ -106,7 +106,8 @@ void FileBmp::close()
 	}
 
 	size_t szData = width * cBytesPerPixel; // Size of data per line
-	size_t szLine = ((szData + 3) & ~3);
+	size_t maskLine = 3;
+	size_t szLine = ((szData + maskLine) & ~maskLine);
 	uint32_t szFile;
 
 	/*
