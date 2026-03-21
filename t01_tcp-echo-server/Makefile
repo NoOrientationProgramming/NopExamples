@@ -10,9 +10,9 @@ CXXFLAGS = -std=gnu++11 -Wall -Wextra \
     -I../../deps/LibNaegCommon \
 
 ifeq ($(OS),Windows_NT)
-    LDFLAGS += -lws2_32
+    LDLIBS += -lws2_32
 else
-    LDFLAGS += -pthread
+    LDLIBS += -pthread
 endif
 
 SRC = \
@@ -47,7 +47,7 @@ TARGET = app
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) $(OBJ) -o $@
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $@ $(LDLIBS)
 
 %.o: ../%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
