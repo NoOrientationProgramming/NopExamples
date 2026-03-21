@@ -33,8 +33,8 @@ typedef double MbVal;
 struct ConfigMandelbrot
 {
 	// Image
-	size_t imgWidth;
-	size_t imgHeight;
+	uint32_t imgWidth;
+	uint32_t imgHeight;
 	size_t szData;
 	size_t szLine;
 	size_t szPadding;

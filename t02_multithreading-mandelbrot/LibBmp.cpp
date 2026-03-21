@@ -47,8 +47,13 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 
 	FILE *pFile;
 
+#if defined(_WIN32)
+	errno_t numErr = ::fopen_s(&pFile, pFilename, "wb");
+	if (numErr)
+#else
 	pFile = fopen(pFilename, "wb");
 	if (!pFile)
+#endif
 		return false;
 
 	// Object
@@ -119,7 +124,7 @@ void FileBmp::close()
 	imageComplete(szLine);
 
 	szData = szLine * idxLine; // Size of data for all (written) lines
-	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
+	szFile = (uint32_t)(szData + cSzHeaderBmp + cSzHeaderDib);
 
 	dbgLog("Updating headers");
 	dbgLog("Size file        %u", szFile);
