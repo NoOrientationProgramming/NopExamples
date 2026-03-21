@@ -113,7 +113,7 @@ void FileBmp::close()
 	size_t szData = width * cBytesPerPixel; // Size of data per line
 	size_t maskLine = 3;
 	size_t szLine = ((szData + maskLine) & ~maskLine);
-	uint32_t szFile;
+	size_t szFile;
 
 	/*
 	 * Try to be as tolerant as possible to any situation.
@@ -124,7 +124,7 @@ void FileBmp::close()
 	imageComplete(szLine);
 
 	szData = szLine * idxLine; // Size of data for all (written) lines
-	szFile = (uint32_t)(szData + cSzHeaderBmp + cSzHeaderDib);
+	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
 
 	dbgLog("Updating headers");
 	dbgLog("Size file        %u", szFile);
@@ -133,7 +133,7 @@ void FileBmp::close()
 	dbgLog("Size data        %u", szData);
 
 	fseek(pFile, 2, SEEK_SET);
-	fwrite(&szFile, sizeof(szFile), 1, pFile);
+	fwrite(&szFile, sizeof(uint32_t), 1, pFile);
 
 	fseek(pFile, cSzHeaderBmp + 4, SEEK_SET);
 	fwrite(&width, sizeof(width), 1, pFile);
