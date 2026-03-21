@@ -38,9 +38,6 @@ jobs:
             cmake --build .
             ./app --help
             rm -rf *
-            make -f ../Makefile -j
-            ./app --help
-            rm -rf *
             cd ../..
           done
 

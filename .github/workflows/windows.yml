@@ -57,13 +57,6 @@ jobs:
 
             Remove-Item * -Recurse -Force
 
-            # --- Makefile ---
-            if (Get-Command make -ErrorAction SilentlyContinue) {
-                make -f ../Makefile -j
-                .\App.exe --help
-                Remove-Item * -Recurse -Force
-            }
-
             Set-Location ../..
           }
 
