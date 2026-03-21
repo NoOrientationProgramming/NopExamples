@@ -173,37 +173,19 @@ Success LogCatching::linesFetch()
 	return Pending;
 }
 
-void LogCatching::logSaveRequest(int signum)
-{
-	(void)signum;
-
-	if (!pLog)
-	{
-		wrnLog("pLog not set");
-		return;
-	}
-
-	bool ok;
-
-	ok = pLog->logSave(true);
-	if (!ok)
-		wrnLog("could not save log");
-}
-
 bool LogCatching::logSave(bool triggeredByUser)
 {
 	time_t now;
 	//struct tm *infoTime;
-	char buf[32];
-	string prefixFile;
+	//char buf[32];
+	//string prefixFile;
 	string nameFile;
 
 	now = time(NULL);
 	//infoTime = localtime(&now);
 
 	//strftime(buf, sizeof(buf), "%y%m%d-%H%M%S_", infoTime);
-	snprintf(buf, sizeof(buf), "%" PRIdMAX "_", (intmax_t)now);
-	nameFile = string(buf) + env.nameBase;
+	nameFile = to_string(now) + "_" + env.nameBase;
 
 	if (triggeredByUser)
 		nameFile += "_usr";
@@ -218,13 +200,13 @@ bool LogCatching::logSave(bool triggeredByUser)
 
 	if (!pFile)
 	{
-		procErrLog(-1, "error opening file: %s (%d)", strerror(errno), errno);
+		procErrLog(-1, "error opening file: %s (%d)", errnoToStr(errno).c_str(), errno);
 		return false;
 	}
 
 	list<string>::iterator iter;
-	uint32_t w = to_string(mCntLines).size();
-	uint32_t idxLine = mCntLines - mLines.size();
+	uint32_t w = (uint32_t)to_string(mCntLines).size();
+	uint32_t idxLine = (uint32_t)(mCntLines - mLines.size());
 
 	iter = mLines.begin();
 	for (; iter != mLines.end(); ++iter, ++idxLine)
@@ -243,4 +225,47 @@ void LogCatching::processInfo(char *pBuf, char *pBufEnd)
 }
 
 /* static functions */
+
+void LogCatching::logSaveRequest(int signum)
+{
+	(void)signum;
+
+	if (!pLog)
+	{
+		wrnLog("pLog not set");
+		return;
+	}
+
+	bool ok;
+
+	ok = pLog->logSave(true);
+	if (!ok)
+		wrnLog("could not save log");
+}
+
+string LogCatching::errnoToStr(int num)
+{
+	char buf[64];
+	size_t len = sizeof(buf) - 1;
+	char *pBuf;
+
+	buf[0] = 0;
+	buf[len] = 0;
+
+#if defined(_WIN32)
+	pBuf = buf;
+	errno_t numErr = ::strerror_s(buf, len, num);
+	(void)numErr;
+#elif defined(__FreeBSD__) || defined(__APPLE__)
+	int res;
+
+	pBuf = buf;
+	res = ::strerror_r(num, buf, len);
+	if (res)
+		*pBuf = 0;
+#else
+	pBuf = ::strerror_r(num, buf, len);
+#endif
+	return string(pBuf);
+}
 

@@ -72,6 +72,7 @@ private:
 
 	/* static functions */
 	static void logSaveRequest(int signum);
+	std::string errnoToStr(int num);
 
 	/* static variables */
 	static LogCatching *pLog;
