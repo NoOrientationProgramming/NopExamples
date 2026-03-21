@@ -77,8 +77,9 @@ Success LogCatching::process()
 		pLog = this;
 
 		//fileNonBlockingSet(STDIN_FILENO);
+#if defined(__unix__)
 		signal(SIGUSR1, logSaveRequest);
-
+#endif
 		mState = StMain;
 
 		break;
