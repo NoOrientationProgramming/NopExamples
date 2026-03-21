@@ -25,6 +25,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <cinttypes>
 #include <time.h>
 #include <stdio.h>
 #include <signal.h>
@@ -195,7 +196,7 @@ bool LogCatching::logSave(bool triggeredByUser)
 	//infoTime = localtime(&now);
 
 	//strftime(buf, sizeof(buf), "%y%m%d-%H%M%S_", infoTime);
-	snprintf(buf, sizeof(buf), "%lld_", now);
+	snprintf(buf, sizeof(buf), "%" PRIdMAX "_", (intmax_t)now);
 	nameFile = string(buf) + env.nameBase;
 
 	if (triggeredByUser)

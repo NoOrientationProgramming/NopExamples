@@ -22,7 +22,7 @@ SRC = \
     ../../deps/LibNaegCommon/LibDspc.cpp \
     ../../deps/LibNaegCommon/Res.cpp \
     ../main.cpp \
-    ../LcSupervising.cpp \
+    ../Supervising.cpp \
     ../LogCatching.cpp \
 
 OBJ = $(notdir $(SRC:.cpp=.o))
