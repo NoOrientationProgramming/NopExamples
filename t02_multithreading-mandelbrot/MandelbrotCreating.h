@@ -30,7 +30,6 @@
 
 #include "Processing.h"
 #include "MandelBlockFilling.h"
-#include "ThreadPooling.h"
 #include "LibBmp.h"
 
 class MandelbrotCreating : public Processing
@@ -70,7 +69,6 @@ private:
 	Success linesProcess();
 
 	void progressPrint();
-	bool servicesStart();
 
 	void hideCursor();
 	void showCursor();

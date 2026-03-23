@@ -29,6 +29,7 @@
 #endif
 
 #include "MandelbrotCreating.h"
+#include "ThreadPooling.h"
 #include "LibTime.h"
 
 #define dForEach_ProcState(gen) \
@@ -100,10 +101,6 @@ Success MandelbrotCreating::process()
 	case StStart:
 
 		mStartMs = curTimeMs;
-
-		ok = servicesStart();
-		if (!ok)
-			return procErrLog(-1, "could not start services");
 
 		mBmp.width = cfg.imgWidth;
 		mBmp.height = cfg.imgHeight;
@@ -238,7 +235,7 @@ bool MandelbrotCreating::fillersStart()
 #if 0
 		start(pFill);
 #else
-#if 1
+#if 0
 		start(pFill, DrivenByNewInternalDriver);
 #else
 		start(pFill, DrivenByExternalDriver);
@@ -326,25 +323,6 @@ void MandelbrotCreating::progressPrint()
 
 	fprintf(stdout, "%s\r", pBufStart);
 	fflush(stdout);
-}
-
-bool MandelbrotCreating::servicesStart()
-{
-	ThreadPooling *pPool;
-
-	pPool = ThreadPooling::create();
-	if (!pPool)
-	{
-		procWrnLog("could not create process");
-		return false;
-	}
-
-	pPool->cntWorkerSet(3);
-	//pPool->procTreeDisplaySet(false);
-
-	start(pPool);
-
-	return true;
 }
 
 void MandelbrotCreating::hideCursor()

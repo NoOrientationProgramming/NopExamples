@@ -25,6 +25,7 @@
 
 #include "Supervising.h"
 #include "SystemDebugging.h"
+#include "ThreadPooling.h"
 
 #include "env.h"
 
@@ -138,6 +139,7 @@ Success Supervising::shutdown()
 
 bool Supervising::servicesStart()
 {
+	// Debugging
 	SystemDebugging *pDbg;
 
 	pDbg = SystemDebugging::create(this);
@@ -152,6 +154,22 @@ bool Supervising::servicesStart()
 	pDbg->procTreeDisplaySet(false);
 	start(pDbg);
 
+	// Thread Pool
+	ThreadPooling *pPool;
+
+	pPool = ThreadPooling::create();
+	if (!pPool)
+	{
+		procWrnLog("could not create process");
+		return false;
+	}
+
+	pPool->cntWorkerSet(3);
+	//pPool->procTreeDisplaySet(false);
+
+	start(pPool);
+
+	// Mandelbrot
 	mpMbCreate = MandelbrotCreating::create();
 	if (!mpMbCreate)
 	{
