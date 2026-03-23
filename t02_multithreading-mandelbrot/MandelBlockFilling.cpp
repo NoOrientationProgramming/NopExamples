@@ -295,7 +295,9 @@ void MandelBlockFilling::colorMandelbrotSimd(char *pData, size_t idxLine, size_t
 	for (size_t u = 0; u < numPixelPerBlock; ++u)
 		procDbgLog("t:  %10.3f", t[u]);
 #if 0
-	idxGrad1 = idxGradient(t);
+	idxGrad1 = (size_t)(t * (cNumGradients - 1));
+	idxGrad1 = PMIN(idxGrad1, cNumGradients - 2);
+
 	pGrad1 = &gradient[idxGrad1];
 	pGrad2 = pGrad1 + 1;
 
