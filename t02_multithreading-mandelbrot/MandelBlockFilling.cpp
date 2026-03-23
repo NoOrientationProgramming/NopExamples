@@ -256,34 +256,62 @@ void MandelBlockFilling::colorMandelbrotSimd(char *pData, size_t idxLine, size_t
 	if (!mIdxLine)
 		procDbgLog("SIMD %3u: %4u", mIdxBlock, mIdxPixel);
 
+	MbValFull w2 = ((MbValFull)mpCfg->imgWidth) / 2;
+	MbValFull h2 = ((MbValFull)mpCfg->imgHeight) / 2;
+	MbValFull scaleX = (1.0 / mpCfg->zoom) / w2;
+	MbValFull scaleY = scaleX * (mpCfg->imgHeight / mpCfg->imgWidth) / h2;
+
+	__m128i tmp_i, idxXin, idxYin;
+	__m256d tmp_d, idxX, idxY, cx, cy;
+
 	// 1. From image pixel space -> Complex space
 
-	__m128i idxX, idxY;
-	__m256d cx, cy;
+	idxXin = _mm_set_epi32(idxPixel + 3, idxPixel + 2, idxPixel + 1, idxPixel + 0);
+	idxYin = _mm_set1_epi32(idxLine);
 
-	idxX = _mm_set_epi32(idxPixel + 3, idxPixel + 2, idxPixel + 1, idxPixel + 0);
-	idxY = _mm_set1_epi32(idxLine);
+	idxX = _mm256_sub_pd(_mm256_cvtepi32_pd(idxXin), _mm256_set1_pd(w2));
+	idxY = _mm256_sub_pd(_mm256_cvtepi32_pd(idxYin), _mm256_set1_pd(h2));
 
-	cx = _mm256_cvtepi32_pd(idxX);
-	cy = _mm256_cvtepi32_pd(idxY);
+	cx = _mm256_mul_pd(_mm256_set1_pd(scaleX), idxX);
+	cx = _mm256_add_pd(cx, _mm256_set1_pd(mpCfg->posX));
 
-	hexDump(&cx, sizeof(cx));
-	hexDump(&cy, sizeof(cy));
+	cy = _mm256_mul_pd(_mm256_set1_pd(scaleY), idxX);
+	cy = _mm256_add_pd(cy, _mm256_set1_pd(mpCfg->posY));
+#if 1
+	hexDump(&idxX, sizeof(idxX));
+	hexDump(&idxY, sizeof(idxY));
 
+	for (size_t u = 0; u < numPixelPerBlock; ++u)
+	{
+		procDbgLog("idxX[%u]: %10.3f", u, idxX[u]);
+		procDbgLog("idxY[%u]: %10.3f", u, idxY[u]);
+	}
+
+	for (size_t u = 0; u < numPixelPerBlock; ++u)
+	{
+		procDbgLog("cx[%u]: %10.3f", u, cx[u]);
+		procDbgLog("cy[%u]: %10.3f", u, cy[u]);
+	}
+#endif
 	// 2. Do the mandelbrot calculation in complex space
+
+	size_t numIterMax = mpCfg->numIterMax;
+	__m256d zx, zy;
+
+	(void)numIterMax;
+	(void)cx;
+	(void)cy;
+	(void)zx;
+	(void)zy;
 
 	// 3. Color mapping from fractional iterator -> RGB color
 
-	__m256d tmp, mu, t, tMin, tMax;
+	__m128i idxGrad1, idxGrad2;
+	__m256d mu, t, tMin, tMax;
 
 	mu = _mm256_set1_pd(20);
 
-	for (size_t u = 0; u < numPixelPerBlock; ++u)
-		procDbgLog("mu: %10.3f", mu[u]);
-
-	tmp = _mm256_set1_pd(0.02);
-	t = _mm256_mul_pd(mu, tmp);
-
+	t = _mm256_mul_pd(_mm256_set1_pd(0.02), mu);
 	t = _mm256_sub_pd(t, _mm256_floor_pd(t));
 
 	tMin = _mm256_set1_pd(0.0);
@@ -292,12 +320,20 @@ void MandelBlockFilling::colorMandelbrotSimd(char *pData, size_t idxLine, size_t
 	t = _mm256_min_pd(t, tMax);
 	t = _mm256_max_pd(t, tMin);
 
-	for (size_t u = 0; u < numPixelPerBlock; ++u)
-		procDbgLog("t:  %10.3f", t[u]);
-#if 0
-	idxGrad1 = (size_t)(t * (cNumGradients - 1));
-	idxGrad1 = PMIN(idxGrad1, cNumGradients - 2);
+	tmp_i = _mm_set1_epi32(cNumGradients - 1);
+	tmp_d = _mm256_cvtepi32_pd(tmp_i);
+	tmp_d = _mm256_mul_pd(t, tmp_d);
+	idxGrad1 = _mm256_cvtpd_epi32(tmp_d);
 
+	tmp_i = _mm_set1_epi32(cNumGradients - 2);
+	idxGrad1 = _mm_min_epi32(idxGrad1, tmp_i);
+
+	tmp_i = _mm_set1_epi32(1);
+	idxGrad2 = _mm_add_epi32(idxGrad1, tmp_i);
+
+	hexDump(&idxGrad1, sizeof(idxGrad1));
+	hexDump(&idxGrad2, sizeof(idxGrad2));
+#if 0
 	pGrad1 = &gradient[idxGrad1];
 	pGrad2 = pGrad1 + 1;
 
@@ -319,18 +355,15 @@ void MandelBlockFilling::colorMandelbrotSimd(char *pData, size_t idxLine, size_t
 void MandelBlockFilling::colorMandelbrotScalar(char *pData, size_t idxLine, size_t idxPixel)
 {
 	size_t numIterMax = mpCfg->numIterMax;
-	MbValFull offsX = mpCfg->posX;
-	MbValFull offsY = mpCfg->posY;
-	MbValFull zoom = mpCfg->zoom;
+	MbValFull w2 = ((MbValFull)mpCfg->imgWidth) / 2;
+	MbValFull h2 = ((MbValFull)mpCfg->imgHeight) / 2;
+	MbValFull scaleX = 1.0 / mpCfg->zoom;
+	MbValFull scaleY = scaleX * mpCfg->imgHeight / mpCfg->imgWidth;
 
-	MbValFull w2 = (MbValFull)(mpCfg->imgWidth >> 1);
-	MbValFull h2 = (MbValFull)(mpCfg->imgHeight >> 1);
 	MbValFull idxX = idxPixel - w2;
 	MbValFull idxY = idxLine - h2;
-	MbValFull scaleX = 1.0 / zoom;
-	MbValFull scaleY = scaleX * mpCfg->imgHeight / mpCfg->imgWidth;
-	MbValFull cx = scaleX * idxX / w2 + offsX;
-	MbValFull cy = scaleY * idxY / h2 + offsY;
+	MbValFull cx = scaleX * idxX / w2 + mpCfg->posX;
+	MbValFull cy = scaleY * idxY / h2 + mpCfg->posY;
 	MbValFull zx, zy, mu, t, tMin, tMax;
 	Color c;
 
