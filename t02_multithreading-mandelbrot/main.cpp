@@ -62,6 +62,10 @@ Supervising *pApp = NULL;
 class AppHelpOutput : public TclapOutput {};
 #endif
 
+#define cNameFileDefault		"mandelbrot_1"
+#define cDirOutputDefault	"."
+#define cZoomDefault		"17000"
+
 // OS signal handler => Tell the application what to do on Ctrl-C
 #if defined(_WIN32)
 BOOL WINAPI applicationCloseRequest(DWORD signal)
@@ -147,8 +151,18 @@ int main(int argc, char *argv[])
 	cmd.add(argForceDouble);
 	SwitchArg argDisableSimd("", "no-simd", "Disable usage of SIMD (Single Instruction Multiple Data)", false);
 	cmd.add(argDisableSimd);
-	ValueArg<uint16_t> argPort("", "port-telnet", "Start in server mode if not zero. Default: 0", false, 0, "uint");
+	ValueArg<uint16_t> argPort("", "port-telnet", "Start in server mode if not zero. Default: 0",
+								false, 0, "uint");
 	cmd.add(argPort);
+	ValueArg<string> argNameFile("", "name-file", "Name of the outputfile without extension. Default: " cNameFileDefault,
+								false, cNameFileDefault, "string");
+	cmd.add(argNameFile);
+	ValueArg<string> argDirOut("", "dir-out", "Output directory. Default: " cDirOutputDefault,
+								false, cDirOutputDefault, "string");
+	cmd.add(argDirOut);
+	ValueArg<double> argZoom("", "zoom", "Zoom in the complex plane. Default: " cZoomDefault,
+								false, atof(cZoomDefault), "double");
+	cmd.add(argZoom);
 
 	cmd.parse(argc, argv);
 
@@ -166,9 +180,12 @@ int main(int argc, char *argv[])
 #if defined(__unix__)
 	env.coreDump = argCoreDump.getValue();
 #endif
+	env.nameFile = argNameFile.getValue();
+	env.dirOutput = argDirOut.getValue();
 	env.forceDouble = argForceDouble.getValue();
 	env.disableSimd = argDisableSimd.getValue();
 	env.port = argPort.getValue();
+	env.zoom = argZoom.getValue();
 #else
 	(void)argc;
 	(void)argv;

@@ -159,7 +159,7 @@ bool Supervising::servicesStart()
 		return false;
 	}
 
-	mpMbCreate->nameFile = "mandelbrot_1";
+	mpMbCreate->nameFile = env.nameFile;
 
 	ConfigMandelbrot *pMandel = &mpMbCreate->cfg;
 
@@ -178,9 +178,9 @@ bool Supervising::servicesStart()
 	pMandel->numIterMax = 2000;
 	pMandel->posX = -0.743643887037151;
 	pMandel->posY = 0.131825904205330;
+	pMandel->zoom = env.zoom;
 #if 0
 	pMandel->zoom = 17000; // float
-#else
 	pMandel->zoom = 170000; // double
 #endif
 	start(mpMbCreate);

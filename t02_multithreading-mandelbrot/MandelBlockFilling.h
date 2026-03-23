@@ -26,6 +26,8 @@
 #ifndef MANDEL_BLOCK_FILLING_H
 #define MANDEL_BLOCK_FILLING_H
 
+#include <string>
+
 #include "Processing.h"
 
 const double zoomFloatMax = 17000;
@@ -40,6 +42,8 @@ struct ConfigMandelbrot
 	size_t szData;
 	size_t szLine;
 	size_t szPadding;
+	std::string nameFile;
+	std::string dirOut;
 
 	// Mandelbrot
 	bool forceDouble;
