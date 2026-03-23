@@ -201,6 +201,9 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	// |||||| ____________ |||||| ____________
+
+	// |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 	while (1)
 	{
 		for (size_t coreBurst = 0; coreBurst < 13; ++coreBurst)

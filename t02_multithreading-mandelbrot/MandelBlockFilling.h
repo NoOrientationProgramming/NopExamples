@@ -108,6 +108,7 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	Success lineFill();
+	void colorMandelbrotChunks(char *pData, size_t idxLine, size_t idxPixel, size_t numPixel = 0);
 	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
 	size_t mandelbrot(
 			MbValFull cx, MbValFull cy,
@@ -120,6 +121,8 @@ private:
 
 	/* member variables */
 	//uint32_t mStartMs;
+	size_t mNumBlock;
+	size_t mIdxBlock;
 	size_t mNumPixel;
 	size_t mIdxPixel;
 	size_t mNumIter;

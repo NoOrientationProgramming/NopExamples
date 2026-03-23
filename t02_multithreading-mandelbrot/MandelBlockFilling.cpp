@@ -106,6 +106,8 @@ MandelBlockFilling::MandelBlockFilling()
 	, mpCfg(NULL)
 	, mpLine(NULL)
 	, mIdxLine(0)
+	, mNumBlock(0)
+	, mIdxBlock(0)
 	, mNumPixel(0)
 	, mIdxPixel(0)
 	, mNumIter(0)
@@ -116,6 +118,10 @@ MandelBlockFilling::MandelBlockFilling()
 }
 
 /* member functions */
+
+const size_t shiftElem = 2;
+const size_t numPixelPerBlock = 1 << shiftElem;
+const size_t maskElem = numPixelPerBlock - 1;
 
 Success MandelBlockFilling::process()
 {
@@ -139,6 +145,9 @@ Success MandelBlockFilling::process()
 
 		mNumPixel = mpCfg->szData / cBytesPerPixel;
 		mIdxPixel = 0;
+
+		mNumBlock = ((mNumPixel + maskElem) >> shiftElem);
+		mIdxBlock = 0;
 
 		mState = StMain;
 
@@ -185,31 +194,79 @@ Success MandelBlockFilling::process()
 
 Success MandelBlockFilling::lineFill()
 {
-	size_t numRemaining, numBurst;
+	size_t numRemaining, numBurst; // Unit: Blocks
+	size_t numPixelProcessed;
 
-	numRemaining = mNumPixel - mIdxPixel;
+	numRemaining = mNumBlock - mIdxBlock;
 	numBurst = PMIN(numRemaining, mpCfg->numBurst);
 
 	char *pDataEnd = mpDataStart + mpCfg->szData + mpCfg->szPadding;
 #if 0
 	if (!mIdxLine && !mIdxPixel)
+	{
 		procDbgLog("Pixels per line  %u", mNumPixel);
+		procDbgLog("Blocks per line  %u", mNumBlock);
+	}
 #endif
+	size_t idxY[numPixelPerBlock], idxX[numPixelPerBlock];
+
+	(void)idxY;
+	(void)idxX;
+
 	for (; numBurst; --numBurst)
 	{
-		colorMandelbrot(mpData, mIdxLine, mIdxPixel);
+		numRemaining = mNumPixel - mIdxPixel;
+		numPixelProcessed = PMIN(numRemaining, numPixelPerBlock);
+#if 0
+		if (!mIdxLine)
+			procDbgLog("%3u: %2u, %4u", mIdxBlock, numPixelProcessed, mIdxPixel);
+#endif
+		if (numPixelProcessed >= numPixelPerBlock)
+			colorMandelbrotChunks(mpData, mIdxLine, mIdxPixel);
+		else
+			colorMandelbrotChunks(mpData, mIdxLine, mIdxPixel, numPixelProcessed);
 
-		mpData += cBytesPerPixel;
-		++mIdxPixel;
+		mpData += cBytesPerPixel * numPixelProcessed;
+
+		++mIdxBlock;
+		mIdxPixel += numPixelProcessed;
 	}
 
 	if (mIdxPixel < mNumPixel)
 		return Pending;
 
 	for (; mpData < pDataEnd; ++mpData)
+	{
+#if 0
+		if (!mIdxLine)
+			procDbgLog("0x00 -> %p", mpData);
+#endif
 		*mpData = 0;
+	}
 
+#if 0 // TODO: Remove. Just temporary
+	userInfLog("foo");
+
+	exit(1);
+#endif
 	return Positive;
+}
+
+void MandelBlockFilling::colorMandelbrotChunks(char *pData, size_t idxLine, size_t idxPixel, size_t numPixel)
+{
+	size_t i;
+
+	if (!numPixel)
+		numPixel = numPixelPerBlock;
+
+	i = 0;
+	for (; i < numPixel; ++i)
+	{
+		colorMandelbrot(pData, idxLine, idxPixel);
+
+		pData += cBytesPerPixel;
+		++idxPixel;
+	}
 }
 
 void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
