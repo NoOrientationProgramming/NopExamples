@@ -64,7 +64,7 @@ class AppHelpOutput : public TclapOutput {};
 
 #define cNameFileDefault		"mandelbrot_1"
 #define cDirOutputDefault	"."
-#define cZoomDefault		"17000"
+#define cZoomDefault		"170000"
 
 // OS signal handler => Tell the application what to do on Ctrl-C
 #if defined(_WIN32)
@@ -149,8 +149,10 @@ int main(int argc, char *argv[])
 #endif
 	SwitchArg argForceDouble("", "double", "Force calculation in double", false);
 	cmd.add(argForceDouble);
+#if APP_HAS_AVX2
 	SwitchArg argDisableSimd("", "no-simd", "Disable usage of SIMD (Single Instruction Multiple Data)", false);
 	cmd.add(argDisableSimd);
+#endif
 	ValueArg<uint16_t> argPort("", "port-telnet", "Start in server mode if not zero. Default: 0",
 								false, 0, "uint");
 	cmd.add(argPort);
@@ -183,7 +185,9 @@ int main(int argc, char *argv[])
 	env.nameFile = argNameFile.getValue();
 	env.dirOutput = argDirOut.getValue();
 	env.forceDouble = argForceDouble.getValue();
+#if APP_HAS_AVX2
 	env.disableSimd = argDisableSimd.getValue();
+#endif
 	env.port = argPort.getValue();
 	env.zoom = argZoom.getValue();
 #else
@@ -201,9 +205,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	// |||||| ____________ |||||| ____________
-
-	// |_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|_|
 	while (1)
 	{
 		for (size_t coreBurst = 0; coreBurst < 13; ++coreBurst)

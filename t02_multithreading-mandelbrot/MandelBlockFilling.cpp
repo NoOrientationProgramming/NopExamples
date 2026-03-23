@@ -24,6 +24,9 @@
 */
 
 #include <math.h>
+#if APP_HAS_AVX2
+#include <immintrin.h>
+#endif
 
 #include "MandelBlockFilling.h"
 #include "LibBmp.h"
@@ -50,7 +53,7 @@ struct GradientStop
 	MbValFull t;
 	Color c;
 };
-#if 1
+
 static GradientStop keysGradient[] =
 {
 	{0.00,  {  0,   0,   0}}, // black
@@ -66,37 +69,20 @@ static GradientStop keysGradient[] =
 	{0.50,  {255, 220, 120}}, // light gold
 	{0.55,  {255, 200,  60}}, // gold
 	{0.60,  {255, 170,   0}}, // deep gold
+	{0.65,  {227, 145,   0}},
 	{0.70,  {200, 120,   0}}, // bronze
+	{0.75,  {160,  90,   0}},
 	{0.80,  {120,  60,   0}}, // dark bronze
+	{0.85,  { 90,  25,   0}},
 	{0.90,  { 60,  30,   0}}, // dark brown
+	{0.95,  { 30,  15,   0}},
 	{1.00,  {  0,   0,   0}}, // back to black
 };
-#else
-static GradientStop keysGradient[] =
-{
-	{0.00,  {  0,   0,   0}}, // black
-	{0.05,  { 80,  80,  80}}, // deep blue
-	{0.10,  {150, 150, 150}}, // blue
-	{0.15,  {200, 200, 200}}, // blue-cyan
-	{0.20,  {220, 220, 220}}, // cyan
-	{0.25,  {255, 255, 255}}, // light cyan
-	{0.30,  {255, 255, 255}}, // very light blue
-	{0.35,  {255, 255, 255}}, // almost white
-	{0.40,  {255, 255, 255}}, // white
-	{0.45,  {200, 200, 200}}, // mint
-	{0.50,  {140, 140, 140}}, // light green
-	{0.55,  { 80,  80,  80}}, // green
-	{0.60,  { 60,  60,  60}}, // strong green
-	{0.70,  { 40,  40,  40}}, // forest green
-	{0.80,  { 25,  25,  25}}, // dark green
-	{0.90,  { 15,  15,  15}}, // very dark green
-	{1.00,  {  0,   0,   0}}, // back to black
-};
-#endif
-const size_t cNumGradients = 256;
+
+const size_t cScaleGradient = 20;
 
 const size_t cNumKeysGradient = sizeof(keysGradient) / sizeof(keysGradient[0]);
-const size_t cScaleGradient = cNumGradients / (cNumKeysGradient - 1);
+const size_t cNumGradients = (cNumKeysGradient - 1) * cScaleGradient + 1;
 
 static GradientStop gradient[cNumGradients] = {};
 
@@ -208,11 +194,6 @@ Success MandelBlockFilling::lineFill()
 		procDbgLog("Blocks per line  %u", mNumBlock);
 	}
 #endif
-	size_t idxY[numPixelPerBlock], idxX[numPixelPerBlock];
-
-	(void)idxY;
-	(void)idxX;
-
 	for (; numBurst; --numBurst)
 	{
 		numRemaining = mNumPixel - mIdxPixel;
@@ -221,10 +202,7 @@ Success MandelBlockFilling::lineFill()
 		if (!mIdxLine)
 			procDbgLog("%3u: %2u, %4u", mIdxBlock, numPixelProcessed, mIdxPixel);
 #endif
-		if (numPixelProcessed >= numPixelPerBlock)
-			colorMandelbrotChunks(mpData, mIdxLine, mIdxPixel);
-		else
-			colorMandelbrotChunks(mpData, mIdxLine, mIdxPixel, numPixelProcessed);
+		colorMandelbrotChunks(mpData, mIdxLine, mIdxPixel, numPixelProcessed);
 
 		mpData += cBytesPerPixel * numPixelProcessed;
 
@@ -244,32 +222,99 @@ Success MandelBlockFilling::lineFill()
 		*mpData = 0;
 	}
 
-#if 0 // TODO: Remove. Just temporary
-	userInfLog("foo");
-
-	exit(1);
-#endif
 	return Positive;
 }
 
 void MandelBlockFilling::colorMandelbrotChunks(char *pData, size_t idxLine, size_t idxPixel, size_t numPixel)
 {
-	size_t i;
-
-	if (!numPixel)
-		numPixel = numPixelPerBlock;
-
-	i = 0;
-	for (; i < numPixel; ++i)
+#if APP_HAS_AVX2
+	if (numPixel == numPixelPerBlock && !mpCfg->disableSimd)
 	{
-		colorMandelbrot(pData, idxLine, idxPixel);
+		colorMandelbrotSimd(pData, idxLine, idxPixel);
+		return;
+	}
+#endif
+#if 0
+	if (!mIdxLine)
+		procDbgLog("SCAL %3u: %4u", mIdxBlock, mIdxPixel);
+#endif
+	for (size_t i = 0; i < numPixel; ++i)
+	{
+		colorMandelbrotScalar(pData, idxLine, idxPixel);
 
 		pData += cBytesPerPixel;
 		++idxPixel;
 	}
+
+	//exit(1);
 }
 
-void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel)
+// (x[4], y[4]) -> (r, g, b)[4]
+#if APP_HAS_AVX2
+void MandelBlockFilling::colorMandelbrotSimd(char *pData, size_t idxLine, size_t idxPixel)
+{
+	if (!mIdxLine)
+		procDbgLog("SIMD %3u: %4u", mIdxBlock, mIdxPixel);
+
+	// 1. From image pixel space -> Complex space
+
+	__m128i idxX, idxY;
+	__m256d cx, cy;
+
+	idxX = _mm_set_epi32(idxPixel + 3, idxPixel + 2, idxPixel + 1, idxPixel + 0);
+	idxY = _mm_set1_epi32(idxLine);
+
+	cx = _mm256_cvtepi32_pd(idxX);
+	cy = _mm256_cvtepi32_pd(idxY);
+
+	hexDump(&cx, sizeof(cx));
+	hexDump(&cy, sizeof(cy));
+
+	// 2. Do the mandelbrot calculation in complex space
+
+	// 3. Color mapping from fractional iterator -> RGB color
+
+	__m256d tmp, mu, t, tMin, tMax;
+
+	mu = _mm256_set1_pd(20);
+
+	for (size_t u = 0; u < numPixelPerBlock; ++u)
+		procDbgLog("mu: %10.3f", mu[u]);
+
+	tmp = _mm256_set1_pd(0.02);
+	t = _mm256_mul_pd(mu, tmp);
+
+	t = _mm256_sub_pd(t, _mm256_floor_pd(t));
+
+	tMin = _mm256_set1_pd(0.0);
+	tMax = _mm256_set1_pd(1.0);
+
+	t = _mm256_min_pd(t, tMax);
+	t = _mm256_max_pd(t, tMin);
+
+	for (size_t u = 0; u < numPixelPerBlock; ++u)
+		procDbgLog("t:  %10.3f", t[u]);
+#if 0
+	idxGrad1 = idxGradient(t);
+	pGrad1 = &gradient[idxGrad1];
+	pGrad2 = pGrad1 + 1;
+
+	c = lerp(t, pGrad1->c, pGrad2->c);
+#endif
+	for (size_t i = 0; i < numPixelPerBlock; ++i)
+	{
+		// Not RGB but BGR! => BMP specific
+		*pData++ = 0x20;
+		*pData++ = 0x20;
+		*pData++ = 0x20;
+
+		++idxPixel;
+	}
+}
+#endif
+
+// (x, y) -> (r, g, b)
+void MandelBlockFilling::colorMandelbrotScalar(char *pData, size_t idxLine, size_t idxPixel)
 {
 	size_t numIterMax = mpCfg->numIterMax;
 	MbValFull offsX = mpCfg->posX;
@@ -308,7 +353,9 @@ void MandelBlockFilling::colorMandelbrot(char *pData, size_t idxLine, size_t idx
 
 		t = PMAX(tMin, PMIN(tMax, t));
 
-		idxGrad1 = idxGradient(t);
+		idxGrad1 = (size_t)(t * (cNumGradients - 1));
+		idxGrad1 = PMIN(idxGrad1, cNumGradients - 2);
+
 		pGrad1 = &gradient[idxGrad1];
 		pGrad2 = pGrad1 + 1;
 
@@ -377,23 +424,6 @@ MbValFull MandelBlockFilling::fractionalIter(
 	return numIter + 1 - log2(log2(mag));
 }
 
-size_t MandelBlockFilling::idxGradient(MbValFull t)
-{
-	GradientStop *pGrad1, *pGrad2;
-	size_t i = 0;
-
-	for (; i < cNumGradients - 1; ++i)
-	{
-		pGrad1 = &gradient[i];
-		pGrad2 = pGrad1 + 1;
-
-		if (t > pGrad1->t && t < pGrad2->t)
-			return i;
-	}
-
-	return 0;
-}
-
 void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)
 {
 #if 0
@@ -434,10 +464,12 @@ void MandelBlockFilling::gradientBuild()
 			if (i >= 32)
 				continue;
 
-			procDbgLog("%2u - %2u - %2u: %0.3f, %3u %3u %3u",
+			dbgLog("%2u - %2u - %2u: %0.3f, %3u %3u %3u",
 				k, s, i, pGrad->t, pGrad->c.r, pGrad->c.g, pGrad->c.b);
 #endif
 		}
 	}
+
+	gradient[cNumGradients - 1] = keysGradient[cNumKeysGradient - 1];
 }
 

@@ -49,7 +49,9 @@ struct ConfigMandelbrot
 	// Mandelbrot
 	bool forceDouble;
 	bool useDouble;
+#if APP_HAS_AVX2
 	bool disableSimd;
+#endif
 	size_t numIterMax;
 	MbValFull posX;
 	MbValFull posY;
@@ -108,8 +110,11 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	Success lineFill();
-	void colorMandelbrotChunks(char *pData, size_t idxLine, size_t idxPixel, size_t numPixel = 0);
-	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
+	void colorMandelbrotChunks(char *pData, size_t idxLine, size_t idxPixel, size_t numPixel);
+#if APP_HAS_AVX2
+	void colorMandelbrotSimd(char *pData, size_t idxLine, size_t idxPixel);
+#endif
+	void colorMandelbrotScalar(char *pData, size_t idxLine, size_t idxPixel);
 	size_t mandelbrot(
 			MbValFull cx, MbValFull cy,
 			MbValFull &zx, MbValFull &zy,
@@ -117,7 +122,6 @@ private:
 	MbValFull fractionalIter(
 			MbValFull zx, MbValFull zy,
 			size_t numIter);
-	size_t idxGradient(MbValFull t);
 
 	/* member variables */
 	//uint32_t mStartMs;

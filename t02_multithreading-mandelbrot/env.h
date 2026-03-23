@@ -33,7 +33,9 @@ struct Environment
 	std::string nameFile;
 	std::string dirOutput;
 	bool forceDouble;
+#if APP_HAS_AVX2
 	bool disableSimd;
+#endif
 	uint16_t port;
 
 	uint32_t imgWidth;

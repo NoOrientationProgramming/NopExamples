@@ -147,7 +147,9 @@ Success MandelbrotCreating::process()
 		userInfLog("  Datatype          %14s%s",
 						cfg.useDouble ? "double" : "float",
 						cfg.forceDouble ? " (forced)" : "");
+#if APP_HAS_AVX2
 		userInfLog("  SIMD              %14s", cfg.disableSimd ? "Disabled" : "Enabled");
+#endif
 		userInfLog("  Max. iter. per pixel        %u", cfg.numIterMax);
 		userInfLog("  Pos X             %14.3f", cfg.posX);
 		userInfLog("  Pos Y             %14.3f", cfg.posY);
@@ -235,7 +237,7 @@ bool MandelbrotCreating::fillersStart()
 #if 0
 		start(pFill);
 #else
-#if 0
+#if 1
 		start(pFill, DrivenByNewInternalDriver);
 #else
 		start(pFill, DrivenByExternalDriver);

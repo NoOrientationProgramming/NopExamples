@@ -181,8 +181,8 @@ bool Supervising::servicesStart()
 
 	ConfigMandelbrot *pMandel = &mpMbCreate->cfg;
 
-	pMandel->imgWidth = 803;
-	pMandel->imgHeight = 600;
+	pMandel->imgWidth = 1920;
+	pMandel->imgHeight = 1200;
 	//pMandel->imgWidth = 2560;
 	//pMandel->imgHeight = 1600;
 	//pMandel->imgWidth = 3840;
@@ -191,8 +191,10 @@ bool Supervising::servicesStart()
 	//pMandel->imgHeight = 4800;
 
 	pMandel->forceDouble = env.forceDouble;
+#if APP_HAS_AVX2
 	pMandel->disableSimd = env.disableSimd;
-
+	pMandel->disableSimd = true;
+#endif
 	pMandel->numIterMax = 2000;
 	pMandel->posX = -0.743643887037151;
 	pMandel->posY = 0.131825904205330;
