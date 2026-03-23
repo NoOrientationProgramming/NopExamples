@@ -30,6 +30,18 @@ struct Environment
 #if defined(__unix__)
 	bool coreDump;
 #endif
+	std::string nameFile;
+	std::string dirOutput;
+	bool forceDouble;
+	bool disableSimd;
+	uint16_t port;
+
+	uint32_t imgWidth;
+	uint32_t imgHeight;
+	size_t numIterMax;
+	double posX;
+	double posY;
+	double zoom;
 };
 
 extern Environment env;

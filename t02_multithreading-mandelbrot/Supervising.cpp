@@ -26,6 +26,8 @@
 #include "Supervising.h"
 #include "SystemDebugging.h"
 
+#include "env.h"
+
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
@@ -163,6 +165,8 @@ bool Supervising::servicesStart()
 	//pMandel->imgHeight = 2400;
 	//pMandel->imgWidth = 7680;
 	//pMandel->imgHeight = 4800;
+
+	pMandel->forceDouble = env.forceDouble;
 
 	pMandel->numIterMax = 2000;
 	pMandel->posX = -0.743643887037151;

@@ -28,6 +28,8 @@
 
 #include "Processing.h"
 
+const double zoomFloatMax = 17000;
+
 typedef double MbVal;
 
 struct ConfigMandelbrot
@@ -40,6 +42,8 @@ struct ConfigMandelbrot
 	size_t szPadding;
 
 	// Mandelbrot
+	bool forceDouble;
+	bool useDouble;
 	size_t numIterMax;
 	MbVal posX;
 	MbVal posY;

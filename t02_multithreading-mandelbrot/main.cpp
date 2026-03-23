@@ -143,6 +143,9 @@ int main(int argc, char *argv[])
 	SwitchArg argCoreDump("", "core-dump", "Enable core dumps", false);
 	cmd.add(argCoreDump);
 #endif
+	SwitchArg argForceDouble("", "double", "Force calculation in double", false);
+	cmd.add(argForceDouble);
+
 	cmd.parse(argc, argv);
 
 	if (argLicenses.getValue())
@@ -159,6 +162,7 @@ int main(int argc, char *argv[])
 #if defined(__unix__)
 	env.coreDump = argCoreDump.getValue();
 #endif
+	env.forceDouble = argForceDouble.getValue();
 #else
 	(void)argc;
 	(void)argv;

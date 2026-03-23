@@ -141,10 +141,15 @@ Success MandelbrotCreating::process()
 
 		userInfLog("");
 
+		cfg.useDouble = cfg.zoom > zoomFloatMax || cfg.forceDouble;
+
 		userInfLog("  Image width       %14u [pixel]", cfg.imgWidth);
 		userInfLog("  Image height      %14u [pixel]", cfg.imgHeight);
 		userInfLog("");
 
+		userInfLog("  Datatype          %14s%s",
+						cfg.useDouble ? "double" : "float",
+						cfg.forceDouble ? " (forced)" : "");
 		userInfLog("  Max. iter. per pixel        %u", cfg.numIterMax);
 		userInfLog("  Pos X             %14.3f", cfg.posX);
 		userInfLog("  Pos Y             %14.3f", cfg.posY);
