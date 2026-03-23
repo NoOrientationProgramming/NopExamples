@@ -283,14 +283,14 @@ void MandelBlockFilling::colorMandelbrotSimd(char *pData, size_t idxLine, size_t
 
 	for (size_t u = 0; u < numPixelPerBlock; ++u)
 	{
-		procDbgLog("idxX[%u]: %10.3f", u, idxX[u]);
-		procDbgLog("idxY[%u]: %10.3f", u, idxY[u]);
+		procDbgLog("[%u] idxX   %10.3f", u, idxX[u]);
+		procDbgLog("[%u] idxY   %10.3f", u, idxY[u]);
 	}
 
 	for (size_t u = 0; u < numPixelPerBlock; ++u)
 	{
-		procDbgLog("cx[%u]: %10.3f", u, cx[u]);
-		procDbgLog("cy[%u]: %10.3f", u, cy[u]);
+		procDbgLog("[%u] cx     %10.3f", u, cx[u]);
+		procDbgLog("[%u] cy     %10.3f", u, cy[u]);
 	}
 #endif
 	// 2. Do the mandelbrot calculation in complex space
