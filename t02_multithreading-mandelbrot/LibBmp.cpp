@@ -197,11 +197,17 @@ bool FileBmp::lineAppendUnlocked(const char *pData, size_t len)
 	if (idxLine >= height)
 		return false;
 
-	if (!pFile || !pData || !len || (len & 3))
+	if (!pFile || !pData || !len)
 		return false;
 
 	if (!width || !height)
 		return false;
+
+	if (len & 3)
+	{
+		wrnLog("Padding error: %u (%u) @ %p -> %p", idxLine, len, pData, pFile);
+		return false;
+	}
 #if 0
 	if (idxLine < 5)
 		wrnLog("Writing line: %u (%u) @ %p -> %p", idxLine, len, pData, pFile);
