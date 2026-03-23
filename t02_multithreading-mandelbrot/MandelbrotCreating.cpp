@@ -284,7 +284,7 @@ Success MandelbrotCreating::linesProcess()
 
 		pData = mpLineDone + sizeof(BlockMandelHeader);
 
-		ok = mBmp.lineAppend(pData, cfg.szData);
+		ok = mBmp.lineAppend(pData, cfg.szData + cfg.szPadding);
 		if (!ok)
 			return procErrLog(-1, "could not append line");
 

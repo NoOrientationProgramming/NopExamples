@@ -190,7 +190,7 @@ Success MandelBlockFilling::lineFill()
 	numRemaining = mNumPixel - mIdxPixel;
 	numBurst = PMIN(numRemaining, mpCfg->numBurst);
 
-	char *pDataEnd = mpDataStart + mpCfg->szData;
+	char *pDataEnd = mpDataStart + mpCfg->szData + mpCfg->szPadding;
 #if 0
 	if (!mIdxLine && !mIdxPixel)
 		procDbgLog("Pixels per line  %u", mNumPixel);
