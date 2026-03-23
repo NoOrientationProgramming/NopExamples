@@ -150,6 +150,7 @@ Success MandelbrotCreating::process()
 		userInfLog("  Datatype          %14s%s",
 						cfg.useDouble ? "double" : "float",
 						cfg.forceDouble ? " (forced)" : "");
+		userInfLog("  SIMD              %14s", cfg.disableSimd ? "Disabled" : "Enabled");
 		userInfLog("  Max. iter. per pixel        %u", cfg.numIterMax);
 		userInfLog("  Pos X             %14.3f", cfg.posX);
 		userInfLog("  Pos Y             %14.3f", cfg.posY);

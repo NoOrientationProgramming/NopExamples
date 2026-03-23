@@ -44,6 +44,7 @@ struct ConfigMandelbrot
 	// Mandelbrot
 	bool forceDouble;
 	bool useDouble;
+	bool disableSimd;
 	size_t numIterMax;
 	MbVal posX;
 	MbVal posY;

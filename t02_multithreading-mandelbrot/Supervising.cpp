@@ -167,6 +167,7 @@ bool Supervising::servicesStart()
 	//pMandel->imgHeight = 4800;
 
 	pMandel->forceDouble = env.forceDouble;
+	pMandel->disableSimd = env.disableSimd;
 
 	pMandel->numIterMax = 2000;
 	pMandel->posX = -0.743643887037151;

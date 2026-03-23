@@ -145,6 +145,8 @@ int main(int argc, char *argv[])
 #endif
 	SwitchArg argForceDouble("", "double", "Force calculation in double", false);
 	cmd.add(argForceDouble);
+	SwitchArg argDisableSimd("", "no-simd", "Disable usage of SIMD (Single Instruction Multiple Data)", false);
+	cmd.add(argDisableSimd);
 
 	cmd.parse(argc, argv);
 
@@ -163,6 +165,7 @@ int main(int argc, char *argv[])
 	env.coreDump = argCoreDump.getValue();
 #endif
 	env.forceDouble = argForceDouble.getValue();
+	env.disableSimd = argDisableSimd.getValue();
 #else
 	(void)argc;
 	(void)argv;
