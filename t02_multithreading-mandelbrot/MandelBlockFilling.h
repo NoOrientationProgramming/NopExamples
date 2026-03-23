@@ -32,7 +32,8 @@
 
 const double zoomFloatMax = 17000;
 
-typedef double MbVal;
+typedef double MbValFull;
+typedef float MbVal;
 
 struct ConfigMandelbrot
 {
@@ -50,9 +51,9 @@ struct ConfigMandelbrot
 	bool useDouble;
 	bool disableSimd;
 	size_t numIterMax;
-	MbVal posX;
-	MbVal posY;
-	MbVal zoom;
+	MbValFull posX;
+	MbValFull posY;
+	MbValFull zoom;
 
 	// Filling
 	size_t numBurst;
@@ -109,13 +110,13 @@ private:
 	Success lineFill();
 	void colorMandelbrot(char *pData, size_t idxLine, size_t idxPixel);
 	size_t mandelbrot(
-			MbVal cx, MbVal cy,
-			MbVal &zx, MbVal &zy,
+			MbValFull cx, MbValFull cy,
+			MbValFull &zx, MbValFull &zy,
 			size_t numIterMax);
-	MbVal fractionalIter(
-			MbVal zx, MbVal zy,
+	MbValFull fractionalIter(
+			MbValFull zx, MbValFull zy,
 			size_t numIter);
-	size_t idxGradient(MbVal t);
+	size_t idxGradient(MbValFull t);
 
 	/* member variables */
 	//uint32_t mStartMs;
