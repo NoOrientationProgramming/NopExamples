@@ -137,7 +137,7 @@ if cxx.get_id() == 'gcc'
 	have_avx2 = cxx.has_argument('-mavx2')
 	if have_avx2
 		add_project_arguments('-mavx2', language : 'cpp')
-		add_project_arguments('-DAPP_HAS_AVX2=1', language : 'cpp')
+		args += '-DAPP_HAS_AVX2=1'
 	else
 		warning('Scalar code only')
 	endif
