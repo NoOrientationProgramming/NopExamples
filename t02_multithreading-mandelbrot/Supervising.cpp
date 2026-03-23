@@ -78,6 +78,12 @@ Success Supervising::process()
 	{
 	case StStart:
 
+		if (env.port)
+		{
+			userInfLog("");
+			userInfLog("  Starting in server mode: %u", env.port);
+		}
+
 		ok = servicesStart();
 		if (!ok)
 			return procErrLog(-1, "could not start services");
