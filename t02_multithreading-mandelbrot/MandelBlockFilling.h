@@ -115,10 +115,9 @@ private:
 	void colorMandelbrotSimd(char *pData, size_t idxLine, size_t idxPixel);
 #endif
 	void colorMandelbrotScalar(char *pData, size_t idxLine, size_t idxPixel);
-	size_t mandelbrot(
-			MbValFull cx, MbValFull cy,
-			MbValFull &zx, MbValFull &zy,
-			size_t numIterMax);
+	void mandelbrot(
+			MbValFull cx, MbValFull cy, size_t numIterMax,
+			MbValFull &zx, MbValFull &zy, size_t &numIter);
 	MbValFull fractionalIter(
 			MbValFull zx, MbValFull zy,
 			size_t numIter);

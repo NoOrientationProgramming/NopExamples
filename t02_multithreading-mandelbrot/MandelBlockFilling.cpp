@@ -367,9 +367,10 @@ void MandelBlockFilling::colorMandelbrotScalar(char *pData, size_t idxLine, size
 	MbValFull zx, zy, mu, t, tMin, tMax;
 	Color c;
 
-	size_t numIter = mandelbrot(cx, cy, zx, zy, numIterMax);
 	GradientStop *pGrad1, *pGrad2;
-	size_t idxGrad1;
+	size_t numIter, idxGrad1;
+
+	mandelbrot(cx, cy, numIterMax, zx, zy, numIter);
 
 	if (numIter < numIterMax)
 	{
@@ -420,18 +421,18 @@ void MandelBlockFilling::colorMandelbrotScalar(char *pData, size_t idxLine, size
 	*pData++ = c.r;
 }
 
-size_t MandelBlockFilling::mandelbrot(
-			MbValFull cx, MbValFull cy,
-			MbValFull &zx, MbValFull &zy,
-			size_t numIterMax)
+void MandelBlockFilling::mandelbrot(
+			MbValFull cx, MbValFull cy, size_t numIterMax,
+			MbValFull &zx, MbValFull &zy, size_t &numIter)
 {
-	size_t i = 0;
 	MbValFull xx, yy, xy;
 
 	zx = 0.0;
 	zy = 0.0;
 
-	while (i < numIterMax)
+	numIter = 0;
+
+	while (numIter < numIterMax)
 	{
 		xx = zx * zx;
 		yy = zy * zy;
@@ -444,11 +445,9 @@ size_t MandelBlockFilling::mandelbrot(
 		zx = xx - yy + cx;
 		zy = 2 * xy + cy;
 
+		++numIter;
 		++mNumIter;
-		++i;
 	}
-
-	return i;
 }
 
 MbValFull MandelBlockFilling::fractionalIter(
