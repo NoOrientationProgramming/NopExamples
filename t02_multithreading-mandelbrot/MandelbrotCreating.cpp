@@ -110,23 +110,22 @@ Success MandelbrotCreating::process()
 		cfg.szPadding = cfg.szLine - cfg.szData;
 
 		cfg.szLine += sizeof(BlockMandelHeader);
-
+		mSzBuffer = cfg.szLine * mBmp.height;
+#if 0
 		procDbgLog("Line header      %u", sizeof(BlockMandelHeader));
 		procDbgLog("Data size        %u", cfg.szData);
 		procDbgLog("Line padding     %u", cfg.szPadding);
 
 		procDbgLog("Line size        %u", cfg.szLine);
-
-		mSzBuffer = cfg.szLine * mBmp.height;
 		procDbgLog("Buffer size      %u", mSzBuffer);
-
+#endif
 		mpBuffer = new dNoThrow char[mSzBuffer];
 		if (!mpBuffer)
 			return procErrLog(-1, "could not allocate data buffer");
-
+#if 0
 		procDbgLog("Buffer start     %p", mpBuffer);
 		procDbgLog("Buffer end       %p", mpBuffer + mSzBuffer);
-
+#endif
 		nameFile += ".bmp";
 		ok = FileBmp::create(nameFile.c_str(), &mBmp);
 		if (!ok)
@@ -134,25 +133,7 @@ Success MandelbrotCreating::process()
 
 		mpLineFiller = mpLineDone = mpBuffer;
 
-		userInfLog("");
-
 		cfg.useDouble = cfg.zoom > zoomFloatMax || cfg.forceDouble;
-
-		userInfLog("  Image width       %14u [pixel]", cfg.imgWidth);
-		userInfLog("  Image height      %14u [pixel]", cfg.imgHeight);
-		userInfLog("");
-
-		userInfLog("  Datatype          %14s%s",
-						cfg.useDouble ? "double" : "float",
-						cfg.forceDouble ? " (forced)" : "");
-#if APP_HAS_AVX2
-		userInfLog("  SIMD              %14s", cfg.disableSimd ? "Disabled" : "Enabled");
-#endif
-		userInfLog("  Max. iter. per pixel        %u", cfg.numIterMax);
-		userInfLog("  Pos X             %14.3f", cfg.posX);
-		userInfLog("  Pos Y             %14.3f", cfg.posY);
-		userInfLog("  Zoom              %14.3e", cfg.zoom);
-		userInfLog("");
 
 		hideCursor();
 		progressPrint();

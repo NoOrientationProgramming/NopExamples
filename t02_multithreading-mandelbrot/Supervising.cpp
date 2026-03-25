@@ -207,9 +207,31 @@ bool Supervising::servicesStart()
 	pMandel->zoom = 17000; // float
 	pMandel->zoom = 170000; // double
 #endif
+	configPrint(pMandel);
+
 	start(mpMbCreate);
 
 	return true;
+}
+
+void Supervising::configPrint(ConfigMandelbrot *pCfg)
+{
+	userInfLog("");
+	userInfLog("  Image width       %14u [pixel]", pCfg->imgWidth);
+	userInfLog("  Image height      %14u [pixel]", pCfg->imgHeight);
+	userInfLog("");
+
+	userInfLog("  Datatype          %14s%s",
+					pCfg->useDouble ? "double" : "float",
+					pCfg->forceDouble ? " (forced)" : "");
+#if APP_HAS_AVX2
+	userInfLog("  SIMD              %14s", pCfg->disableSimd ? "Disabled" : "Enabled");
+#endif
+	userInfLog("  Max. iter. per pixel        %u", pCfg->numIterMax);
+	userInfLog("  Pos X             %14.3f", pCfg->posX);
+	userInfLog("  Pos Y             %14.3f", pCfg->posY);
+	userInfLog("  Zoom              %14.3e", pCfg->zoom);
+	userInfLog("");
 }
 
 void Supervising::processInfo(char *pBuf, char *pBufEnd)

@@ -60,6 +60,7 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	bool servicesStart();
+	void configPrint(ConfigMandelbrot *pMandel);
 
 	/* member variables */
 	//uint32_t mStartMs;
