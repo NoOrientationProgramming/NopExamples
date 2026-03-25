@@ -102,7 +102,7 @@ const size_t cNumGradients = (cNumKeysGradient - 1) * cScaleGradient + 1;
 
 static GradientStop gradient[cNumGradients] = {};
 
-MbValFull fractionalIter(
+static MbValFull fractionalIter(
 			MbValFull zx, MbValFull zy,
 			size_t numIter)
 {
@@ -110,7 +110,7 @@ MbValFull fractionalIter(
 	return numIter + 1 - log2(log2(mag));
 }
 
-void mandelbrot(
+static void mandelbrot(
 			MbValFull cx, MbValFull cy, size_t numIterMax,
 			MbValFull &zx, MbValFull &zy, size_t &numIter)
 {
