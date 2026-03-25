@@ -215,7 +215,6 @@ bool Supervising::servicesStart()
 	pMandel->disableSimd = env.disableSimd;
 	pMandel->disableSimd = true;
 #endif
-	pMandel->numIterMax = 2000;
 	pMandel->posX = -0.743643887037151;
 	pMandel->posY = 0.131825904205330;
 	pMandel->zoom = env.zoom;
@@ -223,6 +222,8 @@ bool Supervising::servicesStart()
 	pMandel->zoom = 17000; // float
 	pMandel->zoom = 170000; // double
 #endif
+	pMandel->numIterMax = 2000;
+
 	configPrint(pMandel);
 
 	start(mpMbCreate);

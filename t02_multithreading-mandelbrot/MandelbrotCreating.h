@@ -27,6 +27,7 @@
 #define MANDELBROT_CREATING_H
 
 #include <string>
+#include <list>
 
 #include "Processing.h"
 #include "MandelBlockFilling.h"
@@ -77,12 +78,15 @@ private:
 
 	bool fillersStart();
 	Success linesProcess();
+	Success fillersProcess();
 
 	/* member variables */
 	uint32_t mStartMs;
 	char *mpBuffer;
 	size_t mSzBuffer;
 	FileBmp mBmp;
+
+	std::list<MandelBlockFilling *> mLstFillers;
 
 	size_t mIdxLineFiller;
 	char *mpLineFiller;

@@ -24,12 +24,15 @@
 
 struct Environment
 {
+	// Default
 	bool haveTclap;
 	bool daemonDebug;
 	int verbosity;
 #if defined(__unix__)
 	bool coreDump;
 #endif
+
+	// Application
 	std::string nameFile;
 	std::string dirOutput;
 	bool forceDouble;
@@ -40,10 +43,13 @@ struct Environment
 
 	uint32_t imgWidth;
 	uint32_t imgHeight;
-	size_t numIterMax;
 	double posX;
 	double posY;
 	double zoom;
+
+	size_t numIterMax;
+	size_t numThreads;
+	size_t numFillers;
 };
 
 extern Environment env;

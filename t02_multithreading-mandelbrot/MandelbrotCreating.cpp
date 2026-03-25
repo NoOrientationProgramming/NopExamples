@@ -51,6 +51,7 @@ MandelbrotCreating::MandelbrotCreating()
 	, mpBuffer(NULL)
 	, mSzBuffer(0)
 	, mBmp()
+	, mLstFillers()
 	, mIdxLineFiller(0)
 	, mpLineFiller(NULL)
 	, mpLineDone(NULL)
@@ -141,6 +142,8 @@ Success MandelbrotCreating::process()
 
 		break;
 	case StMain:
+
+		(void)fillersProcess();
 
 		ok = fillersStart();
 		if (!ok)
@@ -269,6 +272,17 @@ Success MandelbrotCreating::linesProcess()
 
 		return Positive;
 	}
+
+	return Pending;
+}
+
+Success MandelbrotCreating::fillersProcess()
+{
+	// Check filler finished
+
+	// Start new filler
+
+	// Check overall finished
 
 	return Pending;
 }

@@ -64,7 +64,12 @@ class AppHelpOutput : public TclapOutput {};
 
 #define cNameFileDefault		"mandelbrot_1"
 #define cDirOutputDefault	"."
+#define cImgWidthDefault		"1920"
+#define cImgHeightDefault	"1200"
+#define cPosXDefault		"-0.743643887037151"
+#define cPosYDefault		"0.131825904205330"
 #define cZoomDefault		"170000"
+#define cNumIterMaxDefault	"2000"
 
 // OS signal handler => Tell the application what to do on Ctrl-C
 #if defined(_WIN32)
@@ -137,6 +142,7 @@ int main(int argc, char *argv[])
 #endif
 	cmd.setOutput(&aho);
 
+	// Default
 	SwitchArg argDebug("d", "debug", "Enable debugging daemon", false);
 	cmd.add(argDebug);
 	ValueArg<int> argVerbosity("v", "verbosity", "Verbosity: high => more output", false, 3, "int");
@@ -147,6 +153,14 @@ int main(int argc, char *argv[])
 	SwitchArg argCoreDump("", "core-dump", "Enable core dumps", false);
 	cmd.add(argCoreDump);
 #endif
+
+	// Application
+	ValueArg<string> argNameFile("", "name-file", "Name of the outputfile without extension. Default: " cNameFileDefault,
+								false, cNameFileDefault, "string");
+	cmd.add(argNameFile);
+	ValueArg<string> argDirOut("", "dir-out", "Output directory. Default: " cDirOutputDefault,
+								false, cDirOutputDefault, "string");
+	cmd.add(argDirOut);
 	SwitchArg argForceDouble("", "double", "Force calculation in double", false);
 	cmd.add(argForceDouble);
 #if APP_HAS_AVX2
@@ -156,16 +170,18 @@ int main(int argc, char *argv[])
 	ValueArg<uint16_t> argPort("", "port-telnet", "Start in server mode if not zero. Default: 0",
 								false, 0, "uint");
 	cmd.add(argPort);
-	ValueArg<string> argNameFile("", "name-file", "Name of the outputfile without extension. Default: " cNameFileDefault,
-								false, cNameFileDefault, "string");
-	cmd.add(argNameFile);
-	ValueArg<string> argDirOut("", "dir-out", "Output directory. Default: " cDirOutputDefault,
-								false, cDirOutputDefault, "string");
-	cmd.add(argDirOut);
+	// imgWidth;
+	// imgHeight;
+	// posX;
+	// posY;
 	ValueArg<double> argZoom("", "zoom", "Zoom in the complex plane. Default: " cZoomDefault,
 								false, atof(cZoomDefault), "double");
 	cmd.add(argZoom);
+	// numIterMax;
+	// numThreads;
+	// numFillers;
 
+	// Parse
 	cmd.parse(argc, argv);
 
 	if (argLicenses.getValue())
