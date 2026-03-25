@@ -60,13 +60,19 @@ private:
 	void processInfo(char *pBuf, char *pBufEnd);
 
 	bool servicesStart();
+
 	void configPrint(ConfigMandelbrot *pMandel);
+	void progressPrint();
 	void resultPrint();
+
+	void hideCursor();
+	void showCursor();
 
 	/* member variables */
 	//uint32_t mStartMs;
 	uint32_t mStateSd;
 	MandelbrotCreating *mpMbCreate;
+	size_t mIdxLineDone;
 
 	/* static functions */
 

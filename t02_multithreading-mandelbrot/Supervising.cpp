@@ -61,6 +61,7 @@ Supervising::Supervising()
 	//, mStartMs(0)
 	, mStateSd(StSdStart)
 	, mpMbCreate(NULL)
+	, mIdxLineDone(10)
 {
 	mState = StStart;
 }
@@ -90,10 +91,15 @@ Success Supervising::process()
 		if (!ok)
 			return procErrLog(-1, "could not start services");
 
+		hideCursor();
+		progressPrint();
+
 		mState = StMain;
 
 		break;
 	case StMain:
+
+		progressPrint();
 
 		success = mpMbCreate->success();
 		if (success == Pending)
@@ -102,6 +108,7 @@ Success Supervising::process()
 		if (success != Positive)
 			return procErrLog(-1, "could not create Mandelbrot picture");
 
+		progressPrint();
 		resultPrint();
 
 		return Positive;
@@ -129,6 +136,8 @@ Success Supervising::shutdown()
 
 		if (mpMbCreate->progress())
 			break;
+
+		showCursor();
 
 		return Positive;
 
@@ -236,6 +245,30 @@ void Supervising::configPrint(ConfigMandelbrot *pCfg)
 	userInfLog("");
 }
 
+void Supervising::progressPrint()
+{
+	size_t idxLineDone = mpMbCreate->mIdxLineDone;
+
+	if (idxLineDone == mIdxLineDone)
+		return;
+	mIdxLineDone = idxLineDone;
+
+	char buf[59];
+	char *pBufStart = buf;
+	char *pBuf = pBufStart;
+	char *pBufEnd = pBuf + sizeof(buf);
+
+	pBuf[0] = 0;
+
+	dInfo("\r  ");
+	pBuf += progressStr(pBuf, pBufEnd,
+			(int)idxLineDone,
+			(int)mpMbCreate->cfg.imgHeight);
+
+	fprintf(stdout, "%s\r", pBufStart);
+	fflush(stdout);
+}
+
 void Supervising::resultPrint()
 {
 	size_t ips, numIter = mpMbCreate->mNumIterations;
@@ -249,6 +282,38 @@ void Supervising::resultPrint()
 	userInfLog("  Iter. per second  %14.3e", (double)ips);
 	userInfLog("  Pixel * IPS       %14.3e", ((double)ips) * pCfg->imgWidth * pCfg->imgHeight);
 	userInfLog("");
+}
+
+void Supervising::hideCursor()
+{
+#ifdef _WIN32
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO info;
+
+	info.dwSize = 100;
+	info.bVisible = FALSE;
+
+	SetConsoleCursorInfo(consoleHandle, &info);
+#else
+	fprintf(stdout, "\033[?25l");
+	fflush(stdout);
+#endif
+}
+
+void Supervising::showCursor()
+{
+#ifdef _WIN32
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO info;
+
+	info.dwSize = 100;
+	info.bVisible = TRUE;
+
+	SetConsoleCursorInfo(consoleHandle, &info);
+#else
+	fprintf(stdout, "\033[?25h");
+	fflush(stdout);
+#endif
 }
 
 void Supervising::processInfo(char *pBuf, char *pBufEnd)

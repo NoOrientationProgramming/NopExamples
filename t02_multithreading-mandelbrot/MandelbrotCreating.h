@@ -47,6 +47,7 @@ public:
 	ConfigMandelbrot cfg;
 
 	// Output
+	size_t mIdxLineDone;
 	size_t mNumIterations;
 	uint32_t mDurationMs;
 
@@ -73,11 +74,6 @@ private:
 	bool fillersStart();
 	Success linesProcess();
 
-	void progressPrint();
-
-	void hideCursor();
-	void showCursor();
-
 	/* member variables */
 	uint32_t mStartMs;
 	char *mpBuffer;
@@ -86,8 +82,6 @@ private:
 	size_t mSzBuffer;
 
 	size_t mIdxLineFiller;
-	size_t mIdxLineDone;
-	size_t mIdxProgress;
 
 	char *mpLineFiller;
 	char *mpLineDone;

@@ -49,6 +49,7 @@ using namespace std;
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	, nameFile()
+	, mIdxLineDone(0)
 	, mNumIterations(0)
 	, mDurationMs(0)
 	, mStartMs(0)
@@ -56,8 +57,6 @@ MandelbrotCreating::MandelbrotCreating()
 	, mBmp()
 	, mSzBuffer(0)
 	, mIdxLineFiller(0)
-	, mIdxLineDone(0)
-	, mIdxProgress(0)
 	, mpLineFiller(NULL)
 	, mpLineDone(NULL)
 {
@@ -136,9 +135,6 @@ Success MandelbrotCreating::process()
 
 		cfg.useDouble = cfg.zoom > zoomFloatMax || cfg.forceDouble;
 
-		hideCursor();
-		progressPrint();
-
 		mState = StMain;
 
 		break;
@@ -170,7 +166,6 @@ Success MandelbrotCreating::process()
 Success MandelbrotCreating::shutdown()
 {
 	mBmp.close();
-	showCursor();
 	return Positive;
 }
 
@@ -264,73 +259,16 @@ Success MandelbrotCreating::linesProcess()
 		if (!ok)
 			return procErrLog(-1, "could not append line");
 
-		progressPrint();
-
 		mpLineDone += cfg.szLine;
 		++mIdxLineDone;
 
 		if (mIdxLineDone < mBmp.height)
 			continue;
 
-		progressPrint();
-
 		return Positive;
 	}
 
 	return Pending;
-}
-
-void MandelbrotCreating::progressPrint()
-{
-	++mIdxProgress;
-	if (mIdxLineDone != 0 && mIdxLineDone != mBmp.height && mIdxProgress < 100)
-		return;
-	mIdxProgress = 0;
-
-	char buf[59];
-	char *pBufStart = buf;
-	char *pBuf = pBufStart;
-	char *pBufEnd = pBuf + sizeof(buf);
-
-	pBuf[0] = 0;
-
-	dInfo("\r  ");
-	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineDone, (int)mBmp.height);
-
-	fprintf(stdout, "%s\r", pBufStart);
-	fflush(stdout);
-}
-
-void MandelbrotCreating::hideCursor()
-{
-#ifdef _WIN32
-	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO info;
-
-	info.dwSize = 100;
-	info.bVisible = FALSE;
-
-	SetConsoleCursorInfo(consoleHandle, &info);
-#else
-	fprintf(stdout, "\033[?25l");
-	fflush(stdout);
-#endif
-}
-
-void MandelbrotCreating::showCursor()
-{
-#ifdef _WIN32
-	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
-	CONSOLE_CURSOR_INFO info;
-
-	info.dwSize = 100;
-	info.bVisible = TRUE;
-
-	SetConsoleCursorInfo(consoleHandle, &info);
-#else
-	fprintf(stdout, "\033[?25h");
-	fflush(stdout);
-#endif
 }
 
 void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
