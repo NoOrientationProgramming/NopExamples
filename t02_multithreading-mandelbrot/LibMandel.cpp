@@ -141,65 +141,69 @@ static void mandelbrot(
 // (x, y) -> (r, g, b)
 size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
 {
-	size_t numIterMax = pCfg->numIterMax;
-	MbValFull w2 = ((MbValFull)pCfg->imgWidth) / 2;
-	MbValFull h2 = ((MbValFull)pCfg->imgHeight) / 2;
-	MbValFull scaleX = 1.0 / pCfg->zoom;
-	MbValFull scaleY = scaleX * pCfg->imgHeight / pCfg->imgWidth;
+	// 1. From image pixel space -> Complex space
 
-	MbValFull idxX = idxPixel - w2;
-	MbValFull idxY = idxLine - h2;
-	MbValFull cx = scaleX * idxX / w2 + pCfg->posX;
-	MbValFull cy = scaleY * idxY / h2 + pCfg->posY;
-	MbValFull zx, zy, mu, t, tMin, tMax;
-	Color c;
+	MbValFull idxX = idxPixel - pCfg->w2;
+	MbValFull idxY = idxLine - pCfg->h2;
+	MbValFull cx = pCfg->scaleX * idxX + pCfg->posX;
+	MbValFull cy = pCfg->scaleY * idxY + pCfg->posY;
 
-	GradientStop *pGrad1, *pGrad2;
-	size_t numIter, idxGrad1;
+	// 2. Do the mandelbrot calculation in complex space
+
+	size_t numIter, numIterMax = pCfg->numIterMax;
+	MbValFull zx, zy;
 
 	mandelbrot(cx, cy, numIterMax, zx, zy, numIter);
 
-	if (numIter < numIterMax)
+	// 3. Color mapping from fractional iterator -> RGB color
+
+	if (numIter >= numIterMax)
 	{
-		mu = fractionalIter(zx, zy, numIter);
-#if 0
-		t = mu / numIterMax;
-		//t = pow(t, 0.7);
-		t = sqrt(t);
-		//t = 1.0 - t;
-#else
-		t = mu * 0.02;
-		t = t - floor(t);
-#endif
-		tMin = 0.0;
-		tMax = 1.0;
+		*pData++ = 0;
+		*pData++ = 0;
+		*pData++ = 0;
 
-		t = PMAX(tMin, PMIN(tMax, t));
-
-		idxGrad1 = (size_t)(t * (cNumGradients - 1));
-		idxGrad1 = PMIN(idxGrad1, cNumGradients - 2);
-
-		pGrad1 = &gradient[idxGrad1];
-		pGrad2 = pGrad1 + 1;
-
-		c = lerp(t, pGrad1->c, pGrad2->c);
+		return numIter;
 	}
+
+	GradientStop *pGrad1, *pGrad2;
+	MbValFull mu, t, tMin, tMax;
+	size_t idxGrad1;
+	Color c;
+
+	mu = fractionalIter(zx, zy, numIter);
+	t = mu * 0.02;
+	t = t - floor(t);
+
+	tMin = 0.0;
+	tMax = 1.0;
+
+	t = PMAX(tMin, PMIN(tMax, t));
+
+	idxGrad1 = (size_t)(t * (cNumGradients - 1));
+	idxGrad1 = PMIN(idxGrad1, cNumGradients - 2);
+
+	pGrad1 = &gradient[idxGrad1];
+	pGrad2 = pGrad1 + 1;
+
+	c = lerp(t, pGrad1->c, pGrad2->c);
 #if 0
-	if (idxLine < 2 && !idxPixel)
+	if (idxLine < 2 && idxPixel < 4)
 	{
-		dbgLog("Idx. X          %.0f", idxX);
-		dbgLog("Idx. Y          %.0f", idxY);
+		dbgLog("-----------------------------------");
+		dbgLog("Idx. X          %12.0f", idxX);
+		dbgLog("Idx. Y          %12.0f", idxY);
 
-		dbgLog("Complex X       %.3f", cx);
-		dbgLog("Complex Y       %.3f", cy);
+		dbgLog("Complex X       %12.8f", cx);
+		dbgLog("Complex Y       %12.8f", cy);
 
-		dbgLog("Iterations      %u", numIter);
-		dbgLog("Frac. iter.     %.3f", mu);
-		dbgLog("Normalized      %.3f", t);
-		dbgLog("Idx. grad. 1    %u", idxGrad1);
-		dbgLog("Idx. grad. 2    %u", idxGrad1 + 1);
+		dbgLog("Iterations      %12u", numIter);
+		dbgLog("Frac. iter.     %12.3f", mu);
+		dbgLog("Normalized      %12.3f", t);
+		dbgLog("Idx. grad. 1    %12u", idxGrad1);
+		dbgLog("Idx. grad. 2    %12u", idxGrad1 + 1);
 
-		dbgLog("R/G/B           %d/%d/%d", c.r, c.g, c.b);
+		dbgLog("R/G/B            %3d/%3d/%3d", c.r, c.g, c.b);
 	}
 #endif
 	// Not RGB but BGR! => BMP specific
@@ -212,44 +216,61 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 
 // (x[4], y[4]) -> (r, g, b)[4]
 #if APP_HAS_AVX2
+#if 1
+static void m128iPrint(__m128i &val, const char *pName = NULL)
+{
+	uint32_t valOut[cNumPixelPerBlock];
+
+	_mm_storeu_si128((__m128i *)valOut, val);
+
+	dbgLog("-----------------------------------");
+	dbgLog("%s = [%u, %u, %u, %u]",
+		pName ? pName : "m128i",
+		valOut[0], valOut[1], valOut[2], valOut[3]);
+
+	hexDump(&valOut, sizeof(valOut));
+	dbgLog("");
+}
+
+static void m256dPrint(__m256d &val, const char *pName = NULL)
+{
+	__m256d valOut = val;
+
+	//double valOut[cNumPixelPerBlock];
+	//_mm256_store_pd(valOut, val);
+
+	dbgLog("-----------------------------------");
+	dbgLog("%s = [%.8f, %.8f, %.8f, %.8f]",
+		pName ? pName : "m256d",
+		valOut[0], valOut[1], valOut[2], valOut[3]);
+
+	hexDump(&valOut, sizeof(valOut));
+}
+#endif
 size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
 {
-	MbValFull w2 = ((MbValFull)pCfg->imgWidth) / 2;
-	MbValFull h2 = ((MbValFull)pCfg->imgHeight) / 2;
-	MbValFull scaleX = (1.0 / pCfg->zoom) / w2;
-	MbValFull scaleY = scaleX * (pCfg->imgHeight / pCfg->imgWidth) / h2;
+	// 1. From image pixel space -> Complex space
 
 	__m128i tmp_i, idxXin, idxYin;
 	__m256d tmp_d, idxX, idxY, cx, cy;
 
-	// 1. From image pixel space -> Complex space
-
 	idxXin = _mm_set_epi32(idxPixel + 3, idxPixel + 2, idxPixel + 1, idxPixel + 0);
 	idxYin = _mm_set1_epi32(idxLine);
 
-	idxX = _mm256_sub_pd(_mm256_cvtepi32_pd(idxXin), _mm256_set1_pd(w2));
-	idxY = _mm256_sub_pd(_mm256_cvtepi32_pd(idxYin), _mm256_set1_pd(h2));
+	idxX = _mm256_sub_pd(_mm256_cvtepi32_pd(idxXin), _mm256_set1_pd(pCfg->w2));
+	idxY = _mm256_sub_pd(_mm256_cvtepi32_pd(idxYin), _mm256_set1_pd(pCfg->h2));
 
-	cx = _mm256_mul_pd(_mm256_set1_pd(scaleX), idxX);
+	cx = _mm256_mul_pd(_mm256_set1_pd(pCfg->scaleX), idxX);
 	cx = _mm256_add_pd(cx, _mm256_set1_pd(pCfg->posX));
 
-	cy = _mm256_mul_pd(_mm256_set1_pd(scaleY), idxX);
+	cy = _mm256_mul_pd(_mm256_set1_pd(pCfg->scaleY), idxY);
 	cy = _mm256_add_pd(cy, _mm256_set1_pd(pCfg->posY));
 #if 1
-	hexDump(&idxX, sizeof(idxX));
-	hexDump(&idxY, sizeof(idxY));
+	m128iPrint(idxXin, "idxXin");
+	m128iPrint(idxYin, "idxYin");
 
-	for (size_t u = 0; u < cNumPixelPerBlock; ++u)
-	{
-		dbgLog("[%u] idxX   %10.3f", u, idxX[u]);
-		dbgLog("[%u] idxY   %10.3f", u, idxY[u]);
-	}
-
-	for (size_t u = 0; u < cNumPixelPerBlock; ++u)
-	{
-		dbgLog("[%u] cx     %10.3f", u, cx[u]);
-		dbgLog("[%u] cy     %10.3f", u, cy[u]);
-	}
+	m256dPrint(cx, "cx");
+	m256dPrint(cy, "cy");
 #endif
 	// 2. Do the mandelbrot calculation in complex space
 

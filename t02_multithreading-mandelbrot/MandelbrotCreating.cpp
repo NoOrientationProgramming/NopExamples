@@ -100,10 +100,15 @@ Success MandelbrotCreating::process()
 		mBmp.width = cfg.imgWidth;
 		mBmp.height = cfg.imgHeight;
 
+		cfg.w2 = ((MbValFull)cfg.imgWidth) / 2;
+		cfg.h2 = ((MbValFull)cfg.imgHeight) / 2;
+		cfg.scaleX = 1.0 / cfg.zoom;
+		cfg.scaleY = (cfg.scaleX * cfg.imgHeight) / (cfg.imgWidth * cfg.h2);
+		cfg.scaleX /= cfg.w2;
+
 		cfg.szData = mBmp.width * cBytesPerPixel;
 		cfg.szLine = ((cfg.szData + maskLine) & ~maskLine);
 		cfg.szPadding = cfg.szLine - cfg.szData;
-
 		cfg.szLine += sizeof(BlockMandelHeader);
 
 		// TODO

@@ -59,6 +59,11 @@ struct ConfigMandelbrot
 	MbValFull posY;
 	MbValFull zoom;
 
+	MbValFull w2;
+	MbValFull h2;
+	MbValFull scaleX;
+	MbValFull scaleY;
+
 	// Filling
 	size_t numBurst;
 };
