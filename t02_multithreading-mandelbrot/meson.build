@@ -26,6 +26,7 @@ srcs = [
 	'MandelbrotCreating.cpp',
 	'MandelBlockFilling.cpp',
 	'LibBmp.cpp',
+	'LibMandel.cpp',
 ]
 
 # Arguments

@@ -1,0 +1,104 @@
+/*
+  This file is part of the DSP-Crowd project
+  https://www.dsp-crowd.com
+
+  Author(s):
+      - Johannes Natter, office@dsp-crowd.com
+
+  File created on 25.03.2026
+
+  Copyright (C) 2026, Johannes Natter
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+#ifndef LIB_MANDEL_H
+#define LIB_MANDEL_H
+
+#include <stddef.h>
+#include <inttypes.h>
+#include <string>
+
+typedef double MbValFull;
+typedef float MbVal;
+
+const size_t cShiftElem = 2;
+const size_t cNumPixelPerBlock = 1 << cShiftElem;
+const size_t cMaskElem = cNumPixelPerBlock - 1;
+
+class Color
+{
+public:
+	Color(int r_ = 0, int g_ = 0, int b_ = 0)
+		: r(r_)
+		, g(g_)
+		, b(b_)
+	{}
+
+	Color operator+(const Color &other) const
+	{ return Color(r + other.r, g + other.g, b + other.b); }
+	Color operator-(const Color &other) const
+	{ return Color(r - other.r, g - other.g, b - other.b); }
+	Color operator*(double t) const
+	{
+		return Color(static_cast<int>(r * t),
+			static_cast<int>(g * t),
+			static_cast<int>(b * t));
+	}
+	Color operator/(double t) const
+	{
+		return Color(static_cast<int>(r / t),
+			static_cast<int>(g / t),
+			static_cast<int>(b / t));
+	}
+
+	int r;
+	int g;
+	int b;
+};
+
+struct ConfigMandelbrot
+{
+	// Image
+	uint32_t imgWidth;
+	uint32_t imgHeight;
+	size_t szData;
+	size_t szLine;
+	size_t szPadding;
+	std::string nameFile;
+	std::string dirOut;
+
+	// Mandelbrot
+	bool forceDouble;
+	bool useDouble;
+#if APP_HAS_AVX2
+	bool disableSimd;
+#endif
+	size_t numIterMax;
+	MbValFull posX;
+	MbValFull posY;
+	MbValFull zoom;
+
+	// Filling
+	size_t numBurst;
+};
+
+size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel);
+#if APP_HAS_AVX2
+size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel);
+#endif
+void gradientBuild();
+
+#endif
+

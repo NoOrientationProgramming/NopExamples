@@ -134,8 +134,6 @@ Success MandelbrotCreating::process()
 
 		mpLineFiller = mpLineDone = mpBuffer;
 
-		MandelBlockFilling::gradientBuild();
-
 		userInfLog("");
 
 		cfg.useDouble = cfg.zoom > zoomFloatMax || cfg.forceDouble;

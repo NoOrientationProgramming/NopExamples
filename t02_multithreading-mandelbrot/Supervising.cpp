@@ -26,6 +26,7 @@
 #include "Supervising.h"
 #include "SystemDebugging.h"
 #include "ThreadPooling.h"
+#include "LibMandel.h"
 
 #include "env.h"
 
@@ -170,6 +171,9 @@ bool Supervising::servicesStart()
 	start(pPool);
 
 	// Mandelbrot
+
+	gradientBuild();
+
 	mpMbCreate = MandelbrotCreating::create();
 	if (!mpMbCreate)
 	{

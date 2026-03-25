@@ -29,37 +29,9 @@
 #include <string>
 
 #include "Processing.h"
+#include "LibMandel.h"
 
 const double zoomFloatMax = 17000;
-
-typedef double MbValFull;
-typedef float MbVal;
-
-struct ConfigMandelbrot
-{
-	// Image
-	uint32_t imgWidth;
-	uint32_t imgHeight;
-	size_t szData;
-	size_t szLine;
-	size_t szPadding;
-	std::string nameFile;
-	std::string dirOut;
-
-	// Mandelbrot
-	bool forceDouble;
-	bool useDouble;
-#if APP_HAS_AVX2
-	bool disableSimd;
-#endif
-	size_t numIterMax;
-	MbValFull posX;
-	MbValFull posY;
-	MbValFull zoom;
-
-	// Filling
-	size_t numBurst;
-};
 
 struct BlockMandelHeader
 {
@@ -111,16 +83,6 @@ private:
 
 	Success lineFill();
 	void colorMandelbrotChunks(char *pData, size_t idxLine, size_t idxPixel, size_t numPixel);
-#if APP_HAS_AVX2
-	void colorMandelbrotSimd(char *pData, size_t idxLine, size_t idxPixel);
-#endif
-	void colorMandelbrotScalar(char *pData, size_t idxLine, size_t idxPixel);
-	void mandelbrot(
-			MbValFull cx, MbValFull cy, size_t numIterMax,
-			MbValFull &zx, MbValFull &zy, size_t &numIter);
-	MbValFull fractionalIter(
-			MbValFull zx, MbValFull zy,
-			size_t numIter);
 
 	/* member variables */
 	//uint32_t mStartMs;
