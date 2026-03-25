@@ -210,6 +210,7 @@ bool Supervising::servicesStart()
 	//pMandel->imgHeight = 4800;
 
 	pMandel->forceDouble = env.forceDouble;
+	pMandel->useDouble = pMandel->zoom > zoomFloatMax || pMandel->forceDouble;
 #if APP_HAS_AVX2
 	pMandel->disableSimd = env.disableSimd;
 	pMandel->disableSimd = true;

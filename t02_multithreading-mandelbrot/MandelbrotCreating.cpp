@@ -132,8 +132,6 @@ Success MandelbrotCreating::process()
 
 		mpLineFiller = mpLineDone = mpBuffer;
 
-		cfg.useDouble = cfg.zoom > zoomFloatMax || cfg.forceDouble;
-
 		mState = StMain;
 
 		break;
