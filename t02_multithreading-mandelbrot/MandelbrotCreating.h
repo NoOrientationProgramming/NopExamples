@@ -42,8 +42,13 @@ public:
 		return new dNoThrow MandelbrotCreating;
 	}
 
+	// Input
 	std::string nameFile;
 	ConfigMandelbrot cfg;
+
+	// Output
+	size_t mNumIterations;
+	uint32_t mDurationMs;
 
 protected:
 
@@ -83,7 +88,6 @@ private:
 	size_t mIdxLineFiller;
 	size_t mIdxLineDone;
 	size_t mIdxProgress;
-	size_t mNumIterations;
 
 	char *mpLineFiller;
 	char *mpLineDone;

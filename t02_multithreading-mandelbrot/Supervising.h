@@ -61,6 +61,7 @@ private:
 
 	bool servicesStart();
 	void configPrint(ConfigMandelbrot *pMandel);
+	void resultPrint();
 
 	/* member variables */
 	//uint32_t mStartMs;

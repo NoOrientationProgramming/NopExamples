@@ -102,6 +102,8 @@ Success Supervising::process()
 		if (success != Positive)
 			return procErrLog(-1, "could not create Mandelbrot picture");
 
+		resultPrint();
+
 		return Positive;
 
 		break;
@@ -231,6 +233,21 @@ void Supervising::configPrint(ConfigMandelbrot *pCfg)
 	userInfLog("  Pos X             %14.3f", pCfg->posX);
 	userInfLog("  Pos Y             %14.3f", pCfg->posY);
 	userInfLog("  Zoom              %14.3e", pCfg->zoom);
+	userInfLog("");
+}
+
+void Supervising::resultPrint()
+{
+	size_t ips, numIter = mpMbCreate->mNumIterations;
+	uint32_t durMs = mpMbCreate->mDurationMs;
+	ConfigMandelbrot *pCfg = &mpMbCreate->cfg;
+
+	userInfLog("\n");
+	userInfLog("  Duration          %14zu [ms]", durMs);
+	userInfLog("  Iterations        %14.3e", (double)numIter);
+	ips = (size_t)(((double)numIter) / durMs);
+	userInfLog("  Iter. per second  %14.3e", (double)ips);
+	userInfLog("  Pixel * IPS       %14.3e", ((double)ips) * pCfg->imgWidth * pCfg->imgHeight);
 	userInfLog("");
 }
 

@@ -49,6 +49,8 @@ using namespace std;
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	, nameFile()
+	, mNumIterations(0)
+	, mDurationMs(0)
 	, mStartMs(0)
 	, mpBuffer(NULL)
 	, mBmp()
@@ -56,7 +58,6 @@ MandelbrotCreating::MandelbrotCreating()
 	, mIdxLineFiller(0)
 	, mIdxLineDone(0)
 	, mIdxProgress(0)
-	, mNumIterations(0)
 	, mpLineFiller(NULL)
 	, mpLineDone(NULL)
 {
@@ -92,7 +93,7 @@ Success MandelbrotCreating::process()
 	uint32_t diffMs = curTimeMs - mStartMs;
 	Success success;
 	bool ok;
-	size_t ips, maskLine = 3;
+	size_t maskLine = 3;
 #if 0
 	dStateTrace;
 #endif
@@ -111,6 +112,10 @@ Success MandelbrotCreating::process()
 
 		cfg.szLine += sizeof(BlockMandelHeader);
 		mSzBuffer = cfg.szLine * mBmp.height;
+
+		mpBuffer = new dNoThrow char[mSzBuffer];
+		if (!mpBuffer)
+			return procErrLog(-1, "could not allocate data buffer");
 #if 0
 		procDbgLog("Line header      %u", sizeof(BlockMandelHeader));
 		procDbgLog("Data size        %u", cfg.szData);
@@ -118,11 +123,7 @@ Success MandelbrotCreating::process()
 
 		procDbgLog("Line size        %u", cfg.szLine);
 		procDbgLog("Buffer size      %u", mSzBuffer);
-#endif
-		mpBuffer = new dNoThrow char[mSzBuffer];
-		if (!mpBuffer)
-			return procErrLog(-1, "could not allocate data buffer");
-#if 0
+
 		procDbgLog("Buffer start     %p", mpBuffer);
 		procDbgLog("Buffer end       %p", mpBuffer + mSzBuffer);
 #endif
@@ -154,13 +155,7 @@ Success MandelbrotCreating::process()
 		if (success != Positive)
 			return procErrLog(-1, "could not process lines");
 
-		userInfLog("\n");
-		userInfLog("  Duration          %14zu [ms]", diffMs);
-		userInfLog("  Iterations        %14.3e", (double)mNumIterations);
-		ips = (size_t)(((double)mNumIterations) / diffMs);
-		userInfLog("  Iter. per second  %14.3e", (double)ips);
-		userInfLog("  Pixel * IPS       %14.3e", ((double)ips) * cfg.imgWidth * cfg.imgHeight);
-		userInfLog("");
+		mDurationMs = diffMs;
 
 		return Positive;
 
