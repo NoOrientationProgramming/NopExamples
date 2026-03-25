@@ -47,7 +47,11 @@ public:
 	ConfigMandelbrot cfg;
 
 	// Output
+
+	// Monitoring
 	size_t mIdxLineDone;
+
+	// Result
 	size_t mNumIterations;
 	uint32_t mDurationMs;
 
