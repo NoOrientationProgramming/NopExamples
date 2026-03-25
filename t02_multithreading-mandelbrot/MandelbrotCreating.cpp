@@ -110,6 +110,10 @@ Success MandelbrotCreating::process()
 		cfg.szPadding = cfg.szLine - cfg.szData;
 
 		cfg.szLine += sizeof(BlockMandelHeader);
+
+		// TODO
+		// - Do not create such a big buffer!
+		// - ReUse lines!
 		mSzBuffer = cfg.szLine * mBmp.height;
 
 		mpBuffer = new dNoThrow char[mSzBuffer];
