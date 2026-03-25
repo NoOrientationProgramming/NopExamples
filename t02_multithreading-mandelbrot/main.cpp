@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 								false, atof(cZoomDefault), "double");
 	cmd.add(argZoom);
 	// numIterMax;
-	// numThreads;
+	// numDrivers;
 	// numFillers;
 
 	// Parse

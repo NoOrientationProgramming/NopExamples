@@ -48,7 +48,7 @@ struct Environment
 	double zoom;
 
 	size_t numIterMax;
-	size_t numThreads;
+	size_t numDrivers;
 	size_t numFillers;
 };
 
