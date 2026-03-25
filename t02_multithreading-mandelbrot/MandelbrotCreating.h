@@ -81,12 +81,10 @@ private:
 	/* member variables */
 	uint32_t mStartMs;
 	char *mpBuffer;
+	size_t mSzBuffer;
 	FileBmp mBmp;
 
-	size_t mSzBuffer;
-
 	size_t mIdxLineFiller;
-
 	char *mpLineFiller;
 	char *mpLineDone;
 
