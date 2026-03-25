@@ -23,11 +23,6 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <math.h>
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #include "MandelbrotCreating.h"
 #include "ThreadPooling.h"
 #include "LibTime.h"
