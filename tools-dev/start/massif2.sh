@@ -29,5 +29,9 @@ dRelTargetToTool="$(realpath --relative-to=$dTarget $dTool)"
 echo "Target: $dRelHereToTarget"
 
 file="$(ls -1 ${dRelHereToTarget}/massif.out.* | sort | tail -n 1)"
+if [ -n "$2" ]; then
+	file="$2"
+fi
+
 massif-visualizer "$file" > /dev/null 2>&1 &
 
