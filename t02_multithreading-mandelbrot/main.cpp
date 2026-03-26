@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 	ValueArg<size_t> argNumIterMax("", "iter-max", "Maximum number of Mandelbrot iterations per pixel. Default: " cNumIterMaxDefault,
 								false, atoi(cNumIterMaxDefault), "uint");
 	cmd.add(argNumIterMax);
-	ValueArg<size_t> argThreadsPool("", "threads-pool", "Number of thread used by the thread-pool. Default: " cNumThreadsPoolDefault,
+	ValueArg<size_t> argThreadsPool("", "threads-pool", "Number of threads used by the thread-pool. Default: " cNumThreadsPoolDefault,
 								false, atoi(cNumThreadsPoolDefault), "uint");
 	cmd.add(argThreadsPool);
 	ValueArg<size_t> argNumFillers("", "fillers", "Number of parallel line filler processes. Default: " cNumFillersDefault,
@@ -207,6 +207,7 @@ int main(int argc, char *argv[])
 	// Parse
 	cmd.parse(argc, argv);
 
+	// Default
 	if (argLicenses.getValue())
 	{
 		licensesPrint();
@@ -221,6 +222,8 @@ int main(int argc, char *argv[])
 #if defined(__unix__)
 	env.coreDump = argCoreDump.getValue();
 #endif
+
+	// Application
 	env.nameFile = argNameFile.getValue();
 	env.dirOutput = argDirOut.getValue();
 	env.forceDouble = argForceDouble.getValue();
@@ -228,7 +231,17 @@ int main(int argc, char *argv[])
 	env.disableSimd = argDisableSimd.getValue();
 #endif
 	env.port = argPort.getValue();
+
+	env.imgWidth = argImgWidth.getValue();
+	env.imgHeight = argImgHeight.getValue();
+	env.posX = argPosX.getValue();
+	env.posY = argPosY.getValue();
 	env.zoom = argZoom.getValue();
+
+	env.typeDriver = argTypeDriver.getValue();
+	env.numIterMax = argNumIterMax.getValue();
+	env.numThreadsPool = argThreadsPool.getValue();
+	env.numFillers = argNumFillers.getValue();
 #else
 	(void)argc;
 	(void)argv;

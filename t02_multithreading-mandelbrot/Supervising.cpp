@@ -171,19 +171,22 @@ bool Supervising::servicesStart()
 	start(pDbg);
 
 	// Thread Pool
-	ThreadPooling *pPool;
-
-	pPool = ThreadPooling::create();
-	if (!pPool)
+	if (env.numThreadsPool)
 	{
-		procWrnLog("could not create process");
-		return false;
+		ThreadPooling *pPool;
+
+		pPool = ThreadPooling::create();
+		if (!pPool)
+		{
+			procWrnLog("could not create process");
+			return false;
+		}
+
+		pPool->cntWorkerSet(env.numThreadsPool);
+		//pPool->procTreeDisplaySet(false);
+
+		start(pPool);
 	}
-
-	pPool->cntWorkerSet(3);
-	//pPool->procTreeDisplaySet(false);
-
-	start(pPool);
 
 	// Mandelbrot
 
@@ -196,18 +199,16 @@ bool Supervising::servicesStart()
 		return false;
 	}
 
-	mpMbCreate->nameFile = env.nameFile;
+	mpMbCreate->mNameFile = env.nameFile;
+
+	mpMbCreate->mTypeDriver = env.typeDriver;
+	mpMbCreate->mNumThreadsPool = env.numThreadsPool;
+	mpMbCreate->mNumFillers = env.numFillers;
 
 	ConfigMandelbrot *pMandel = &mpMbCreate->cfg;
 
-	pMandel->imgWidth = 1920;
-	pMandel->imgHeight = 1200;
-	//pMandel->imgWidth = 2560;
-	//pMandel->imgHeight = 1600;
-	//pMandel->imgWidth = 3840;
-	//pMandel->imgHeight = 2400;
-	//pMandel->imgWidth = 7680;
-	//pMandel->imgHeight = 4800;
+	pMandel->imgWidth = env.imgWidth;
+	pMandel->imgHeight = env.imgHeight;
 
 	pMandel->forceDouble = env.forceDouble;
 	pMandel->useDouble = pMandel->zoom > zoomFloatMax || pMandel->forceDouble;
@@ -215,14 +216,10 @@ bool Supervising::servicesStart()
 	pMandel->disableSimd = env.disableSimd;
 	pMandel->disableSimd = true;
 #endif
-	pMandel->posX = -0.743643887037151;
-	pMandel->posY = 0.131825904205330;
+	pMandel->posX = env.posX;
+	pMandel->posY = env.posY;
 	pMandel->zoom = env.zoom;
-#if 0
-	pMandel->zoom = 17000; // float
-	pMandel->zoom = 170000; // double
-#endif
-	pMandel->numIterMax = 2000;
+	pMandel->numIterMax = env.numIterMax;
 
 	configPrint(pMandel);
 
@@ -234,20 +231,24 @@ bool Supervising::servicesStart()
 void Supervising::configPrint(ConfigMandelbrot *pCfg)
 {
 	userInfLog("");
-	userInfLog("  Image width       %14u [pixel]", pCfg->imgWidth);
-	userInfLog("  Image height      %14u [pixel]", pCfg->imgHeight);
+	userInfLog("  Image width             %14u [pixel]", pCfg->imgWidth);
+	userInfLog("  Image height            %14u [pixel]", pCfg->imgHeight);
 	userInfLog("");
 
-	userInfLog("  Datatype          %14s%s",
+	userInfLog("  Datatype                %14s%s",
 					pCfg->useDouble ? "double" : "float",
 					pCfg->forceDouble ? " (forced)" : "");
 #if APP_HAS_AVX2
-	userInfLog("  SIMD              %14s", pCfg->disableSimd ? "Disabled" : "Enabled");
+	userInfLog("  SIMD                    %14s", pCfg->disableSimd ? "Disabled" : "Enabled");
 #endif
-	userInfLog("  Max. iter. per pixel        %u", pCfg->numIterMax);
-	userInfLog("  Pos X             %14.3f", pCfg->posX);
-	userInfLog("  Pos Y             %14.3f", pCfg->posY);
-	userInfLog("  Zoom              %14.3e", pCfg->zoom);
+	userInfLog("  Max. iter. per pix.     %14u", pCfg->numIterMax);
+	userInfLog("  Pos X                   %14.3f", pCfg->posX);
+	userInfLog("  Pos Y                   %14.3f", pCfg->posY);
+	userInfLog("  Zoom                    %14.3e", pCfg->zoom);
+	userInfLog("");
+	userInfLog("  Driver type             %14s", env.typeDriver.c_str());
+	userInfLog("  Num. Pool-threads       %14u", env.numThreadsPool);
+	userInfLog("  Num. fillers            %14u", env.numFillers);
 	userInfLog("");
 }
 
@@ -282,11 +283,11 @@ void Supervising::resultPrint()
 	ConfigMandelbrot *pCfg = &mpMbCreate->cfg;
 
 	userInfLog("\n");
-	userInfLog("  Duration          %14zu [ms]", durMs);
-	userInfLog("  Iterations        %14.3e", (double)numIter);
+	userInfLog("  Duration                %14zu [ms]", durMs);
+	userInfLog("  Iterations              %14.3e", (double)numIter);
 	ips = (size_t)(((double)numIter) / durMs);
-	userInfLog("  Iter. per second  %14.3e", (double)ips);
-	userInfLog("  Pixel * IPS       %14.3e", ((double)ips) * pCfg->imgWidth * pCfg->imgHeight);
+	userInfLog("  Iter. per second        %14.3e", (double)ips);
+	userInfLog("  Pixel * IPS             %14.3e", ((double)ips) * pCfg->imgWidth * pCfg->imgHeight);
 	userInfLog("");
 }
 

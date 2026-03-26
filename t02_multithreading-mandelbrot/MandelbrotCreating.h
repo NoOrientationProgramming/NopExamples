@@ -44,8 +44,12 @@ public:
 	}
 
 	// Input
-	std::string nameFile;
+	std::string mNameFile;
 	ConfigMandelbrot cfg;
+
+	std::string mTypeDriver;
+	size_t mNumThreadsPool;
+	size_t mNumFillers;
 
 	// Output
 
@@ -79,7 +83,7 @@ private:
 	bool fillersStart();
 	Success linesProcess();
 	Success fillersProcess();
-	bool argumentsCheck();
+	Success argumentsCheck();
 
 	/* member variables */
 	uint32_t mStartMs;

@@ -43,7 +43,10 @@ using namespace std;
 
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
-	, nameFile()
+	, mNameFile()
+	, mTypeDriver()
+	, mNumThreadsPool(0)
+	, mNumFillers(0)
 	, mIdxLineDone(0)
 	, mNumIterations(0)
 	, mDurationMs(0)
@@ -96,8 +99,8 @@ Success MandelbrotCreating::process()
 	{
 	case StStart:
 
-		ok = argumentsCheck();
-		if (!ok)
+		success = argumentsCheck();
+		if (success != Positive)
 			return procErrLog(-1, "invalid arguments");
 
 		mBmp.width = cfg.imgWidth;
@@ -133,8 +136,8 @@ Success MandelbrotCreating::process()
 		procDbgLog("Buffer start     %p", mpBuffer);
 		procDbgLog("Buffer end       %p", mpBuffer + mSzBuffer);
 #endif
-		nameFile += ".bmp";
-		ok = FileBmp::create(nameFile.c_str(), &mBmp);
+		mNameFile += ".bmp";
+		ok = FileBmp::create(mNameFile.c_str(), &mBmp);
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
@@ -211,20 +214,17 @@ bool MandelbrotCreating::fillersStart()
 		if (mIdxLineFiller)
 			pFill->procTreeDisplaySet(false);
 #endif
-#if 0
-		start(pFill);
-#else
-#if 1
-		start(pFill, DrivenByNewInternalDriver);
-#else
-		start(pFill, DrivenByExternalDriver);
-#if 1
-		ThreadPooling::procAdd(pFill);
-#else
-		ThreadPooling::procAdd(pFill, 2);
-#endif
-#endif
-#endif
+		if (mTypeDriver == "ext" && mNumThreadsPool)
+		{
+			start(pFill, DrivenByExternalDriver);
+			ThreadPooling::procAdd(pFill);
+		}
+		else
+		if (mTypeDriver == "new")
+			start(pFill, DrivenByNewInternalDriver);
+		else
+			start(pFill);
+
 		whenFinishedRepel(pFill);
 
 		// Next line
@@ -290,9 +290,15 @@ Success MandelbrotCreating::fillersProcess()
 	return Pending;
 }
 
-bool MandelbrotCreating::argumentsCheck()
+Success MandelbrotCreating::argumentsCheck()
 {
-	return true;
+	if (!cfg.imgWidth || !cfg.imgHeight)
+		return procErrLog(-1, "bad image format");
+
+	if (cfg.numIterMax > 200000)
+		return procErrLog(-1, "max. iterations too high");
+
+	return Positive;
 }
 
 void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
