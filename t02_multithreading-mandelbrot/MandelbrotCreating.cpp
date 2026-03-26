@@ -103,16 +103,13 @@ Success MandelbrotCreating::process()
 		if (success != Positive)
 			return procErrLog(-1, "invalid arguments");
 
-		mBmp.width = cfg.imgWidth;
-		mBmp.height = cfg.imgHeight;
-
 		cfg.w2 = ((MbValFull)cfg.imgWidth) / 2;
 		cfg.h2 = ((MbValFull)cfg.imgHeight) / 2;
 		cfg.scaleX = 1.0 / cfg.zoom;
 		cfg.scaleY = (cfg.scaleX * cfg.imgHeight) / (cfg.imgWidth * cfg.h2);
 		cfg.scaleX /= cfg.w2;
 
-		cfg.szData = mBmp.width * cBytesPerPixel;
+		cfg.szData = cfg.imgWidth * cBytesPerPixel;
 		cfg.szLine = ((cfg.szData + maskLine) & ~maskLine);
 		cfg.szPadding = cfg.szLine - cfg.szData;
 
@@ -133,6 +130,9 @@ Success MandelbrotCreating::process()
 		procDbgLog("Buffer start     %p", mpBuffer);
 		procDbgLog("Buffer end       %p", mpBufferEnd);
 #endif
+		mBmp.width = cfg.imgWidth;
+		mBmp.height = cfg.imgHeight;
+
 		mNameFile += ".bmp";
 		ok = FileBmp::create(mNameFile.c_str(), &mBmp);
 		if (!ok)
