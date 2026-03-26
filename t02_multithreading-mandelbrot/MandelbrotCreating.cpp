@@ -217,9 +217,10 @@ Success MandelbrotCreating::fillersProcess()
 
 	while (mLstFillers.size() < mNumFillers && mIdxLineFiller < cfg.imgHeight)
 	{
+#if 1
 		if (useExt && ThreadPooling::queueReqFull())
 			break;
-
+#endif
 		pFill = MandelBlockFilling::create();
 		if (!pFill)
 			return procErrLog(-1, "could not create process");
@@ -234,7 +235,13 @@ Success MandelbrotCreating::fillersProcess()
 		if (useExt)
 		{
 			start(pFill, DrivenByExternalDriver);
-			ThreadPooling::procAdd(pFill);
+
+			ssize_t numDone = ThreadPooling::procAdd(pFill);
+			if (numDone != 1)
+			{
+				procDbgLog("external driver request failed. switching back to parental drive");
+				start(pFill);
+			}
 		}
 		else
 		if (mTypeDriver == "new")
