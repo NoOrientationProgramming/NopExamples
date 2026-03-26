@@ -178,7 +178,9 @@ Success MandelbrotCreating::fillersProcess()
 	list<MandelBlockFilling *>::iterator iter;
 	MandelBlockFilling *pFill;
 	Success success;
-	bool ok;
+	bool ok, useExt;
+
+	useExt = mTypeDriver == "ext" && mNumThreadsPool;
 
 	// Check filler finished
 
@@ -226,7 +228,7 @@ Success MandelbrotCreating::fillersProcess()
 
 		pFill->procTreeDisplaySet(false);
 
-		if (mTypeDriver == "ext" && mNumThreadsPool)
+		if (useExt)
 		{
 			start(pFill, DrivenByExternalDriver);
 			ThreadPooling::procAdd(pFill);
