@@ -96,7 +96,9 @@ Success MandelbrotCreating::process()
 	{
 	case StStart:
 
-		mStartMs = curTimeMs;
+		ok = argumentsCheck();
+		if (!ok)
+			return procErrLog(-1, "invalid arguments");
 
 		mBmp.width = cfg.imgWidth;
 		mBmp.height = cfg.imgHeight;
@@ -138,6 +140,7 @@ Success MandelbrotCreating::process()
 
 		mpLineFiller = mpLineDone = mpBuffer;
 
+		mStartMs = curTimeMs;
 		mState = StMain;
 
 		break;
@@ -285,6 +288,11 @@ Success MandelbrotCreating::fillersProcess()
 	// Check overall finished
 
 	return Pending;
+}
+
+bool MandelbrotCreating::argumentsCheck()
+{
+	return true;
 }
 
 void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)

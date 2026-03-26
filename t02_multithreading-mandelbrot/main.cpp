@@ -62,14 +62,17 @@ Supervising *pApp = NULL;
 class AppHelpOutput : public TclapOutput {};
 #endif
 
-#define cNameFileDefault		"mandelbrot_1"
-#define cDirOutputDefault	"."
-#define cImgWidthDefault		"1920"
-#define cImgHeightDefault	"1200"
-#define cPosXDefault		"-0.743643887037151"
-#define cPosYDefault		"0.131825904205330"
-#define cZoomDefault		"170000"
-#define cNumIterMaxDefault	"2000"
+#define cNameFileDefault			"mandelbrot_1"
+#define cDirOutputDefault		"."
+#define cImgWidthDefault			"1920"
+#define cImgHeightDefault		"1200"
+#define cPosXDefault			"-0.743643887037151"
+#define cPosYDefault			"0.131825904205330"
+#define cZoomDefault			"170000"
+#define cTypeDriverDefault		"ext"
+#define cNumIterMaxDefault		"2000"
+#define cNumThreadsPoolDefault	"3"
+#define cNumFillersDefault		"51"
 
 // OS signal handler => Tell the application what to do on Ctrl-C
 #if defined(_WIN32)
@@ -145,7 +148,7 @@ int main(int argc, char *argv[])
 	// Default
 	SwitchArg argDebug("d", "debug", "Enable debugging daemon", false);
 	cmd.add(argDebug);
-	ValueArg<int> argVerbosity("v", "verbosity", "Verbosity: high => more output", false, 3, "int");
+	ValueArg<int> argVerbosity("v", "verbosity", "Verbosity: high => more output", false, 3, "uint");
 	cmd.add(argVerbosity);
 	SwitchArg argLicenses("", "licenses", "Show dependencies", false);
 	cmd.add(argLicenses);
@@ -167,19 +170,35 @@ int main(int argc, char *argv[])
 	SwitchArg argDisableSimd("", "no-simd", "Disable usage of SIMD (Single Instruction Multiple Data)", false);
 	cmd.add(argDisableSimd);
 #endif
-	ValueArg<uint16_t> argPort("", "port-telnet", "Start in server mode if not zero. Default: 0",
-								false, 0, "uint");
+	ValueArg<uint16_t> argPort("", "port-telnet", "Start in server mode if not zero. Default: 0", false, 0, "uint");
 	cmd.add(argPort);
-	// imgWidth;
-	// imgHeight;
-	// posX;
-	// posY;
+	ValueArg<size_t> argImgWidth("", "img-width", "Width of generated image. Default: " cImgWidthDefault,
+								false, atoi(cImgWidthDefault), "uint");
+	cmd.add(argImgWidth);
+	ValueArg<size_t> argImgHeight("", "img-height", "Height of generated image. Default: " cImgHeightDefault,
+								false, atoi(cImgHeightDefault), "uint");
+	cmd.add(argImgHeight);
+	ValueArg<double> argPosX("", "pos-x", "X-Position in the complex plane. Default: " cPosXDefault,
+								false, atof(cPosXDefault), "double");
+	cmd.add(argPosX);
+	ValueArg<double> argPosY("", "pos-y", "Y-Position in the complex plane. Default: " cPosYDefault,
+								false, atof(cPosYDefault), "double");
+	cmd.add(argPosY);
 	ValueArg<double> argZoom("", "zoom", "Zoom in the complex plane. Default: " cZoomDefault,
 								false, atof(cZoomDefault), "double");
 	cmd.add(argZoom);
-	// numIterMax;
-	// numDrivers;
-	// numFillers;
+	ValueArg<string> argTypeDriver("", "type-driver", "par = Parent\n, new = NewInternal, ext = External. Default: " cTypeDriverDefault,
+								false, cTypeDriverDefault, "string");
+	cmd.add(argTypeDriver);
+	ValueArg<size_t> argNumIterMax("", "iter-max", "Maximum number of Mandelbrot iterations per pixel. Default: " cNumIterMaxDefault,
+								false, atoi(cNumIterMaxDefault), "uint");
+	cmd.add(argNumIterMax);
+	ValueArg<size_t> argThreadsPool("", "threads-pool", "Number of thread used by the thread-pool. Default: " cNumThreadsPoolDefault,
+								false, atoi(cNumThreadsPoolDefault), "uint");
+	cmd.add(argThreadsPool);
+	ValueArg<size_t> argNumFillers("", "fillers", "Number of parallel line filler processes. Default: " cNumFillersDefault,
+								false, atoi(cNumFillersDefault), "uint");
+	cmd.add(argNumFillers);
 
 	// Parse
 	cmd.parse(argc, argv);

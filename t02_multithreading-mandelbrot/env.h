@@ -47,8 +47,9 @@ struct Environment
 	double posY;
 	double zoom;
 
+	std::string typeDriver;
 	size_t numIterMax;
-	size_t numDrivers;
+	size_t numThreadsPool;
 	size_t numFillers;
 };
 

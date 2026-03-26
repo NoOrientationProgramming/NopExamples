@@ -79,6 +79,7 @@ private:
 	bool fillersStart();
 	Success linesProcess();
 	Success fillersProcess();
+	bool argumentsCheck();
 
 	/* member variables */
 	uint32_t mStartMs;
