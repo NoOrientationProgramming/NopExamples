@@ -92,8 +92,7 @@ Success MandelBlockFilling::process()
 		if (success == Pending)
 			break;
 #if 0
-		if (mIdxLine < 5)
-			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
+		if (mIdxLine < 5) procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
 #endif
 		return Positive;
 
@@ -129,8 +128,7 @@ Success MandelBlockFilling::lineFill()
 		numRemaining = mNumPixel - mIdxPixel;
 		numPixelProcessed = PMIN(numRemaining, cNumPixelPerBlock);
 #if 0
-		if (!mIdxLine)
-			procDbgLog("%3u: %2u, %4u", mIdxBlock, numPixelProcessed, mIdxPixel);
+		if (!mIdxLine) procDbgLog("%3u: %2u, %4u", mIdxBlock, numPixelProcessed, mIdxPixel);
 #endif
 		colorMandelbrotChunks(mpData, mIdxLine, mIdxPixel, numPixelProcessed);
 
@@ -146,8 +144,7 @@ Success MandelBlockFilling::lineFill()
 	for (; mpData < pDataEnd; ++mpData)
 	{
 #if 0
-		if (!mIdxLine)
-			procDbgLog("0x00 -> %p", mpData);
+		if (!mIdxLine) procDbgLog("0x00 -> %p", mpData);
 #endif
 		*mpData = 0;
 	}
@@ -161,16 +158,14 @@ void MandelBlockFilling::colorMandelbrotChunks(char *pData, size_t idxLine, size
 	if (numPixel == cNumPixelPerBlock && !mpCfg->disableSimd)
 	{
 #if 1
-		if (!idxLine)
-			procDbgLog("SIMD %3u: %4u", mIdxBlock, mIdxPixel);
+		if (!idxLine) procDbgLog("#### SIMD %3u: %4u", mIdxBlock, mIdxPixel);
 #endif
 		mNumIter += colorMandelbrotSimd(mpCfg, pData, idxLine, idxPixel);
 		//return;
 	}
 #endif
 #if 0
-	if (!mIdxLine)
-		procDbgLog("SCAL %3u: %4u", mIdxBlock, mIdxPixel);
+	if (!mIdxLine) procDbgLog("#### SCAL %3u: %4u", mIdxBlock, mIdxPixel);
 #endif
 	for (size_t i = 0; i < numPixel; ++i)
 	{
