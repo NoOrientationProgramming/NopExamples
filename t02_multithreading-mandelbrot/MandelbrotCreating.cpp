@@ -52,12 +52,12 @@ MandelbrotCreating::MandelbrotCreating()
 	, mDurationMs(0)
 	, mStartMs(0)
 	, mpBuffer(NULL)
+	, mpBufferEnd(NULL)
 	, mSzBuffer(0)
 	, mBmp()
 	, mLstFillers()
 	, mIdxLineFiller(0)
 	, mpLineFiller(NULL)
-	, mpLineDone(NULL)
 {
 	// Image
 	cfg.imgWidth = 1920;
@@ -115,16 +115,14 @@ Success MandelbrotCreating::process()
 		cfg.szData = mBmp.width * cBytesPerPixel;
 		cfg.szLine = ((cfg.szData + maskLine) & ~maskLine);
 		cfg.szPadding = cfg.szLine - cfg.szData;
-		cfg.szLine += sizeof(BlockMandelHeader);
 
-		// TODO
-		// - Do not create such a big buffer!
-		// - ReUse lines!
-		mSzBuffer = cfg.szLine * mBmp.height;
+		mSzBuffer = cfg.szLine * mNumFillers;
 
 		mpBuffer = new dNoThrow char[mSzBuffer];
 		if (!mpBuffer)
 			return procErrLog(-1, "could not allocate data buffer");
+
+		mpBufferEnd = mpBuffer + mSzBuffer;
 #if 0
 		procDbgLog("Line header      %u", sizeof(BlockMandelHeader));
 		procDbgLog("Data size        %u", cfg.szData);
@@ -141,7 +139,8 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
-		mpLineFiller = mpLineDone = mpBuffer;
+		mIdxLineFiller = 0;
+		mpLineFiller = mpBuffer;
 
 		mStartMs = curTimeMs;
 		mState = StMain;
@@ -149,13 +148,7 @@ Success MandelbrotCreating::process()
 		break;
 	case StMain:
 
-		(void)fillersProcess();
-
-		ok = fillersStart();
-		if (!ok)
-			return procErrLog(-1, "could not start filler");
-
-		success = linesProcess();
+		success = fillersProcess();
 		if (success == Pending)
 			break;
 
@@ -180,40 +173,59 @@ Success MandelbrotCreating::shutdown()
 	return Positive;
 }
 
-bool MandelbrotCreating::fillersStart()
+Success MandelbrotCreating::fillersProcess()
 {
-#if 1
-	if (mIdxLineDone != mIdxLineFiller)
-		return true;
-#endif
-	size_t numRemaining, numBurst = 53;
-
-	numRemaining = cfg.imgHeight - mIdxLineFiller;
-	if (!numRemaining)
-		return true;
-
-	numBurst = PMIN(numRemaining, numBurst);
-
+	list<MandelBlockFilling *>::iterator iter;
 	MandelBlockFilling *pFill;
+	Success success;
+	bool ok;
 
-	for (; numBurst; --numBurst)
+	// Check filler finished
+
+	iter = mLstFillers.begin();
+
+	while (1)
+	{
+		if (iter == mLstFillers.end())
+			break;
+
+		pFill = *iter;
+
+		success = pFill->success();
+		if (success == Pending)
+			break;
+
+		if (success != Positive)
+			return procErrLog(-1, "error filling line %u @ %p",
+								pFill->mIdxLine, pFill->mpLine);
+
+		mNumIterations += pFill->mNumIter;
+
+		ok = mBmp.lineAppend(pFill->mpLine, cfg.szLine);
+		if (!ok)
+			return procErrLog(-1, "could not append line");
+
+		repel(pFill);
+		iter = mLstFillers.erase(iter);
+
+		++mIdxLineDone;
+	}
+
+	// Start new filler
+
+	while (mLstFillers.size() < mNumFillers && mIdxLineFiller < cfg.imgHeight)
 	{
 		pFill = MandelBlockFilling::create();
 		if (!pFill)
-		{
-			procErrLog(-1, "could not create process");
-			return false;
-		}
+			return procErrLog(-1, "could not create process");
 
 		pFill->mpCfg = &cfg;
 
-		memset(mpLineFiller, 0, sizeof(BlockMandelHeader));
-		pFill->mpLine = mpLineFiller;
 		pFill->mIdxLine = mIdxLineFiller;
-#if 1
-		if (mIdxLineFiller)
-			pFill->procTreeDisplaySet(false);
-#endif
+		pFill->mpLine = mpLineFiller;
+
+		pFill->procTreeDisplaySet(false);
+
 		if (mTypeDriver == "ext" && mNumThreadsPool)
 		{
 			start(pFill, DrivenByExternalDriver);
@@ -225,69 +237,22 @@ bool MandelbrotCreating::fillersStart()
 		else
 			start(pFill);
 
-		whenFinishedRepel(pFill);
+		mLstFillers.push_back(pFill);
 
 		// Next line
-		mpLineFiller += cfg.szLine;
 		++mIdxLineFiller;
+
+		mpLineFiller += cfg.szLine;
+		if (mpLineFiller >= mpBufferEnd)
+			mpLineFiller = mpBuffer;
 	}
-
-	return true;
-}
-
-Success MandelbrotCreating::linesProcess()
-{
-	BlockMandelHeader *pHdr;
-	size_t numIterations;
-	char *pData;
-	bool ok;
-
-	while (1)
-	{
-		// Prevent read from uninizialized area
-		if (mIdxLineDone == mIdxLineFiller)
-			break;
-
-		pHdr = (BlockMandelHeader *)mpLineDone;
-
-		ok = pHdr->success & FlagFillingDone;
-		if (!ok)
-			break;
-
-		ok = pHdr->success & FlagFillingPositive;
-		if (!ok)
-			return procErrLog(-1, "error filling line %u @ %p", mIdxLineDone, mpLineDone);
-
-		memcpy(&numIterations, pHdr->numIter, sizeof(numIterations));
-		mNumIterations += numIterations;
-
-		pData = mpLineDone + sizeof(BlockMandelHeader);
-
-		ok = mBmp.lineAppend(pData, cfg.szData + cfg.szPadding);
-		if (!ok)
-			return procErrLog(-1, "could not append line");
-
-		mpLineDone += cfg.szLine;
-		++mIdxLineDone;
-
-		if (mIdxLineDone < mBmp.height)
-			continue;
-
-		return Positive;
-	}
-
-	return Pending;
-}
-
-Success MandelbrotCreating::fillersProcess()
-{
-	// Check filler finished
-
-	// Start new filler
 
 	// Check overall finished
 
-	return Pending;
+	if (mLstFillers.size() || mIdxLineFiller < cfg.imgHeight)
+		return Pending;
+
+	return Positive;
 }
 
 Success MandelbrotCreating::argumentsCheck()

@@ -30,7 +30,6 @@
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
-		gen(StDone) \
 		gen(StIdle) \
 
 #define dGenProcStateEnum(s) s,
@@ -47,14 +46,13 @@ MandelBlockFilling::MandelBlockFilling()
 	: Processing("MandelBlockFilling")
 	//, mStartMs(0)
 	, mpCfg(NULL)
-	, mpLine(NULL)
 	, mIdxLine(0)
+	, mpLine(NULL)
+	, mNumIter(0)
 	, mNumBlock(0)
 	, mIdxBlock(0)
 	, mNumPixel(0)
 	, mIdxPixel(0)
-	, mNumIter(0)
-	, mpDataStart(NULL)
 	, mpData(NULL)
 {
 	mState = StStart;
@@ -77,10 +75,7 @@ Success MandelBlockFilling::process()
 		if (!mpCfg || !mpLine)
 			return procErrLog(-1, "invalid arguments");
 
-		mpHdr = (BlockMandelHeader *)mpLine;
-		mpData = mpDataStart = mpLine + sizeof(BlockMandelHeader);
-
-		memset(mpHdr, 0, sizeof(*mpHdr));
+		mpData = mpLine;
 
 		mNumPixel = mpCfg->szData / cBytesPerPixel;
 		mIdxPixel = 0;
@@ -96,28 +91,10 @@ Success MandelBlockFilling::process()
 		success = lineFill();
 		if (success == Pending)
 			break;
-
-		if (success == Positive)
-			mpHdr->success |= FlagFillingPositive;
-
-		memcpy(mpHdr->numIter, &mNumIter, sizeof(mpHdr->numIter));
-
-		mState = StDone;
-
-		break;
-	case StDone:
-
-		mpHdr->success |= FlagFillingDone;
 #if 0
 		if (mIdxLine < 5)
 			procDbgLog("Line %u @ %p finished", mIdxLine, mpLine);
 #endif
-		if (!mIdxLine)
-		{
-			mState = StIdle;
-			break;
-		}
-
 		return Positive;
 
 		break;
@@ -139,7 +116,7 @@ Success MandelBlockFilling::lineFill()
 	numRemaining = mNumBlock - mIdxBlock;
 	numBurst = PMIN(numRemaining, mpCfg->numBurst);
 
-	char *pDataEnd = mpDataStart + mpCfg->szData + mpCfg->szPadding;
+	char *pDataEnd = mpLine + mpCfg->szLine;
 #if 0
 	if (!mIdxLine && !mIdxPixel)
 	{

@@ -33,18 +33,6 @@
 
 const double zoomFloatMax = 17000;
 
-struct BlockMandelHeader
-{
-	char success;
-	char numIter[sizeof(size_t)];
-};
-
-enum FlagsFilling
-{
-	FlagFillingDone = 1,
-	FlagFillingPositive = 2,
-};
-
 class MandelBlockFilling : public Processing
 {
 
@@ -55,10 +43,14 @@ public:
 		return new dNoThrow MandelBlockFilling;
 	}
 
+	// Input
 	ConfigMandelbrot *mpCfg;
 
-	char *mpLine;
 	size_t mIdxLine;
+	char *mpLine;
+
+	// Input
+	size_t mNumIter;
 
 	static void gradientBuild();
 
@@ -90,8 +82,6 @@ private:
 	size_t mIdxBlock;
 	size_t mNumPixel;
 	size_t mIdxPixel;
-	size_t mNumIter;
-	BlockMandelHeader *mpHdr;
 	char *mpDataStart;
 	char *mpData;
 

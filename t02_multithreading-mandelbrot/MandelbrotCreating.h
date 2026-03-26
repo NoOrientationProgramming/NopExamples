@@ -80,14 +80,13 @@ private:
 	Success shutdown();
 	void processInfo(char *pBuf, char *pBufEnd);
 
-	bool fillersStart();
-	Success linesProcess();
 	Success fillersProcess();
 	Success argumentsCheck();
 
 	/* member variables */
 	uint32_t mStartMs;
 	char *mpBuffer;
+	char *mpBufferEnd;
 	size_t mSzBuffer;
 	FileBmp mBmp;
 
@@ -95,7 +94,6 @@ private:
 
 	size_t mIdxLineFiller;
 	char *mpLineFiller;
-	char *mpLineDone;
 
 	/* static functions */
 
