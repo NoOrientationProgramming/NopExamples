@@ -124,7 +124,6 @@ Success MandelbrotCreating::process()
 
 		mpBufferEnd = mpBuffer + mSzBuffer;
 #if 0
-		procDbgLog("Line header      %u", sizeof(BlockMandelHeader));
 		procDbgLog("Data size        %u", cfg.szData);
 		procDbgLog("Line padding     %u", cfg.szPadding);
 
@@ -132,7 +131,7 @@ Success MandelbrotCreating::process()
 		procDbgLog("Buffer size      %u", mSzBuffer);
 
 		procDbgLog("Buffer start     %p", mpBuffer);
-		procDbgLog("Buffer end       %p", mpBuffer + mSzBuffer);
+		procDbgLog("Buffer end       %p", mpBufferEnd);
 #endif
 		mNameFile += ".bmp";
 		ok = FileBmp::create(mNameFile.c_str(), &mBmp);
