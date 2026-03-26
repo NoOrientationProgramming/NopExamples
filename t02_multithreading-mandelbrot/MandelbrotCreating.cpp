@@ -217,6 +217,9 @@ Success MandelbrotCreating::fillersProcess()
 
 	while (mLstFillers.size() < mNumFillers && mIdxLineFiller < cfg.imgHeight)
 	{
+		if (useExt && ThreadPooling::queueReqFull())
+			break;
+
 		pFill = MandelBlockFilling::create();
 		if (!pFill)
 			return procErrLog(-1, "could not create process");
