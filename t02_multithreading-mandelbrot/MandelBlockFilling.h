@@ -31,7 +31,7 @@
 #include "Processing.h"
 #include "LibMandel.h"
 
-const double zoomFloatMax = 17000;
+const double cZoomFloatMax = 17000;
 
 class MandelBlockFilling : public Processing
 {
