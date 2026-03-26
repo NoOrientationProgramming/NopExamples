@@ -157,11 +157,11 @@ void MandelBlockFilling::colorMandelbrotChunks(char *pData, size_t idxLine, size
 #if APP_HAS_AVX2
 	if (numPixel == cNumPixelPerBlock && !mpCfg->disableSimd)
 	{
-#if 1
+#if 0
 		if (!idxLine) procDbgLog("#### SIMD %3u: %4u", mIdxBlock, mIdxPixel);
 #endif
 		mNumIter += colorMandelbrotSimd(mpCfg, pData, idxLine, idxPixel);
-		//return;
+		return;
 	}
 #endif
 #if 0
@@ -174,9 +174,10 @@ void MandelBlockFilling::colorMandelbrotChunks(char *pData, size_t idxLine, size
 		pData += cBytesPerPixel;
 		++idxPixel;
 	}
-
+#if 0
 	if (!mpCfg->disableSimd)
 		exit(1);
+#endif
 }
 
 void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)
