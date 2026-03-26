@@ -298,6 +298,12 @@ Success MandelbrotCreating::argumentsCheck()
 	if (cfg.numIterMax > 200000)
 		return procErrLog(-1, "max. iterations too high");
 
+	if (!mNumFillers)
+		return procErrLog(-1, "no fillers specified");
+
+	if (mNumFillers > cfg.imgHeight)
+		return procErrLog(-1, "number of fillers can't exceed image height");
+
 	return Positive;
 }
 
