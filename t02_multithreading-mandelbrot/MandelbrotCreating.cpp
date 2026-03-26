@@ -249,7 +249,7 @@ Success MandelbrotCreating::fillersProcess()
 
 	// Check overall finished
 
-	if (mLstFillers.size() || mIdxLineFiller < cfg.imgHeight)
+	if (mIdxLineDone < cfg.imgHeight)
 		return Pending;
 
 	return Positive;

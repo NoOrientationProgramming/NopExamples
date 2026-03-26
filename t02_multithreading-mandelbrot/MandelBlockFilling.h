@@ -82,7 +82,6 @@ private:
 	size_t mIdxBlock;
 	size_t mNumPixel;
 	size_t mIdxPixel;
-	char *mpDataStart;
 	char *mpData;
 
 	/* static functions */
