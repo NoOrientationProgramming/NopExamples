@@ -187,7 +187,11 @@ int main(int argc, char *argv[])
 	ValueArg<double> argZoom("", "zoom", "Zoom in the complex plane. Default: " cZoomDefault,
 								false, atof(cZoomDefault), "double");
 	cmd.add(argZoom);
-	ValueArg<string> argTypeDriver("", "type-driver", "par = Parent\n, new = NewInternal, ext = External. Default: " cTypeDriverDefault,
+	ValueArg<string> argTypeDriver("", "type-driver",
+								"Type of driver for each filler process. Default: " cTypeDriverDefault
+								"\npar = Parent       (main thread)"
+								"\nnew = NewInternal  (exclusive thread)"
+								"\next = External     (thread pool)",
 								false, cTypeDriverDefault, "string");
 	cmd.add(argTypeDriver);
 	ValueArg<size_t> argNumIterMax("", "iter-max", "Maximum number of Mandelbrot iterations per pixel. Default: " cNumIterMaxDefault,
