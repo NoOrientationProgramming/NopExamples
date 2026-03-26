@@ -180,7 +180,8 @@ void MandelBlockFilling::colorMandelbrotChunks(char *pData, size_t idxLine, size
 		++idxPixel;
 	}
 
-	//exit(1);
+	if (!mpCfg->disableSimd)
+		exit(1);
 }
 
 void MandelBlockFilling::processInfo(char *pBuf, char *pBufEnd)
