@@ -1,6 +1,4 @@
 
-# Welcome to the NOP tutorials! <!-- omit in toc -->
-
 ## Output
 
 <p align="center">
