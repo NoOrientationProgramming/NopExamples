@@ -234,10 +234,9 @@ static void m128iPrint(__m128i &val, const char *pName = NULL)
 
 static void m256dPrint(__m256d &val, const char *pName = NULL)
 {
-	__m256d valOut = val;
+	double valOut[cNumPixelPerBlock];
 
-	//double valOut[cNumPixelPerBlock];
-	//_mm256_store_pd(valOut, val);
+	_mm256_storeu_pd(valOut, val);
 
 	dbgLog("-----------------------------------");
 	dbgLog("%s = [%.8f, %.8f, %.8f, %.8f]",
