@@ -402,7 +402,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	m128iPrint(idxGrad1, "idxGrad1");
 	m128iPrint(idxGrad2, "idxGrad2");
 #endif
-	return 0;
+	return numIterSum;
 }
 #endif
 
