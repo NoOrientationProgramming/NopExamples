@@ -17,6 +17,8 @@ srcs = [
 	'../deps/SystemCore/TcpListening.cpp',
 	'../deps/SystemCore/TcpTransfering.cpp',
 	'../deps/LibNaegCommon/ThreadPooling.cpp',
+	'../deps/LibNaegCommon/TelnetFiltering.cpp',
+	'../deps/LibNaegCommon/KeyUser.cpp',
 	'../deps/LibNaegCommon/LibTime.cpp',
 	'../deps/LibNaegCommon/LibFilesys.cpp',
 	'../deps/LibNaegCommon/LibDspc.cpp',
@@ -25,6 +27,7 @@ srcs = [
 	'Supervising.cpp',
 	'MandelbrotCreating.cpp',
 	'MandelBlockFilling.cpp',
+	'UserInteracting.cpp',
 	'LibBmp.cpp',
 	'LibMandel.cpp',
 ]

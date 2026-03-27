@@ -30,6 +30,7 @@
 #include "Supervising.h"
 #include "SystemDebugging.h"
 #include "ThreadPooling.h"
+#include "UserInteracting.h"
 #include "LibMandel.h"
 
 #include "env.h"
@@ -37,6 +38,8 @@
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
+		gen(StServerStart) \
+		gen(StServer) \
 
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
@@ -48,7 +51,7 @@ dProcessStateStr(ProcState);
 
 #define dForEach_SdState(gen) \
 		gen(StSdStart) \
-		gen(StSdAppDoneWait) \
+		gen(StSdMandelDoneWait) \
 
 #define dGenSdStateEnum(s) s,
 dProcessStateEnum(SdState);
@@ -65,6 +68,7 @@ Supervising::Supervising()
 	//, mStartMs(0)
 	, mStateSd(StSdStart)
 	, mpMbCreate(NULL)
+	, mpListen(NULL)
 	, mIdxLineDone(10)
 {
 	mState = StStart;
@@ -85,15 +89,22 @@ Success Supervising::process()
 	{
 	case StStart:
 
+		ok = basicsStart();
+		if (!ok)
+			return procErrLog(-1, "could not start basic services");
+
 		if (env.port)
 		{
 			userInfLog("");
-			userInfLog("  Starting in server mode: %u", env.port);
+			userInfLog("  Listening on TCP port %u (telnet)", env.port);
+
+			mState = StServerStart;
+			break;
 		}
 
-		ok = servicesStart();
+		ok = mandelbrotStart();
 		if (!ok)
-			return procErrLog(-1, "could not start services");
+			return procErrLog(-1, "could not start mandelbrot creation");
 
 		hideCursor();
 		progressPrint();
@@ -118,6 +129,22 @@ Success Supervising::process()
 		return Positive;
 
 		break;
+	case StServerStart:
+
+		ok = serverStart();
+		if (!ok)
+			return procErrLog(-1, "could not start server");
+
+		hideCursor();
+
+		mState = StServer;
+
+		break;
+	case StServer:
+
+		peerAdd();
+
+		break;
 	default:
 		break;
 	}
@@ -131,12 +158,18 @@ Success Supervising::shutdown()
 	{
 	case StSdStart:
 
+		if (!mpMbCreate)
+		{
+			showCursor();
+			return Positive;
+		}
+
 		cancel(mpMbCreate);
 
-		mStateSd = StSdAppDoneWait;
+		mStateSd = StSdMandelDoneWait;
 
 		break;
-	case StSdAppDoneWait:
+	case StSdMandelDoneWait:
 
 		if (mpMbCreate->progress())
 			break;
@@ -153,7 +186,7 @@ Success Supervising::shutdown()
 	return Pending;
 }
 
-bool Supervising::servicesStart()
+bool Supervising::basicsStart()
 {
 	// Debugging
 	SystemDebugging *pDbg;
@@ -171,25 +204,28 @@ bool Supervising::servicesStart()
 	start(pDbg);
 
 	// Thread Pool
-	if (env.numThreadsPool)
+	if (!env.numThreadsPool)
+		return true;
+
+	ThreadPooling *pPool;
+
+	pPool = ThreadPooling::create();
+	if (!pPool)
 	{
-		ThreadPooling *pPool;
-
-		pPool = ThreadPooling::create();
-		if (!pPool)
-		{
-			procWrnLog("could not create process");
-			return false;
-		}
-
-		pPool->cntWorkerSet(env.numThreadsPool);
-		//pPool->procTreeDisplaySet(false);
-
-		start(pPool);
+		procWrnLog("could not create process");
+		return false;
 	}
 
-	// Mandelbrot
+	pPool->cntWorkerSet(env.numThreadsPool);
+	//pPool->procTreeDisplaySet(false);
 
+	start(pPool);
+
+	return true;
+}
+
+bool Supervising::mandelbrotStart()
+{
 	gradientBuild();
 
 	mpMbCreate = MandelbrotCreating::create();
@@ -226,6 +262,47 @@ bool Supervising::servicesStart()
 	start(mpMbCreate);
 
 	return true;
+}
+
+bool Supervising::serverStart()
+{
+	mpListen = TcpListening::create();
+	if (!mpListen)
+	{
+		procWrnLog("could not create process");
+		return false;
+	}
+
+	mpListen->portSet(env.port);
+
+	start(mpListen);
+
+	return true;
+}
+
+void Supervising::peerAdd()
+{
+	UserInteracting *pUser;
+	SOCKET fdPeer;
+
+	while (1)
+	{
+		fdPeer = mpListen->nextPeerFd();
+		if (fdPeer == INVALID_SOCKET)
+			break;
+
+		pUser = UserInteracting::create();
+		if (!pUser)
+		{
+			procDbgLog("could not create process");
+			continue;
+		}
+
+		pUser->mFd = fdPeer;
+
+		start(pUser);
+		whenFinishedRepel(pUser);
+	}
 }
 
 void Supervising::configPrint(ConfigMandelbrot *pCfg)

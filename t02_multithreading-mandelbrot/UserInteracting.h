@@ -5,7 +5,7 @@
   Author(s):
       - Johannes Natter, office@dsp-crowd.com
 
-  File created on 14.03.2026
+  File created on 27.03.2026
 
   Copyright (C) 2026, Johannes Natter
 
@@ -23,32 +23,33 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SUPERVISING_H
-#define SUPERVISING_H
+#ifndef USER_INTERACTING_H
+#define USER_INTERACTING_H
 
 #include "Processing.h"
-#include "MandelbrotCreating.h"
-#include "TcpListening.h"
+#include "TelnetFiltering.h"
 
-class Supervising : public Processing
+class UserInteracting : public Processing
 {
 
 public:
 
-	static Supervising *create()
+	static UserInteracting *create()
 	{
-		return new dNoThrow Supervising;
+		return new dNoThrow UserInteracting;
 	}
+
+	SOCKET mFd;
 
 protected:
 
-	virtual ~Supervising() {}
+	virtual ~UserInteracting() {}
 
 private:
 
-	Supervising();
-	Supervising(const Supervising &) = delete;
-	Supervising &operator=(const Supervising &) = delete;
+	UserInteracting();
+	UserInteracting(const UserInteracting &) = delete;
+	UserInteracting &operator=(const UserInteracting &) = delete;
 
 	/*
 	 * Naming of functions:  objectVerb()
@@ -57,27 +58,13 @@ private:
 
 	/* member functions */
 	Success process();
-	Success shutdown();
 	void processInfo(char *pBuf, char *pBufEnd);
 
-	bool basicsStart();
-	bool mandelbrotStart();
-	bool serverStart();
-	void peerAdd();
-
-	void configPrint(ConfigMandelbrot *pMandel);
-	void progressPrint();
-	void resultPrint();
-
-	void hideCursor();
-	void showCursor();
+	void msgMain();
 
 	/* member variables */
 	//uint32_t mStartMs;
-	uint32_t mStateSd;
-	MandelbrotCreating *mpMbCreate;
-	TcpListening *mpListen;
-	size_t mIdxLineDone;
+	TelnetFiltering *mpFilt;
 
 	/* static functions */
 
