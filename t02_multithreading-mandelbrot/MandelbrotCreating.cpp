@@ -109,7 +109,7 @@ Success MandelbrotCreating::process()
 		cfg.scaleY = (cfg.scaleX * cfg.imgHeight) / (cfg.imgWidth * cfg.h2);
 		cfg.scaleX /= cfg.w2;
 
-		cfg.szData = cfg.imgWidth * cBytesPerPixel;
+		cfg.szData = cfg.imgWidth * cNumBytesPerPixel;
 		cfg.szLine = ((cfg.szData + maskLine) & ~maskLine);
 		cfg.szPadding = cfg.szLine - cfg.szData;
 

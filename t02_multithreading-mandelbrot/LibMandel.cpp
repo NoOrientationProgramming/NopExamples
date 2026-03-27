@@ -33,10 +33,12 @@
 
 using namespace std;
 
+typedef int ElemColor;
+
 class Color
 {
 public:
-	Color(int r_ = 0, int g_ = 0, int b_ = 0)
+	Color(ElemColor r_ = 0, ElemColor g_ = 0, ElemColor b_ = 0)
 		: r(r_)
 		, g(g_)
 		, b(b_)
@@ -48,20 +50,20 @@ public:
 	{ return Color(r - other.r, g - other.g, b - other.b); }
 	Color operator*(MbValFull t) const
 	{
-		return Color(static_cast<int>(r * t),
-			static_cast<int>(g * t),
-			static_cast<int>(b * t));
+		return Color(static_cast<ElemColor>(r * t),
+			static_cast<ElemColor>(g * t),
+			static_cast<ElemColor>(b * t));
 	}
 	Color operator/(MbValFull t) const
 	{
-		return Color(static_cast<int>(r / t),
-			static_cast<int>(g / t),
-			static_cast<int>(b / t));
+		return Color(static_cast<ElemColor>(r / t),
+			static_cast<ElemColor>(g / t),
+			static_cast<ElemColor>(b / t));
 	}
 
-	int r;
-	int g;
-	int b;
+	ElemColor r;
+	ElemColor g;
+	ElemColor b;
 };
 
 struct GradientStop
@@ -188,58 +190,52 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 	pGrad2 = pGrad1 + 1;
 
 	c = lerp(t, pGrad1->c, pGrad2->c);
-#if 0
-	if (idxLine < 2 && idxPixel < 4)
-	{
-		dbgLog("-----------------------------------");
-		dbgLog("idxX            %12.0f (%zu)", idxPixel);
-		dbgLog("idxY            %12.0f (%zu)", idxLine);
-		dbgLog("cx              %12.8f", cx);
-		dbgLog("cy              %12.8f", cy);
-		dbgLog("zx              %12.8f", zx);
-		dbgLog("zy              %12.8f", zy);
-		dbgLog("numIter         %12u", numIter);
-		dbgLog("mu              %12.3f", mu);
-		dbgLog("t               %12.3f", t);
-		dbgLog("idxGrad1        %12u", idxGrad1);
-		dbgLog("idxGrad2        %12u", idxGrad1 + 1);
 
-		dbgLog("R/G/B            %3d/%3d/%3d", c.r, c.g, c.b);
-	}
-#endif
 	// Not RGB but BGR! => BMP specific
 	*pData++ = c.b;
 	*pData++ = c.g;
 	*pData++ = c.r;
-
+#if 0
+	dbgLog("-----------------------------------");
+	dbgLog("idxX            %12.0f (%zu)", idxPixel);
+	dbgLog("idxY            %12.0f (%zu)", idxLine);
+	dbgLog("cx              %12.8f", cx);
+	dbgLog("cy              %12.8f", cy);
+	dbgLog("zx              %12.8f", zx);
+	dbgLog("zy              %12.8f", zy);
+	dbgLog("numIter         %12u", numIter);
+	dbgLog("mu              %12.8f", mu);
+	dbgLog("t               %12.8f", t);
+	dbgLog("idxGrad1        %12u", idxGrad1);
+	dbgLog("R/G/B            %3u/%3u/%3u", c.r, c.g, c.b);
+	if (idxLine == 1 && idxPixel >= 4)
+		hexDump(pData - 3, 3, "color scalar");
+#endif
 	return numIter;
 }
 
 // (x[4], y[4]) -> (r, g, b)[4]
 #if APP_HAS_AVX2
-#if 1
+#if 0
 static void m128iPrint(__m128i &val, const char *pName = NULL)
 {
-	uint32_t valOut[cNumPixelPerBlock];
+	int32_t valOut[cNumPixelPerBlock];
 
 	_mm_storeu_si128((__m128i *)valOut, val);
 
-	dbgLog("-----------------------------------");
-	dbgLog("%s = [%u, %u, %u, %u]",
+	dbgLog("%s = [%d, %d, %d, %d]",
 		pName ? pName : "m128i",
 		valOut[0], valOut[1], valOut[2], valOut[3]);
 
 	hexDump(&valOut, sizeof(valOut));
-	dbgLog("");
 }
 
 static void m256dPrint(__m256d &val, const char *pName = NULL)
 {
-	double valOut[cNumPixelPerBlock];
+	MbValFull valOut[cNumPixelPerBlock];
 
 	_mm256_storeu_pd(valOut, val);
 
-	dbgLog("-----------------------------------");
 	dbgLog("%s = [%.8f, %.8f, %.8f, %.8f]",
 		pName ? pName : "m256d",
 		valOut[0], valOut[1], valOut[2], valOut[3]);
@@ -314,6 +310,22 @@ static void mandelbrot(
 	}
 }
 
+__m128i lerp(MbValFull t_d, __m256d a, __m256d b)
+{
+	__m256d t, tmp_d;
+	__m128i tmp_i;
+
+	t = _mm256_set1_pd(t_d);
+
+	tmp_d = _mm256_sub_pd(b, a);
+	tmp_d = _mm256_mul_pd(tmp_d, t);
+	tmp_i = _mm256_cvttpd_epi32(tmp_d);
+
+	tmp_i = _mm_add_epi32(_mm256_cvttpd_epi32(a), tmp_i);
+
+	return tmp_i;
+}
+
 size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
 {
 	// 1. From image pixel space -> Complex space
@@ -336,7 +348,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	// 2. Do the mandelbrot calculation in complex space
 
 	size_t numIterSum, numIterMax = pCfg->numIterMax;
-	double numIter_d[cNumPixelPerBlock];
+	MbValFull numIter_d[cNumPixelPerBlock];
 	__m256d zx, zy, numIter;
 
 	mandelbrot(cx, cy, numIterMax, zx, zy, numIter);
@@ -349,8 +361,12 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 
 	// 3. Color mapping from fractional iterator -> RGB color
 
-	__m128i idxGrad1, idxGrad2;
+	uint32_t idxGrad1_u[cNumPixelPerBlock];
+	MbValFull t_d[cNumPixelPerBlock];
+	GradientStop *pGrad1, *pGrad2;
 	__m256d mu, t, tMin, tMax;
+	__m128i idxGrad1, c;
+	__m256d c1, c2;
 
 	mu = fractionalIter(zx, zy, numIter);
 
@@ -371,22 +387,31 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	tmp_i = _mm_set1_epi32(cNumGradients - 2);
 	idxGrad1 = _mm_min_epi32(idxGrad1, tmp_i);
 
-	tmp_i = _mm_set1_epi32(1);
-	idxGrad2 = _mm_add_epi32(idxGrad1, tmp_i);
-#if 0
-	pGrad1 = &gradient[idxGrad1];
-	pGrad2 = pGrad1 + 1;
+	_mm256_storeu_pd(t_d, t);
+	_mm_storeu_si128((__m128i *)idxGrad1_u, idxGrad1);
 
-	c = lerp(t, pGrad1->c, pGrad2->c);
-#endif
 	for (size_t i = 0; i < cNumPixelPerBlock; ++i)
 	{
-		// Not RGB but BGR! => BMP specific
-		*pData++ = 0x20;
-		*pData++ = 0x20;
-		*pData++ = 0x20;
+		pGrad1 = &gradient[idxGrad1_u[i]];
+		pGrad2 = pGrad1 + 1;
 
-		++idxPixel;
+		c1 = _mm256_set_pd(0, pGrad1->c.b, pGrad1->c.g, pGrad1->c.r);
+		c2 = _mm256_set_pd(0, pGrad2->c.b, pGrad2->c.g, pGrad2->c.r);
+
+		c = lerp(t_d[i], c1, c2);
+#if 0
+		m128iPrint(c, "c1");
+		dbgLog("R/G/B 1          %3u/%3u/%3u", pGrad1->c.r, pGrad1->c.g, pGrad1->c.b);
+		dbgLog("R/G/B 2          %3u/%3u/%3u", pGrad2->c.r, pGrad2->c.g, pGrad2->c.b);
+		dbgLog("R/G/B            %3u/%3u/%3u",
+				_mm_extract_epi8(c, 0),
+				_mm_extract_epi8(c, 4),
+				_mm_extract_epi8(c, 8));
+#endif
+		// Not RGB but BGR! => BMP specific
+		*pData++ = _mm_extract_epi8(c, 8);
+		*pData++ = _mm_extract_epi8(c, 4);
+		*pData++ = _mm_extract_epi8(c, 0);
 	}
 #if 0
 	m128iPrint(idxXin, "idxXin");
@@ -400,7 +425,8 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	m256dPrint(mu, "mu");
 	m256dPrint(t, "t");
 	m128iPrint(idxGrad1, "idxGrad1");
-	m128iPrint(idxGrad2, "idxGrad2");
+	if (idxLine == 1 && idxPixel == 4)
+		hexDump(pData - 12, 12, "color SIMD");
 #endif
 	return numIterSum;
 }
@@ -431,9 +457,7 @@ void gradientBuild()
 			pGrad->t = lerp(t, pKey1->t, pKey2->t);
 			pGrad->c = lerp(t, pKey1->c, pKey2->c);
 #if 0
-			if (i >= 32)
-				continue;
-
+			if (i >= 32) continue;
 			dbgLog("%2u - %2u - %2u: %0.3f, %3u %3u %3u",
 				k, s, i, pGrad->t, pGrad->c.r, pGrad->c.g, pGrad->c.b);
 #endif

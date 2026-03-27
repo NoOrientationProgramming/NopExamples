@@ -29,7 +29,7 @@
 #include <stdio.h>
 #include <mutex>
 
-const size_t cBytesPerPixel = 3 * sizeof(char);
+const size_t cNumBytesPerPixel = 3 * sizeof(char);
 
 class FileBmp
 {
