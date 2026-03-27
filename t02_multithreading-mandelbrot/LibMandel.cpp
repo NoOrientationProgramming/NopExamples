@@ -366,7 +366,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	tmp_i = _mm_set1_epi32(cNumGradients - 1);
 	tmp_d = _mm256_cvtepi32_pd(tmp_i);
 	tmp_d = _mm256_mul_pd(t, tmp_d);
-	idxGrad1 = _mm256_cvtpd_epi32(tmp_d);
+	idxGrad1 = _mm256_cvttpd_epi32(tmp_d);
 
 	tmp_i = _mm_set1_epi32(cNumGradients - 2);
 	idxGrad1 = _mm_min_epi32(idxGrad1, tmp_i);
