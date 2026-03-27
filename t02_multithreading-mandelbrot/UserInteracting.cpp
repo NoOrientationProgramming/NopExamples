@@ -46,6 +46,7 @@ UserInteracting::UserInteracting()
 	//, mStartMs(0)
 	, mFd(INVALID_SOCKET)
 	, mpFilt(NULL)
+	, mInSettings(false)
 {
 	mState = StStart;
 }
@@ -103,7 +104,12 @@ Success UserInteracting::process()
 			break;
 		key = entKey.particle;
 
-		msgMain();
+		if (key == keyTab)
+		{
+			mInSettings = not mInSettings;
+			msgMain();
+			break;
+		}
 
 		break;
 	case StNop:
@@ -120,14 +126,20 @@ void UserInteracting::msgMain()
 {
 	string msg;
 
+	msg += "\033[2J\033[H";
+
 	msg += "\r\n";
+	if (!mInSettings) msg += "\033[1m";
 	msg += "  --- Navigation ---\r\n";
+	msg += "\033[0m";
 	msg += "\r\n";
 
 	msg += "  [h,j,k,l] .. Left,Down,Up,Right\r\n";
 	msg += "\r\n";
 
+	if (mInSettings) msg += "\033[1m";
 	msg += "  ---- Settings ---- \r\n";
+	msg += "\033[0m";
 	msg += "\r\n";
 
 	msg += "> Setting 1      |             |\r\n";

@@ -65,6 +65,7 @@ private:
 	/* member variables */
 	//uint32_t mStartMs;
 	TelnetFiltering *mpFilt;
+	bool mInSettings;
 
 	/* static functions */
 
