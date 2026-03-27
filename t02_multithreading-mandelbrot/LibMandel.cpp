@@ -332,13 +332,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 
 	cy = _mm256_mul_pd(_mm256_set1_pd(pCfg->scaleY), idxY);
 	cy = _mm256_add_pd(cy, _mm256_set1_pd(pCfg->posY));
-#if 1
-	m128iPrint(idxXin, "idxXin");
-	m128iPrint(idxYin, "idxYin");
 
-	m256dPrint(cx, "cx");
-	m256dPrint(cy, "cy");
-#endif
 	// 2. Do the mandelbrot calculation in complex space
 
 	size_t numIterSum, numIterMax = pCfg->numIterMax;
@@ -352,12 +346,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	numIterSum = 0;
 	for (size_t i = 0; i < cNumPixelPerBlock; ++i)
 		numIterSum += (size_t)numIter_d[i];
-#if 0
-	m256dPrint(zx, "zx");
-	m256dPrint(zy, "zy");
-	m256dPrint(numIter, "numIter");
-	dbgLog("numIterSum = %zu", numIterSum);
-#endif
+
 	// 3. Color mapping from fractional iterator -> RGB color
 
 	__m128i idxGrad1, idxGrad2;
@@ -373,10 +362,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 
 	t = _mm256_min_pd(t, tMax);
 	t = _mm256_max_pd(t, tMin);
-#if 0
-	m256dPrint(mu, "mu");
-	m256dPrint(t, "t");
-#endif
+
 	tmp_i = _mm_set1_epi32(cNumGradients - 1);
 	tmp_d = _mm256_cvtepi32_pd(tmp_i);
 	tmp_d = _mm256_mul_pd(t, tmp_d);
@@ -387,9 +373,6 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 
 	tmp_i = _mm_set1_epi32(1);
 	idxGrad2 = _mm_add_epi32(idxGrad1, tmp_i);
-
-	hexDump(&idxGrad1, sizeof(idxGrad1));
-	hexDump(&idxGrad2, sizeof(idxGrad2));
 #if 0
 	pGrad1 = &gradient[idxGrad1];
 	pGrad2 = pGrad1 + 1;
@@ -405,7 +388,20 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 
 		++idxPixel;
 	}
-
+#if 0
+	m128iPrint(idxXin, "idxXin");
+	m128iPrint(idxYin, "idxYin");
+	m256dPrint(cx, "cx");
+	m256dPrint(cy, "cy");
+	m256dPrint(zx, "zx");
+	m256dPrint(zy, "zy");
+	m256dPrint(numIter, "numIter");
+	dbgLog("numIterSum = %zu", numIterSum);
+	m256dPrint(mu, "mu");
+	m256dPrint(t, "t");
+	m128iPrint(idxGrad1, "idxGrad1");
+	m128iPrint(idxGrad2, "idxGrad2");
+#endif
 	return 0;
 }
 #endif
