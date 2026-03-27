@@ -247,6 +247,30 @@ static void m256dPrint(__m256d &val, const char *pName = NULL)
 	hexDump(&valOut, sizeof(valOut));
 }
 #endif
+static __m256d fractionalIter(
+			__m256d zx, __m256d zy,
+			__m256d numIter)
+{
+	MbValFull mag_d[cNumPixelPerBlock];
+	__m256d xx, yy, mag, cOne;
+
+	cOne = _mm256_set1_pd(1.0);
+
+	xx = _mm256_mul_pd(zx, zx);
+	yy = _mm256_mul_pd(zy, zy);
+	mag = _mm256_sqrt_pd(_mm256_add_pd(xx, yy));
+
+	_mm256_storeu_pd(mag_d, mag);
+
+	for (size_t i = 0; i < cNumPixelPerBlock; ++i)
+		mag_d[i] = log2(log2(mag_d[i]));
+
+	mag = _mm256_loadu_pd(mag_d);
+	mag = _mm256_sub_pd(mag, cOne);
+
+	return _mm256_sub_pd(numIter, mag);
+}
+
 static void mandelbrot(
 			__m256d &cx, __m256d &cy, size_t numIterMax,
 			__m256d &zx, __m256d &zy, __m256d &numIter)
@@ -339,7 +363,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	__m128i idxGrad1, idxGrad2;
 	__m256d mu, t, tMin, tMax;
 
-	mu = _mm256_set1_pd(20);
+	mu = fractionalIter(zx, zy, numIter);
 
 	t = _mm256_mul_pd(_mm256_set1_pd(0.02), mu);
 	t = _mm256_sub_pd(t, _mm256_floor_pd(t));
