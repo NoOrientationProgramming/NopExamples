@@ -172,6 +172,7 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 	Color c;
 
 	mu = fractionalIter(zx, zy, numIter);
+
 	t = mu * 0.02;
 	t = t - floor(t);
 
@@ -325,13 +326,13 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	_mm256_storeu_pd(numIter_d, numIter);
 
 	numIterSum = 0;
-	for (size_t i = 0; i < 4; ++i)
+	for (size_t i = 0; i < cNumPixelPerBlock; ++i)
 		numIterSum += (size_t)numIter_d[i];
 #if 0
-	m256dPrint(numIter, "numIter");
-	dbgLog("numIterSum = %zu", numIterSum);
 	m256dPrint(zx, "zx");
 	m256dPrint(zy, "zy");
+	m256dPrint(numIter, "numIter");
+	dbgLog("numIterSum = %zu", numIterSum);
 #endif
 	// 3. Color mapping from fractional iterator -> RGB color
 
@@ -348,7 +349,10 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 
 	t = _mm256_min_pd(t, tMax);
 	t = _mm256_max_pd(t, tMin);
-
+#if 0
+	m256dPrint(mu, "mu");
+	m256dPrint(t, "t");
+#endif
 	tmp_i = _mm_set1_epi32(cNumGradients - 1);
 	tmp_d = _mm256_cvtepi32_pd(tmp_i);
 	tmp_d = _mm256_mul_pd(t, tmp_d);
