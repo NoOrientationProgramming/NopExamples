@@ -316,15 +316,23 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 #endif
 	// 2. Do the mandelbrot calculation in complex space
 
-	size_t numIterMax = pCfg->numIterMax;
-	__m256d zx, zy;
+	size_t numIterSum, numIterMax = pCfg->numIterMax;
+	double numIter_d[cNumPixelPerBlock];
+	__m256d zx, zy, numIter;
 
-	(void)numIterMax;
-	(void)cx;
-	(void)cy;
-	(void)zx;
-	(void)zy;
+	mandelbrotSimd(cx, cy, numIterMax, zx, zy, numIter);
 
+	_mm256_storeu_pd(numIter_d, numIter);
+
+	numIterSum = 0;
+	for (size_t i = 0; i < 4; ++i)
+		numIterSum += (size_t)numIter_d[i];
+#if 0
+	m256dPrint(numIter, "numIter");
+	dbgLog("numIterSum = %zu", numIterSum);
+	m256dPrint(zx, "zx");
+	m256dPrint(zy, "zy");
+#endif
 	// 3. Color mapping from fractional iterator -> RGB color
 
 	__m128i idxGrad1, idxGrad2;
