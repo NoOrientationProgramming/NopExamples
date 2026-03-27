@@ -110,7 +110,7 @@ static MbValFull fractionalIter(
 	return numIter + 1 - log2(log2(mag));
 }
 
-static void mandelbrot(
+static void mandelbrotScalar(
 			MbValFull cx, MbValFull cy, size_t numIterMax,
 			MbValFull &zx, MbValFull &zy, size_t &numIter)
 {
@@ -153,7 +153,7 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 	size_t numIter, numIterMax = pCfg->numIterMax;
 	MbValFull zx, zy;
 
-	mandelbrot(cx, cy, numIterMax, zx, zy, numIter);
+	mandelbrotScalar(cx, cy, numIterMax, zx, zy, numIter);
 
 	// 3. Color mapping from fractional iterator -> RGB color
 
