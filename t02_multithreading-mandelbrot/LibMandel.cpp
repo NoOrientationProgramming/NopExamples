@@ -191,17 +191,17 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 	if (idxLine < 2 && idxPixel < 4)
 	{
 		dbgLog("-----------------------------------");
-		dbgLog("Idx. X          %12.0f (%zu)", idxPixel);
-		dbgLog("Idx. Y          %12.0f (%zu)", idxLine);
-
-		dbgLog("Complex X       %12.8f", cx);
-		dbgLog("Complex Y       %12.8f", cy);
-
-		dbgLog("Iterations      %12u", numIter);
-		dbgLog("Frac. iter.     %12.3f", mu);
-		dbgLog("Normalized      %12.3f", t);
-		dbgLog("Idx. grad. 1    %12u", idxGrad1);
-		dbgLog("Idx. grad. 2    %12u", idxGrad1 + 1);
+		dbgLog("idxX            %12.0f (%zu)", idxPixel);
+		dbgLog("idxY            %12.0f (%zu)", idxLine);
+		dbgLog("cx              %12.8f", cx);
+		dbgLog("cy              %12.8f", cy);
+		dbgLog("zx              %12.8f", zx);
+		dbgLog("zy              %12.8f", zy);
+		dbgLog("numIter         %12u", numIter);
+		dbgLog("mu              %12.3f", mu);
+		dbgLog("t               %12.3f", t);
+		dbgLog("idxGrad1        %12u", idxGrad1);
+		dbgLog("idxGrad2        %12u", idxGrad1 + 1);
 
 		dbgLog("R/G/B            %3d/%3d/%3d", c.r, c.g, c.b);
 	}
