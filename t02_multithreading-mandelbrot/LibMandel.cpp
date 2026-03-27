@@ -110,7 +110,7 @@ static MbValFull fractionalIter(
 	return numIter + 1 - log2(log2(mag));
 }
 
-static void mandelbrotScalar(
+static void mandelbrot(
 			MbValFull cx, MbValFull cy, size_t numIterMax,
 			MbValFull &zx, MbValFull &zy, size_t &numIter)
 {
@@ -153,7 +153,7 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 	size_t numIter, numIterMax = pCfg->numIterMax;
 	MbValFull zx, zy;
 
-	mandelbrotScalar(cx, cy, numIterMax, zx, zy, numIter);
+	mandelbrot(cx, cy, numIterMax, zx, zy, numIter);
 
 	// 3. Color mapping from fractional iterator -> RGB color
 
@@ -246,7 +246,7 @@ static void m256dPrint(__m256d &val, const char *pName = NULL)
 	hexDump(&valOut, sizeof(valOut));
 }
 #endif
-static void mandelbrotSimd(
+static void mandelbrot(
 			__m256d &cx, __m256d &cy, size_t numIterMax,
 			__m256d &zx, __m256d &zy, __m256d &numIter)
 {
@@ -320,7 +320,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	double numIter_d[cNumPixelPerBlock];
 	__m256d zx, zy, numIter;
 
-	mandelbrotSimd(cx, cy, numIterMax, zx, zy, numIter);
+	mandelbrot(cx, cy, numIterMax, zx, zy, numIter);
 
 	_mm256_storeu_pd(numIter_d, numIter);
 
