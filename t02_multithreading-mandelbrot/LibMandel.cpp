@@ -246,6 +246,49 @@ static void m256dPrint(__m256d &val, const char *pName = NULL)
 	hexDump(&valOut, sizeof(valOut));
 }
 #endif
+static void mandelbrotSimd(
+			__m256d &cx, __m256d &cy, size_t numIterMax,
+			__m256d &zx, __m256d &zy, __m256d &numIter)
+{
+	__m256d xx, yy, xy, mag, mask, newZx, newZy;
+	__m256d cOne, cTwo, cFour;
+	__m256d numIterNew;
+
+	cOne = _mm256_set1_pd(1.0);
+	cTwo = _mm256_set1_pd(2.0);
+	cFour = _mm256_set1_pd(4.0);
+
+	zx = _mm256_setzero_pd();
+	zy = _mm256_setzero_pd();
+
+	numIterNew = _mm256_setzero_pd();
+
+	for (size_t i = 0; i < numIterMax; ++i)
+	{
+		xx = _mm256_mul_pd(zx, zx);
+		yy = _mm256_mul_pd(zy, zy);
+
+		mag = _mm256_add_pd(xx, yy);
+
+		mask = _mm256_cmp_pd(mag, cFour, _CMP_LE_OS);
+
+		if (_mm256_testz_pd(mask, mask))
+			break;
+
+		xy = _mm256_mul_pd(zx, zy);
+
+		newZx = _mm256_add_pd(_mm256_sub_pd(xx, yy), cx);
+		newZy = _mm256_add_pd(_mm256_mul_pd(cTwo, xy), cy);
+		//newZy = _mm256_fmadd_pd(cTwo, xy, cy); // => fma
+
+		zx = _mm256_blendv_pd(zx, newZx, mask);
+		zy = _mm256_blendv_pd(zy, newZy, mask);
+
+		numIterNew = _mm256_add_pd(cOne, numIter);
+		numIter = _mm256_blendv_pd(numIter, numIterNew, mask);
+	}
+}
+
 size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
 {
 	// 1. From image pixel space -> Complex space
