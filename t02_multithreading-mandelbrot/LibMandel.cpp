@@ -295,29 +295,38 @@ static void mandelbrot(
 	numIterNew = _mm256_setzero_pd();
 	numIter = _mm256_setzero_pd();
 
+	(void)cOne;
+	(void)numIterNew;
+
 	for (size_t i = 0; i < numIterMax; ++i)
 	{
+		// xx = zx * zx;
 		xx = _mm256_mul_pd(zx, zx);
+		// yy = zy * zy;
 		yy = _mm256_mul_pd(zy, zy);
 
+		// if (xx + yy > 4.0)
 		mag = _mm256_add_pd(xx, yy);
-
 		mask = _mm256_cmp_pd(mag, cFour, _CMP_LE_OS);
 
 		if (_mm256_testz_pd(mask, mask))
 			break;
 
+		// xy = zx * zy;
 		xy = _mm256_mul_pd(zx, zy);
 
+		// zx = xx - yy + cx;
 		newZx = _mm256_add_pd(_mm256_sub_pd(xx, yy), cx);
-		newZy = _mm256_add_pd(_mm256_mul_pd(cTwo, xy), cy);
-		//newZy = _mm256_fmadd_pd(cTwo, xy, cy); // => fma
-
 		zx = _mm256_blendv_pd(zx, newZx, mask);
-		zy = _mm256_blendv_pd(zy, newZy, mask);
 
+		// zy = 2 * xy + cy;
+		newZy = _mm256_add_pd(_mm256_mul_pd(cTwo, xy), cy); // _mm256_fmadd_pd
+		zy = _mm256_blendv_pd(zy, newZy, mask);
+#if 1 // 60ms
+		// ++numIter
 		numIterNew = _mm256_add_pd(cOne, numIter);
 		numIter = _mm256_blendv_pd(numIter, numIterNew, mask);
+#endif
 	}
 }
 
