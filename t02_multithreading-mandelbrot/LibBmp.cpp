@@ -125,13 +125,13 @@ void FileBmp::close()
 
 	szData = szLine * idxLine; // Size of data for all (written) lines
 	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
-
+#if 0
 	dbgLog("Updating headers");
 	dbgLog("Size file        %u", szFile);
 	dbgLog("Width            %u", width);
 	dbgLog("Height written   %u", idxLine);
 	dbgLog("Size data        %u", szData);
-
+#endif
 	fseek(pFile, 2, SEEK_SET);
 	fwrite(&szFile, sizeof(uint32_t), 1, pFile);
 
