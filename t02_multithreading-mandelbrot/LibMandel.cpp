@@ -111,9 +111,10 @@ static T fractionalIter(
 template<typename T>
 static void mandelbrot(
 			T cx, T cy, size_t numIterMax,
-			T &zx, T &zy, size_t &numIter)
+			T &zxOut, T &zyOut, size_t &numIterOut)
 {
-	T xx, yy, xy;
+	T xx, yy, xy, zx, zy;
+	size_t numIter;
 
 	zx = 0.0;
 	zy = 0.0;
@@ -135,6 +136,10 @@ static void mandelbrot(
 
 		++numIter;
 	}
+
+	zxOut = zx;
+	zyOut = zy;
+	numIterOut = numIter;
 }
 
 // (x, y) -> (r, g, b)
@@ -278,12 +283,13 @@ static __m256d fractionalIter(
 }
 
 static void mandelbrot(
-			__m256d &cx, __m256d &cy, size_t numIterMax,
-			__m256d &zx, __m256d &zy, __m256d &numIter)
+			__m256d cx, __m256d cy, size_t numIterMax,
+			__m256d &zxOut, __m256d &zyOut, __m256d &numIterOut)
 {
-	__m256d xx, yy, xy, mag, mask, newZx, newZy;
+	__m256d mag, mask, newZx, newZy;
+	__m256d numIterNew, numIter;
+	__m256d xx, yy, xy, zx, zy;
 	__m256d cOne, cTwo, cFour;
-	__m256d numIterNew;
 
 	cOne = _mm256_set1_pd(1.0);
 	cTwo = _mm256_set1_pd(2.0);
@@ -324,6 +330,10 @@ static void mandelbrot(
 		numIterNew = _mm256_add_pd(cOne, numIter);
 		numIter = _mm256_blendv_pd(numIter, numIterNew, mask);
 	}
+
+	zxOut = zx;
+	zyOut = zy;
+	numIterOut = numIter;
 }
 
 __m128i lerp(MbValFull t_d, __m256d a, __m256d b)
