@@ -295,9 +295,6 @@ static void mandelbrot(
 	numIterNew = _mm256_setzero_pd();
 	numIter = _mm256_setzero_pd();
 
-	(void)cOne;
-	(void)numIterNew;
-
 	for (size_t i = 0; i < numIterMax; ++i)
 	{
 		// xx = zx * zx;
@@ -322,11 +319,10 @@ static void mandelbrot(
 		// zy = 2 * xy + cy;
 		newZy = _mm256_add_pd(_mm256_mul_pd(cTwo, xy), cy); // _mm256_fmadd_pd
 		zy = _mm256_blendv_pd(zy, newZy, mask);
-#if 1 // 60ms
+
 		// ++numIter
 		numIterNew = _mm256_add_pd(cOne, numIter);
 		numIter = _mm256_blendv_pd(numIter, numIterNew, mask);
-#endif
 	}
 }
 
