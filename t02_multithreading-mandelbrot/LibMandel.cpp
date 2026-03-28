@@ -283,6 +283,7 @@ static void mandelbrot(
 	zy = _mm256_setzero_pd();
 
 	numIterNew = _mm256_setzero_pd();
+	numIter = _mm256_setzero_pd();
 
 	for (size_t i = 0; i < numIterMax; ++i)
 	{
