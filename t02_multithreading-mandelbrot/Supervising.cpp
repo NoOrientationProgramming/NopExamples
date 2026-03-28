@@ -354,16 +354,16 @@ void Supervising::progressPrint()
 
 void Supervising::resultPrint()
 {
-	size_t ips, numIter = mpMbCreate->mNumIterations;
-	uint32_t durMs = mpMbCreate->mDurationMs;
+	double ips, numIter = (double)mpMbCreate->mNumIterations;
+	double durMs = (double)mpMbCreate->mDurationMs;
 	ConfigMandelbrot *pCfg = &mpMbCreate->cfg;
 
 	userInfLog("\n");
-	userInfLog("  Duration                %14zu [ms]", durMs);
-	userInfLog("  Iterations              %14.3e", (double)numIter);
-	ips = (size_t)(((double)numIter) / durMs);
-	userInfLog("  Iter. per second        %14.3e", (double)ips);
-	userInfLog("  Pixel * IPS             %14.3e", ((double)ips) * pCfg->imgWidth * pCfg->imgHeight);
+	userInfLog("  Duration                %14zu [ms]", (size_t)durMs);
+	userInfLog("  Iterations              %14.3e", numIter);
+	ips = numIter / (durMs / 1000);
+	userInfLog("  Iter. per second        %14.3e", ips);
+	userInfLog("  Pixel * IPS             %14.3e", ips * pCfg->imgWidth * pCfg->imgHeight);
 	userInfLog("");
 }
 
