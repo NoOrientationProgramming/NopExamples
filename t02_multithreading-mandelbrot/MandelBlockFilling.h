@@ -77,7 +77,7 @@ private:
 	void colorMandelbrotChunks(char *pData, size_t idxLine, size_t idxPixel, size_t numPixel);
 
 	/* member variables */
-	//uint32_t mStartMs;
+	uint32_t mStartMs;
 	size_t mNumBlock;
 	size_t mIdxBlock;
 	size_t mNumPixel;

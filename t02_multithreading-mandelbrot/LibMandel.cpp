@@ -209,7 +209,7 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 	dbgLog("idxGrad1        %12u", idxGrad1);
 	dbgLog("R/G/B            %3u/%3u/%3u", c.r, c.g, c.b);
 	if (idxLine == 1 && idxPixel >= 4)
-		hexDump(pData - 3, 3, "color scalar");
+		hexDump(pData - 3, 3, "COLOR SCALAR");
 #endif
 	return numIter;
 }
@@ -229,7 +229,7 @@ static void m128iPrint(__m128i &val, const char *pName = NULL)
 
 	hexDump(&valOut, sizeof(valOut));
 }
-
+#if 1
 static void m256dPrint(__m256d &val, const char *pName = NULL)
 {
 	MbValFull valOut[cNumPixelPerBlock];
@@ -242,6 +242,7 @@ static void m256dPrint(__m256d &val, const char *pName = NULL)
 
 	hexDump(&valOut, sizeof(valOut));
 }
+#endif
 #endif
 static __m256d fractionalIter(
 			__m256d zx, __m256d zy,
@@ -427,7 +428,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 	m256dPrint(t, "t");
 	m128iPrint(idxGrad1, "idxGrad1");
 	if (idxLine == 1 && idxPixel == 4)
-		hexDump(pData - 12, 12, "color SIMD");
+		hexDump(pData - 12, 12, "COLOR SIMD");
 #endif
 	return numIterSum;
 }

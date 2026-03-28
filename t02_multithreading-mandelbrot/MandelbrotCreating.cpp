@@ -70,7 +70,7 @@ MandelbrotCreating::MandelbrotCreating()
 	cfg.zoom = 170000;
 
 	// Filling
-	cfg.numBurst = 20;
+	cfg.numBurst = 200;
 
 	mState = StStart;
 }
@@ -98,6 +98,8 @@ Success MandelbrotCreating::process()
 	switch (mState)
 	{
 	case StStart:
+
+		sleepUsInternalDriveSet(30000);
 
 		success = argumentsCheck();
 		if (success != Positive)

@@ -250,7 +250,6 @@ bool Supervising::mandelbrotStart()
 	pMandel->useDouble = env.zoom > cZoomFloatMax || env.forceDouble;
 #if APP_HAS_AVX2
 	pMandel->disableSimd = env.disableSimd;
-	pMandel->disableSimd = true;
 #endif
 	pMandel->posX = env.posX;
 	pMandel->posY = env.posY;
