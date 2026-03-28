@@ -28,7 +28,6 @@ dRelTargetToTool="$(realpath --relative-to=$dTarget $dTool)"
 echo "Target: $dRelHereToTarget"
 
 cd "${dRelHereToTarget}" && \
-rm -f ./callgrind.out.* && \
 ninja && \
 
 valgrind \
