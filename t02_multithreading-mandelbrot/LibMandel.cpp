@@ -39,9 +39,9 @@ class Color
 {
 public:
 	Color(uint8_t r_ = 0, uint8_t g_ = 0, uint8_t b_ = 0)
-		: mR((int8_t)r_)
-		, mG((int8_t)g_)
-		, mB((int8_t)b_)
+		: mR((ElemColor)r_)
+		, mG((ElemColor)g_)
+		, mB((ElemColor)b_)
 	{}
 
 	uint8_t r() { return mR; }
