@@ -337,7 +337,7 @@ __m128i lerp(MbValFull t_d, __m256d a, __m256d b)
 	return tmp_i;
 }
 
-size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
+void colorMandelbrotSimdDouble(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel, size_t &numIterSum)
 {
 	// 1. From image pixel space -> Complex space
 
@@ -358,7 +358,7 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 
 	// 2. Do the mandelbrot calculation in complex space
 
-	size_t numIterSum, numIterMax = pCfg->numIterMax;
+	size_t numIterMax = pCfg->numIterMax;
 	MbValFull numIter_d[cNumPixelPerBlock];
 	__m256d zx, zy, numIter;
 
@@ -439,7 +439,35 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 #if 0
 	hexDump(pData - 12, 12, "COLOR SIMD");
 #endif
-	return numIterSum;
+}
+
+void colorMandelbrotSimdFloat(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel, size_t &numIterSum)
+{
+	(void)pCfg;
+	(void)pData;
+	(void)idxLine;
+	(void)idxPixel;
+
+	numIterSum = 0;
+
+	for (size_t i = 0; i < cNumPixelPerBlock; ++i)
+	{
+		*pData++ = 0x7c;
+		*pData++ = 0x7c;
+		*pData++ = 0x7c;
+	}
+}
+
+size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
+{
+	size_t numIter;
+
+	if (pCfg->useDouble)
+		colorMandelbrotSimdDouble(pCfg, pData, idxLine, idxPixel, numIter);
+	else
+		colorMandelbrotSimdFloat(pCfg, pData, idxLine, idxPixel, numIter);
+
+	return numIter;
 }
 #endif
 
