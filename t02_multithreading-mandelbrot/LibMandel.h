@@ -68,11 +68,11 @@ struct ConfigMandelbrot
 	size_t numBurst;
 };
 
+void libMandelInit();
 size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel);
 #if APP_HAS_AVX2
 size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel);
 #endif
-void gradientBuild();
 
 #endif
 

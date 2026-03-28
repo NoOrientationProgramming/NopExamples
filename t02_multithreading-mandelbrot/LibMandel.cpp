@@ -99,6 +99,10 @@ const size_t cNumGradients = (cNumKeysGradient - 1) * cScaleGradient + 1;
 
 static GradientStop gradient[cNumGradients] = {};
 
+#if APP_HAS_AVX2
+static __m256d cOne, cTwo, cFour;
+#endif
+
 template<typename T>
 static T fractionalIter(
 			T zx, T zy,
@@ -263,9 +267,7 @@ static __m256d fractionalIter(
 			__m256d numIter)
 {
 	MbValFull mag_d[cNumPixelPerBlock];
-	__m256d xx, yy, mag, cOne;
-
-	cOne = _mm256_set1_pd(1.0);
+	__m256d xx, yy, mag;
 
 	xx = _mm256_mul_pd(zx, zx);
 	yy = _mm256_mul_pd(zy, zy);
@@ -289,11 +291,6 @@ static void mandelbrot(
 	__m256d mag, mask, newZx, newZy;
 	__m256d numIterNew, numIter;
 	__m256d xx, yy, xy, zx, zy;
-	__m256d cOne, cTwo, cFour;
-
-	cOne = _mm256_set1_pd(1.0);
-	cTwo = _mm256_set1_pd(2.0);
-	cFour = _mm256_set1_pd(4.0);
 
 	zx = _mm256_setzero_pd();
 	zy = _mm256_setzero_pd();
@@ -486,8 +483,15 @@ size_t colorMandelbrotSimd(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, 
 }
 #endif
 
-void gradientBuild()
+void libMandelInit()
 {
+	// SIMD constants
+#if APP_HAS_AVX2
+	cOne = _mm256_set1_pd(1.0);
+	cTwo = _mm256_set1_pd(2.0);
+	cFour = _mm256_set1_pd(4.0);
+#endif
+	// Gradients
 	GradientStop *pKey1, *pKey2, *pGrad;
 	size_t i, s, k = 0;
 	MbValFull t, tMin, tMax;

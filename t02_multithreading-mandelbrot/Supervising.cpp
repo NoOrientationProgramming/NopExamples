@@ -226,7 +226,7 @@ bool Supervising::basicsStart()
 
 bool Supervising::mandelbrotStart()
 {
-	gradientBuild();
+	libMandelInit();
 
 	mpMbCreate = MandelbrotCreating::create();
 	if (!mpMbCreate)
