@@ -33,15 +33,15 @@
 
 using namespace std;
 
-typedef int ElemColor;
+typedef int8_t ElemColor;
 
 class Color
 {
 public:
-	Color(ElemColor r_ = 0, ElemColor g_ = 0, ElemColor b_ = 0)
-		: r(r_)
-		, g(g_)
-		, b(b_)
+	Color(uint8_t r_ = 0, uint8_t g_ = 0, uint8_t b_ = 0)
+		: r((int8_t)r_)
+		, g((int8_t)g_)
+		, b((int8_t)b_)
 	{}
 
 	Color operator+(const Color &other) const
@@ -49,17 +49,7 @@ public:
 	Color operator-(const Color &other) const
 	{ return Color(r - other.r, g - other.g, b - other.b); }
 	Color operator*(MbValFull t) const
-	{
-		return Color(static_cast<ElemColor>(r * t),
-			static_cast<ElemColor>(g * t),
-			static_cast<ElemColor>(b * t));
-	}
-	Color operator/(MbValFull t) const
-	{
-		return Color(static_cast<ElemColor>(r / t),
-			static_cast<ElemColor>(g / t),
-			static_cast<ElemColor>(b / t));
-	}
+	{ return Color(r * t, g * t, b * t); }
 
 	ElemColor r;
 	ElemColor g;
