@@ -28,9 +28,11 @@ dRelTargetToTool="$(realpath --relative-to=$dTarget $dTool)"
 
 echo "Target: $dRelHereToTarget"
 
-file="$(ls -1 ${dRelHereToTarget}/callgrind.out.* | sort | tail -n 1)"
+file=""
 if [ -n "$1" ]; then
 	file="$1"
+else
+	file="$(ls -1 ${dRelHereToTarget}/callgrind.out.* | sort | tail -n 1)"
 fi
 
 kcachegrind "$file" > /dev/null 2>&1 &
