@@ -99,19 +99,21 @@ const size_t cNumGradients = (cNumKeysGradient - 1) * cScaleGradient + 1;
 
 static GradientStop gradient[cNumGradients] = {};
 
-static MbValFull fractionalIter(
-			MbValFull zx, MbValFull zy,
+template<typename T>
+static T fractionalIter(
+			T zx, T zy,
 			size_t numIter)
 {
-	MbValFull mag = sqrt(zx * zx + zy * zy);
+	T mag = sqrt(zx * zx + zy * zy);
 	return numIter + 1 - log2(log2(mag));
 }
 
+template<typename T>
 static void mandelbrot(
-			MbValFull cx, MbValFull cy, size_t numIterMax,
-			MbValFull &zx, MbValFull &zy, size_t &numIter)
+			T cx, T cy, size_t numIterMax,
+			T &zx, T &zy, size_t &numIter)
 {
-	MbValFull xx, yy, xy;
+	T xx, yy, xy;
 
 	zx = 0.0;
 	zy = 0.0;
@@ -136,19 +138,20 @@ static void mandelbrot(
 }
 
 // (x, y) -> (r, g, b)
-size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
+template<typename T>
+static void colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel, size_t &numIter)
 {
 	// 1. From image pixel space -> Complex space
 
-	MbValFull idxX = idxPixel - pCfg->w2;
-	MbValFull idxY = idxLine - pCfg->h2;
-	MbValFull cx = pCfg->scaleX * idxX + pCfg->posX;
-	MbValFull cy = pCfg->scaleY * idxY + pCfg->posY;
+	T idxX = idxPixel - pCfg->w2;
+	T idxY = idxLine - pCfg->h2;
+	T cx = pCfg->scaleX * idxX + pCfg->posX;
+	T cy = pCfg->scaleY * idxY + pCfg->posY;
 
 	// 2. Do the mandelbrot calculation in complex space
 
-	size_t numIter, numIterMax = pCfg->numIterMax;
-	MbValFull zx, zy;
+	size_t numIterMax = pCfg->numIterMax;
+	T zx, zy;
 
 	mandelbrot(cx, cy, numIterMax, zx, zy, numIter);
 
@@ -160,11 +163,11 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 		*pData++ = 0;
 		*pData++ = 0;
 
-		return numIter;
+		return;
 	}
 
 	GradientStop *pGrad1, *pGrad2;
-	MbValFull mu, t, tMin, tMax;
+	T mu, t, tMin, tMax;
 	size_t idxGrad1;
 	Color c;
 
@@ -206,6 +209,17 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 #if 0
 	hexDump(pData - 3, 3, "COLOR SCALAR");
 #endif
+}
+
+size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine, size_t idxPixel)
+{
+	size_t numIter;
+
+	if (pCfg->useDouble)
+		colorMandelbrotScalar<MbValFull>(pCfg, pData, idxLine, idxPixel, numIter);
+	else
+		colorMandelbrotScalar<MbVal>(pCfg, pData, idxLine, idxPixel, numIter);
+
 	return numIter;
 }
 
