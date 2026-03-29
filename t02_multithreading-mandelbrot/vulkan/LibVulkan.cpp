@@ -150,7 +150,7 @@ static void validationLayerAdd(vector<const char *> &layers, vector<const char *
 	layers.push_back(pLayer);
 	extensions.push_back(pExt);
 }
-#if 0
+
 /*
  * Literature
  * - https://docs.vulkan.org/refpages/latest/refpages/source/VkDebugUtilsMessengerCreateInfoEXT.html
@@ -207,7 +207,7 @@ static void validationLayerEnable(vector<const char *> &layers, vector<const cha
 
 	dbgLog("Vulkan messenger created");
 }
-#endif
+
 static void vlkMessengerDestroy()
 {
 	if (!inst.ok || vlkMessenger == VK_NULL_HANDLE)
@@ -250,13 +250,7 @@ static void vlkGlobalDestruct()
 
 	dbgLog("global Vulkan deinit: done");
 }
-#if 0
-static void vlkErrorTest()
-{
-	uint32_t numExtensions;
-	(void)vkEnumerateInstanceExtensionProperties("dummy", &numExtensions, NULL);
-}
-#endif
+
 /*
  * Literature
  * - https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html
@@ -329,11 +323,9 @@ InstanceVulkan instanceVulkanGet()
 		dbgLog("Version %u.%u.%u", major, minor, patch);
 	}
 
-	//validationLayerEnable(layers, extensions);
+	validationLayerEnable(layers, extensions);
 
 	inst.ok = true;
-
-	//vlkErrorTest();
 
 	return inst;
 }
