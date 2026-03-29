@@ -1,0 +1,19 @@
+
+{
+   Vulkan1
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_catch_exception
+   ...
+}
+
+{
+   Vulkan2
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:call_init
+   ...
+}
+

@@ -28,16 +28,15 @@ dRelTargetToTool="$(realpath --relative-to=$dTarget $dTool)"
 
 echo "Target: $dRelHereToTarget"
 
-#	--gen-suppressions=all \
-
 cd "${dRelHereToTarget}" && \
 ninja && \
 
 valgrind \
 	--leak-check=full \
 	--show-leak-kinds=all \
+	--gen-suppressions=all \
 	--track-fds=yes \
-	--suppressions=${dRelTargetToTool}/valgrind_suppressions.txt \
+	--suppressions=../valgrind_suppressions.txt \
 ./app \
 	$@
 

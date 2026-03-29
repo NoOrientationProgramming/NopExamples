@@ -35,6 +35,8 @@ using namespace std;
 static mutex mtxInstance;
 static InstanceVulkan inst;
 
+static VkDebugUtilsMessengerEXT vlkMessenger = VK_NULL_HANDLE;
+
 /*
  * Literature
  * - https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumerateInstanceLayerProperties.html
@@ -127,8 +129,8 @@ static const char *debugReportExtFind()
 
 	return pExt;
 }
-
-static void validationLayerEnable(vector<const char *> &layers, vector<const char *> &extensions)
+#
+static void validationLayerAdd(vector<const char *> &layers, vector<const char *> &extensions)
 {
 	const char *pLayer;
 	const char *pExt;
@@ -148,12 +150,118 @@ static void validationLayerEnable(vector<const char *> &layers, vector<const cha
 	layers.push_back(pLayer);
 	extensions.push_back(pExt);
 }
+#if 0
+/*
+ * Literature
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkDebugUtilsMessengerCreateInfoEXT.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VK_EXT_debug_utils.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/PFN_vkDebugUtilsMessengerCallbackEXT.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkDebugUtilsMessageSeverityFlagBitsEXT.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkDebugUtilsMessageTypeFlagBitsEXT.html
+ */
+static VkBool32 vlkMessageReceived(
+				VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+				VkDebugUtilsMessageTypeFlagsEXT types,
+				const VkDebugUtilsMessengerCallbackDataEXT *pData,
+				void *pUser)
+{
+	dbgLog("%x %x %s %p",
+			severity, types, pData->pMessage, pUser);
+	return VK_FALSE;
+}
 
+static void validationLayerEnable(vector<const char *> &layers, vector<const char *> &extensions)
+{
+	if (!layers.size() || !extensions.size())
+		return;
+
+	PFN_vkCreateDebugUtilsMessengerEXT pFctCreate;
+	VkInstance &vlk = inst.vlk;
+
+	pFctCreate = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(vlk,
+					"vkCreateDebugUtilsMessengerEXT");
+	if (!pFctCreate)
+	{
+		dbgLog("could not load vkCreateDebugUtilsMessengerEXT");
+		return;
+	}
+
+	VkResult res;
+
+	VkDebugUtilsMessengerCreateInfoEXT infoCreate = {};
+	infoCreate.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+	infoCreate.messageSeverity =
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+	infoCreate.messageType =
+		VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+		VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+	infoCreate.pfnUserCallback = vlkMessageReceived;
+
+	res = pFctCreate(vlk, &infoCreate, NULL, &vlkMessenger);
+	if (res != VK_SUCCESS)
+		dbgLog("could not create Vulkan messenger");
+
+	dbgLog("Vulkan messenger created");
+}
+#endif
+/*
+ * Literature
+ */
+#if 0
+static void vlkErrorTest()
+{
+	uint32_t numExtensions;
+	(void)vkEnumerateInstanceExtensionProperties("dummy", &numExtensions, NULL);
+}
+#endif
 /*
  * Literature
  * - https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html
  * - https://docs.vulkan.org/refpages/latest/refpages/source/VkResult.html
  */
+static void vlkMessengerDestroy()
+{
+	if (!inst.ok || vlkMessenger == VK_NULL_HANDLE)
+		return;
+
+	dbgLog("destroying Vulkan messenger");
+
+	PFN_vkDestroyDebugUtilsMessengerEXT pFctDestroy;
+
+	pFctDestroy = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(inst.vlk,
+					"vkDestroyDebugUtilsMessengerEXT");
+	if (!pFctDestroy)
+	{
+		dbgLog("could not load vkDestroyDebugUtilsMessengerEXT");
+		return;
+	}
+
+	pFctDestroy(inst.vlk, vlkMessenger, NULL);
+	vlkMessenger = VK_NULL_HANDLE;
+
+	dbgLog("destroying Vulkan messenger: done");
+}
+
+static void vlkGlobalDestruct()
+{
+	dbgLog("global Vulkan deinit");
+
+	vlkMessengerDestroy();
+
+	if (inst.ok)
+	{
+		vkDestroyInstance(inst.vlk, NULL);
+		inst.vlk = VK_NULL_HANDLE;
+		inst.ok = false;
+	}
+
+	dbgLog("global Vulkan deinit: done");
+}
+
 InstanceVulkan instanceVulkanGet()
 {
 	lock_guard<mutex> lock(mtxInstance);
@@ -164,9 +272,10 @@ InstanceVulkan instanceVulkanGet()
 	vector<const char *> layers, extensions;
 	VkResult res;
 
-	inst.ok = false;
+	memset(&inst, 0, sizeof(inst));
+	inst.vlk = VK_NULL_HANDLE;
 
-	validationLayerEnable(layers, extensions);
+	validationLayerAdd(layers, extensions);
 
 	// Create instance
 
@@ -182,7 +291,7 @@ InstanceVulkan instanceVulkanGet()
 	infoCreate.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 	infoCreate.flags = 0;
 	infoCreate.pApplicationInfo = &infoApp;
-#if 1
+
 	if (layers.size())
 	{
 		infoCreate.enabledLayerCount = layers.size();
@@ -194,12 +303,7 @@ InstanceVulkan instanceVulkanGet()
 		infoCreate.enabledExtensionCount = extensions.size();
 		infoCreate.ppEnabledExtensionNames = extensions.data();
 	}
-#else
-	infoCreate.enabledLayerCount = 0;
-	infoCreate.ppEnabledLayerNames = NULL;
-	infoCreate.enabledExtensionCount = 0;
-	infoCreate.ppEnabledExtensionNames = NULL;
-#endif
+
 	res = vkCreateInstance(&infoCreate, NULL, &inst.vlk);
 	if (res != VK_SUCCESS)
 	{
@@ -209,7 +313,13 @@ InstanceVulkan instanceVulkanGet()
 
 	dbgLog("Vulkan instance created");
 
+	Processing::globalDestructorRegister(vlkGlobalDestruct);
+
+	//validationLayerEnable(layers, extensions);
+
 	inst.ok = true;
+
+	//vlkErrorTest();
 
 	return inst;
 }
