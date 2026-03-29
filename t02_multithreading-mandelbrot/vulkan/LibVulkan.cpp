@@ -161,7 +161,7 @@ static void validationLayerAdd(vector<const char *> &layers, vector<const char *
  * - https://docs.vulkan.org/refpages/latest/refpages/source/VkDebugUtilsMessageSeverityFlagBitsEXT.html
  * - https://docs.vulkan.org/refpages/latest/refpages/source/VkDebugUtilsMessageTypeFlagBitsEXT.html
  */
-static VkBool32 vlkMessageReceived(
+static VkBool32 vulkanMessage(
 				VkDebugUtilsMessageSeverityFlagBitsEXT severity,
 				VkDebugUtilsMessageTypeFlagsEXT types,
 				const VkDebugUtilsMessengerCallbackDataEXT *pData,
@@ -216,7 +216,7 @@ static void messengerCreate(vector<const char *> &layers, vector<const char *> &
 		VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
 		VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
 		VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-	infoCreate.pfnUserCallback = vlkMessageReceived;
+	infoCreate.pfnUserCallback = vulkanMessage;
 
 	res = pFctCreate(vlk, &infoCreate, NULL, &vlkMessenger);
 	if (res != VK_SUCCESS)
