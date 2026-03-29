@@ -89,7 +89,7 @@ Success MandelBlockFilling::process()
 		break;
 	case StMain:
 
-		if (!mIdxLine && diffMs > 25) procWrnLog("sleeped");
+		if (!mIdxLine && diffMs > 25) procDbgLog("sleeped");
 		mStartMs = curTimeMs;
 
 		success = lineFill();
