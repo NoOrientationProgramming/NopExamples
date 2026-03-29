@@ -43,6 +43,7 @@ public:
 
 	std::string name();
 
+	InstanceVulkan inst;
 	VkPhysicalDevice phy;
 
 	// Logical
@@ -51,7 +52,7 @@ public:
 
 InstanceVulkan instanceVulkanGet();
 void devicesVulkanList(InstanceVulkan &inst);
-VkPhysicalDevice deviceVulkanSelect(InstanceVulkan &inst, const char *pName = NULL);
+DeviceVulkan deviceVulkanSelect(InstanceVulkan &inst, const char *pName = NULL);
 
 #endif
 

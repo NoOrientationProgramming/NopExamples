@@ -384,10 +384,14 @@ void devicesVulkanList(InstanceVulkan &inst)
 	}
 }
 
-VkPhysicalDevice deviceVulkanSelect(InstanceVulkan &inst, const char *pName)
+DeviceVulkan deviceVulkanSelect(InstanceVulkan &inst, const char *pName)
 {
+	DeviceVulkan dev;
+
 	(void)inst;
 	(void)pName;
+
+	dev.phy = VK_NULL_HANDLE;
 
 	// Errors
 	// - Not found
@@ -395,13 +399,18 @@ VkPhysicalDevice deviceVulkanSelect(InstanceVulkan &inst, const char *pName)
 
 	// if pName == NULL => Return first device
 
-	return VK_NULL_HANDLE;
+	// Link to instance
+	dev.inst = inst;
+
+	return dev;
 }
 
 // DeviceVulkan
 
 string DeviceVulkan::name()
 {
-	return "";
+	VkPhysicalDeviceProperties props;
+	vkGetPhysicalDeviceProperties(phy, &props);
+	return props.deviceName;
 }
 
