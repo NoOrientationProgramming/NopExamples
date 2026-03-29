@@ -24,7 +24,7 @@ pChange ..> pProc
 pChange --> pChange
 pProc --> pProc
 
-footer **Processing()** Life - Definition\n(C) DSP-Crowd Electronics GmbH
+footer **Definition** Life\n(C) DSP-Crowd Electronics GmbH
 
 @enduml
 

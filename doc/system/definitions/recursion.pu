@@ -41,7 +41,7 @@ func <|-d- func1
 proc2 "1" o-d- "0..*" proc2 : "Recursion\nOrder 2"
 func2 "1" o-d- "0..*" func2 : "Recursion\nOrder 2"
 
-footer **Recursion** Orders \n(C) DSP-Crowd Electronics GmbH
+footer **Definition** Recursion  & Orders\n(C) DSP-Crowd Electronics GmbH
 
 @enduml
 
