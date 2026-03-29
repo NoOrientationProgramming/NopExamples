@@ -141,13 +141,13 @@ static void validationLayerAdd(vector<const char *> &layers, vector<const char *
 	if (!pLayer)
 		return;
 
-	dbgLog("validation layer found: %s", pLayer);
+	//dbgLog("validation layer found: %s", pLayer);
 
 	pExt = debugReportExtFind();
 	if (!pExt)
 		return;
 
-	dbgLog("debug utils found: %s", pExt);
+	//dbgLog("debug utils found: %s", pExt);
 
 	layers.push_back(pLayer);
 	extensions.push_back(pExt);
@@ -222,7 +222,7 @@ static void messengerCreate(vector<const char *> &layers, vector<const char *> &
 	if (res != VK_SUCCESS)
 		dbgLog("could not create Vulkan messenger");
 
-	dbgLog("Vulkan messenger created");
+	//dbgLog("Vulkan messenger created");
 }
 
 static void vlkMessengerDestroy()
@@ -322,23 +322,21 @@ InstanceVulkan instanceVulkanGet()
 		return instInternal;
 	}
 
-	dbgLog("Vulkan instance created");
-
-	Processing::globalDestructorRegister(vlkGlobalDestruct);
-
 	uint32_t versionInst;
 
 	res = vkEnumerateInstanceVersion(&versionInst);
 	if (res != VK_SUCCESS)
-		dbgLog("could not get vulkan version");
+		dbgLog("Vulkan instance created");
 	else
 	{
 		uint32_t major = VK_VERSION_MAJOR(versionInst);
 		uint32_t minor = VK_VERSION_MINOR(versionInst);
 		uint32_t patch = VK_VERSION_PATCH(versionInst);
 
-		dbgLog("Version %u.%u.%u", major, minor, patch);
+		dbgLog("Vulkan instance created: v%u.%u.%u", major, minor, patch);
 	}
+
+	Processing::globalDestructorRegister(vlkGlobalDestruct);
 
 	messengerCreate(layers, extensions);
 
