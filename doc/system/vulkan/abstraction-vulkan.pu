@@ -18,7 +18,7 @@ frame "MsgDispatching()" as pMsg {
 
   pParent --> pStruct : create
   pParent --> pComp : create
-  pParent ..> pDev : use
+  pParent <.. pDev : use
 
   pInst .> pDev : selected
   pDev .> pStruct : bound
