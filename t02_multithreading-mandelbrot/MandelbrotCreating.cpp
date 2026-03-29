@@ -44,7 +44,7 @@ using namespace std;
 MandelbrotCreating::MandelbrotCreating()
 	: Processing("MandelbrotCreating")
 	, mNameFile()
-	, mTypeDriver()
+	, mTypeDriver("")
 	, mNumThreadsPool(0)
 	, mNumFillers(0)
 	, mIdxLineDone(0)
