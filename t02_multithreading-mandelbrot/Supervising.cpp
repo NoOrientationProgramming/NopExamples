@@ -320,8 +320,8 @@ void Supervising::configPrint(ConfigMandelbrot *pCfg)
 	userInfLog("  SIMD                    %14s", pCfg->disableSimd ? "Disabled" : "Enabled");
 #endif
 	userInfLog("  Max. iter. per pix.     %14u", pCfg->numIterMax);
-	userInfLog("  Pos X                   %14.3f", pCfg->posX);
-	userInfLog("  Pos Y                   %14.3f", pCfg->posY);
+	userInfLog("  Pos X                   %31.17f", pCfg->posX);
+	userInfLog("  Pos Y                   %31.17f", pCfg->posY);
 	userInfLog("  Zoom                    %14.3e", pCfg->zoom);
 	userInfLog("");
 	userInfLog("  Driver type             %14s", env.typeDriver.c_str());
