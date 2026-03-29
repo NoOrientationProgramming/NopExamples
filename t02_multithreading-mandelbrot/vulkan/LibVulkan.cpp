@@ -32,6 +32,8 @@
 using namespace std;
 
 static mutex mtxInstance;
+static InstanceVulkan inst;
+
 
 /*
  * Literature
@@ -74,29 +76,37 @@ static string validationLayerFind()
 			str = iter->layerName;
 	}
 
-	if (str.size())
+	if (!str.size())
 		dbgLog("standard validation layer not supported");
 
 	return str;
+}
+
+static void validationLayerEnable()
+{
+	string layer;
+
+	layer = validationLayerFind();
+	if (!layer.size())
+	{
+		dbgLog("validation layer not found");
+		return;
+	}
+
+	dbgLog("validation layer found: %s", layer.c_str());
+
+	inst.haveValLayer = true;
+	inst.layers.push_back(layer);
 }
 
 InstanceVulkan instanceVulkanGet()
 {
 	lock_guard<mutex> lock(mtxInstance);
 
-	InstanceVulkan inst;
-	string str;
+	if (inst.ok)
+		return inst;
 
-	inst.haveValLayer = false;
-
-	str = validationLayerFind();
-	if (str.size())
-	{
-		inst.haveValLayer = true;
-		inst.layers.push_back(str);
-
-		dbgLog("Validation layer found: %s", str.c_str());
-	}
+	validationLayerEnable();
 
 	return inst;
 }

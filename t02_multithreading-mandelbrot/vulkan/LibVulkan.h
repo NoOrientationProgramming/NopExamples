@@ -36,7 +36,9 @@ struct InstanceVulkan
 {
 	VkInstance vlk;
 	std::list<std::string> layers;
+	std::list<std::string> extensions;
 	bool haveValLayer;
+	bool ok;
 };
 
 InstanceVulkan instanceVulkanGet();
