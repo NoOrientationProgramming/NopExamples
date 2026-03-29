@@ -208,21 +208,6 @@ static void validationLayerEnable(vector<const char *> &layers, vector<const cha
 	dbgLog("Vulkan messenger created");
 }
 #endif
-/*
- * Literature
- */
-#if 0
-static void vlkErrorTest()
-{
-	uint32_t numExtensions;
-	(void)vkEnumerateInstanceExtensionProperties("dummy", &numExtensions, NULL);
-}
-#endif
-/*
- * Literature
- * - https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html
- * - https://docs.vulkan.org/refpages/latest/refpages/source/VkResult.html
- */
 static void vlkMessengerDestroy()
 {
 	if (!inst.ok || vlkMessenger == VK_NULL_HANDLE)
@@ -246,6 +231,10 @@ static void vlkMessengerDestroy()
 	dbgLog("destroying Vulkan messenger: done");
 }
 
+/*
+ * Literature
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/vkDestroyInstance.html
+ */
 static void vlkGlobalDestruct()
 {
 	dbgLog("global Vulkan deinit");
@@ -261,7 +250,18 @@ static void vlkGlobalDestruct()
 
 	dbgLog("global Vulkan deinit: done");
 }
-
+#if 0
+static void vlkErrorTest()
+{
+	uint32_t numExtensions;
+	(void)vkEnumerateInstanceExtensionProperties("dummy", &numExtensions, NULL);
+}
+#endif
+/*
+ * Literature
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkResult.html
+ */
 InstanceVulkan instanceVulkanGet()
 {
 	lock_guard<mutex> lock(mtxInstance);
@@ -313,6 +313,8 @@ InstanceVulkan instanceVulkanGet()
 
 	dbgLog("Vulkan instance created");
 
+	Processing::globalDestructorRegister(vlkGlobalDestruct);
+
 	uint32_t versionInst;
 
 	res = vkEnumerateInstanceVersion(&versionInst);
@@ -326,8 +328,6 @@ InstanceVulkan instanceVulkanGet()
 
 		dbgLog("Version %u.%u.%u", major, minor, patch);
 	}
-
-	Processing::globalDestructorRegister(vlkGlobalDestruct);
 
 	//validationLayerEnable(layers, extensions);
 
