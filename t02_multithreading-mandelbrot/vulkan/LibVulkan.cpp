@@ -27,4 +27,12 @@
 
 using namespace std;
 
+InstanceVulkan instanceVulkanGet()
+{
+	InstanceVulkan inst;
+
+	inst.a = 0;
+
+	return inst;
+}
 

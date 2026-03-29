@@ -26,7 +26,14 @@
 #ifndef LIB_VULKAN_H
 #define LIB_VULKAN_H
 
+#include <inttypes.h>
 
+struct InstanceVulkan
+{
+	uint32_t a;
+};
+
+InstanceVulkan instanceVulkanGet();
 
 #endif
 

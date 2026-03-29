@@ -28,6 +28,11 @@
 
 #include "Processing.h"
 
+struct StructureVulkan
+{
+	uint32_t a;
+};
+
 class StrctVlkCreating : public Processing
 {
 
@@ -37,6 +42,12 @@ public:
 	{
 		return new dNoThrow StrctVlkCreating;
 	}
+
+	// Configuration
+	// ...
+
+	// Output
+	StructureVulkan result;
 
 protected:
 
