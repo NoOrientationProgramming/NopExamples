@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 	ValueArg<string> argTypeDriver("", "type-driver",
 								"Type of driver for each filler process. Default: " cTypeDriverDefault
 								"\npar = Parent       (main thread)"
-								"\nnew = NewInternal  (exclusive thread)"
+								"\nnew = NewInternal  (one thread per filler)"
 								"\next = External     (thread pool)",
 								false, cTypeDriverDefault, "string");
 	cmd.add(argTypeDriver);
