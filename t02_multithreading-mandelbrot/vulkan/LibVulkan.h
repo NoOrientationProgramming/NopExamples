@@ -26,18 +26,12 @@
 #ifndef LIB_VULKAN_H
 #define LIB_VULKAN_H
 
-#include <string>
-#include <list>
-
 #include <vulkan/vulkan.h>
 #include <inttypes.h>
 
 struct InstanceVulkan
 {
 	VkInstance vlk;
-	std::list<std::string> layers;
-	std::list<std::string> extensions;
-	bool haveValLayer;
 	bool ok;
 };
 

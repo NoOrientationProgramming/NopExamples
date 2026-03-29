@@ -23,8 +23,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <mutex>
+#include <string>
 #include <vector>
+#include <mutex>
 
 #include "LibVulkan.h"
 #include "Processing.h"
@@ -34,24 +35,24 @@ using namespace std;
 static mutex mtxInstance;
 static InstanceVulkan inst;
 
-
 /*
  * Literature
  * - https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumerateInstanceLayerProperties.html
  * - https://docs.vulkan.org/refpages/latest/refpages/source/VkLayerProperties.html
  * - apt install vulkan-validationlayers-dev
  */
-static string validationLayerFind()
+static const char *validationLayerFind()
 {
+	const char *pStdVal = "VK_LAYER_KHRONOS_validation";
 	uint32_t numLayers;
+	const char *pVal;
 	VkResult res;
-	string str;
 
 	res = vkEnumerateInstanceLayerProperties(&numLayers, NULL);
 	if (res != VK_SUCCESS)
 	{
 		dbgLog("could not enumerate layer properties");
-		return str;
+		return NULL;
 	}
 
 	//dbgLog("Layer count: %u", numLayers);
@@ -62,7 +63,7 @@ static string validationLayerFind()
 	if (res != VK_SUCCESS)
 	{
 		dbgLog("could not enumerate layer properties");
-		return str;
+		return NULL;
 	}
 
 	vector<VkLayerProperties>::iterator iter;
@@ -72,14 +73,14 @@ static string validationLayerFind()
 	{
 		//dbgLog("%-33s - %s", iter->layerName, iter->description);
 
-		if (!strcmp(iter->layerName, "VK_LAYER_KHRONOS_validation"))
-			str = iter->layerName;
+		if (!strcmp(iter->layerName, pStdVal))
+			pVal = pStdVal;;
 	}
 
-	if (!str.size())
+	if (!pVal)
 		dbgLog("standard validation layer not found");
 
-	return str;
+	return pVal;
 }
 
 /*
@@ -87,17 +88,18 @@ static string validationLayerFind()
  * - https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumerateInstanceExtensionProperties.html
  * - https://docs.vulkan.org/refpages/latest/refpages/source/VkExtensionProperties.html
  */
-static string debugReportExtFind()
+static const char *debugReportExtFind()
 {
+	const char *pStdVal = "VK_EXT_debug_utils";
 	uint32_t numExtensions;
 	VkResult res;
-	string str;
+	const char *pExt;
 
 	res = vkEnumerateInstanceExtensionProperties(NULL, &numExtensions, NULL);
 	if (res != VK_SUCCESS)
 	{
 		dbgLog("could not enumerate extension properties");
-		return str;
+		return NULL;
 	}
 
 	vector<VkExtensionProperties> exts(numExtensions);
@@ -106,7 +108,7 @@ static string debugReportExtFind()
 	if (res != VK_SUCCESS)
 	{
 		dbgLog("could not enumerate extension properties");
-		return str;
+		return NULL;
 	}
 
 	vector<VkExtensionProperties>::iterator iter;
@@ -116,37 +118,42 @@ static string debugReportExtFind()
 	{
 		//dbgLog("%s", iter->extensionName);
 
-		if (!strcmp(iter->extensionName, VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
-			str = iter->extensionName;
+		if (!strcmp(iter->extensionName, pStdVal))
+			pExt = pStdVal;
 	}
 
-	if (!str.size())
+	if (!pExt)
 		dbgLog("debug report extension not found");
 
-	return str;
+	return pExt;
 }
 
-static void validationLayerEnable()
+static void validationLayerEnable(vector<const char *> &layers, vector<const char *> &extensions)
 {
-	string layer, extension;
+	const char *pLayer;
+	const char *pExt;
 
-	layer = validationLayerFind();
-	if (!layer.size())
+	pLayer = validationLayerFind();
+	if (!pLayer)
 		return;
 
-	dbgLog("validation layer found: %s", layer.c_str());
+	dbgLog("validation layer found: %s", pLayer);
 
-	extension = debugReportExtFind();
-	if (!extension.size())
+	pExt = debugReportExtFind();
+	if (!pExt)
 		return;
 
-	dbgLog("debug report extension found: %s", extension.c_str());
+	dbgLog("debug report extension found: %s", pExt);
 
-	inst.haveValLayer = true;
-	inst.layers.push_back(layer);
-	inst.extensions.push_back(extension);
+	layers.push_back(pLayer);
+	extensions.push_back(pExt);
 }
 
+/*
+ * Literature
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/vkCreateInstance.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkResult.html
+ */
 InstanceVulkan instanceVulkanGet()
 {
 	lock_guard<mutex> lock(mtxInstance);
@@ -154,7 +161,55 @@ InstanceVulkan instanceVulkanGet()
 	if (inst.ok)
 		return inst;
 
-	validationLayerEnable();
+	vector<const char *> layers, extensions;
+	VkResult res;
+
+	inst.ok = false;
+
+	validationLayerEnable(layers, extensions);
+
+	// Create instance
+
+	VkApplicationInfo infoApp = {};
+	infoApp.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	infoApp.pApplicationName = "Std app";
+	infoApp.applicationVersion = 0;
+	infoApp.pEngineName = "NaegVulkan";
+	infoApp.engineVersion = 0;
+	infoApp.apiVersion = VK_API_VERSION_1_1;
+
+	VkInstanceCreateInfo infoCreate = {};
+	infoCreate.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	infoCreate.flags = 0;
+	infoCreate.pApplicationInfo = &infoApp;
+#if 1
+	if (layers.size())
+	{
+		infoCreate.enabledLayerCount = layers.size();
+		infoCreate.ppEnabledLayerNames = layers.data();
+	}
+
+	if (extensions.size())
+	{
+		infoCreate.enabledExtensionCount = extensions.size();
+		infoCreate.ppEnabledExtensionNames = extensions.data();
+	}
+#else
+	infoCreate.enabledLayerCount = 0;
+	infoCreate.ppEnabledLayerNames = NULL;
+	infoCreate.enabledExtensionCount = 0;
+	infoCreate.ppEnabledExtensionNames = NULL;
+#endif
+	res = vkCreateInstance(&infoCreate, NULL, &inst.vlk);
+	if (res != VK_SUCCESS)
+	{
+		dbgLog("could not create Vulkan instance: %d", res);
+		return inst;
+	}
+
+	dbgLog("Vulkan instance created");
+
+	inst.ok = true;
 
 	return inst;
 }
