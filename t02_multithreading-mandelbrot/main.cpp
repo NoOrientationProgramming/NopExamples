@@ -71,8 +71,8 @@ class AppHelpOutput : public TclapOutput {};
 #define cZoomDefault			"170000"
 #define cTypeDriverDefault		"ext"
 #define cNumIterMaxDefault		"2000"
-#define cNumThreadsPoolDefault	"3"
-#define cNumFillersDefault		"51"
+#define cNumThreadsPoolDefault	"20"
+#define cNumFillersDefault		cImgHeightDefault
 
 // OS signal handler => Tell the application what to do on Ctrl-C
 #if defined(_WIN32)
