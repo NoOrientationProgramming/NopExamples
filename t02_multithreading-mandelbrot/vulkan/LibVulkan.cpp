@@ -39,14 +39,18 @@ static mutex mtxInstance;
  * - https://docs.vulkan.org/refpages/latest/refpages/source/VkLayerProperties.html
  * - apt install vulkan-validationlayers-dev
  */
-static Success validationLayerCreate()
+static string validationLayerFind()
 {
 	uint32_t numLayers;
 	VkResult res;
+	string str;
 
 	res = vkEnumerateInstanceLayerProperties(&numLayers, NULL);
 	if (res != VK_SUCCESS)
-		return errLog(-1, "could not enumerate layer properties");
+	{
+		dbgLog("could not enumerate layer properties");
+		return str;
+	}
 
 	//dbgLog("Layer count: %u", numLayers);
 
@@ -54,27 +58,26 @@ static Success validationLayerCreate()
 
 	res = vkEnumerateInstanceLayerProperties(&numLayers, props.data());
 	if (res != VK_SUCCESS)
-		return errLog(-1, "could not enumerate layer properties");
+	{
+		dbgLog("could not enumerate layer properties");
+		return str;
+	}
 
 	vector<VkLayerProperties>::iterator iter;
-	bool found = false;
 
 	iter = props.begin();
 	for (; iter != props.end(); ++iter)
 	{
 		//dbgLog("%-33s - %s", iter->layerName, iter->description);
 
-		if (!strstr(iter->layerName, "validation"))
-			found = true;
+		if (strstr(iter->layerName, "validation"))
+			str = iter->layerName;
 	}
 
-	if (!found)
-	{
+	if (str.size())
 		dbgLog("standard validation layer not supported");
-		return -1;
-	}
 
-	return Positive;
+	return str;
 }
 
 InstanceVulkan instanceVulkanGet()
@@ -82,13 +85,18 @@ InstanceVulkan instanceVulkanGet()
 	lock_guard<mutex> lock(mtxInstance);
 
 	InstanceVulkan inst;
-	Success success;
+	string str;
 
 	inst.haveValLayer = false;
 
-	success = validationLayerCreate();
-	if (success == Positive)
+	str = validationLayerFind();
+	if (str.size())
+	{
 		inst.haveValLayer = true;
+		inst.layers.push_back(str);
+
+		dbgLog("Validation layer found: %s", str.c_str());
+	}
 
 	return inst;
 }
