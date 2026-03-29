@@ -32,7 +32,7 @@
 struct InstanceVulkan
 {
 	VkInstance vlk;
-	uint32_t a;
+	bool haveValLayer;
 };
 
 InstanceVulkan instanceVulkanGet();

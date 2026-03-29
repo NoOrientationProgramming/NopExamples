@@ -24,6 +24,7 @@
 */
 
 #include <mutex>
+#include <vector>
 
 #include "LibVulkan.h"
 #include "Processing.h"
@@ -35,6 +36,8 @@ static mutex mtxInstance;
 /*
  * Literature
  * - https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumerateInstanceLayerProperties.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkLayerProperties.html
+ * - apt install vulkan-validationlayers-dev
  */
 static Success validationLayerCreate()
 {
@@ -45,7 +48,31 @@ static Success validationLayerCreate()
 	if (res != VK_SUCCESS)
 		return errLog(-1, "could not enumerate layer properties");
 
-	dbgLog("Layer count: %u", numLayers);
+	//dbgLog("Layer count: %u", numLayers);
+
+	vector<VkLayerProperties> props(numLayers);
+
+	res = vkEnumerateInstanceLayerProperties(&numLayers, props.data());
+	if (res != VK_SUCCESS)
+		return errLog(-1, "could not enumerate layer properties");
+
+	vector<VkLayerProperties>::iterator iter;
+	bool found = false;
+
+	iter = props.begin();
+	for (; iter != props.end(); ++iter)
+	{
+		//dbgLog("%-33s - %s", iter->layerName, iter->description);
+
+		if (!strstr(iter->layerName, "validation"))
+			found = true;
+	}
+
+	if (!found)
+	{
+		dbgLog("standard validation layer not supported");
+		return -1;
+	}
 
 	return Positive;
 }
@@ -57,14 +84,11 @@ InstanceVulkan instanceVulkanGet()
 	InstanceVulkan inst;
 	Success success;
 
-	inst.a = 0;
+	inst.haveValLayer = false;
 
 	success = validationLayerCreate();
-	if (success != Positive)
-	{
-		wrnLog("could not create validation layer");
-		return inst;
-	}
+	if (success == Positive)
+		inst.haveValLayer = true;
 
 	return inst;
 }
