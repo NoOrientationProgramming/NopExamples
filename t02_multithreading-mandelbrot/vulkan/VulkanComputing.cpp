@@ -40,6 +40,11 @@ dProcessStateStr(ProcState);
 
 using namespace std;
 
+/* Literature
+ * - https://gpuopen.com/learn/understanding-vulkan-objects/
+ * - https://github.com/Erkaman/vulkan_minimal_compute/blob/master/src/main.cpp
+ */
+
 VulkanComputing::VulkanComputing()
 	: Processing("VulkanComputing")
 	//, mStartMs(0)

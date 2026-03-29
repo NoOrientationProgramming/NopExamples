@@ -232,6 +232,10 @@ size_t colorMandelbrotScalar(ConfigMandelbrot *pCfg, char *pData, size_t idxLine
 }
 
 // (x[4], y[4]) -> (r, g, b)[4]
+/*
+ * Literature
+ * - https://www.intel.com/content/www/us/en/docs/intrinsics-guide/index.html
+ */
 #if APP_HAS_AVX2
 #if 0
 static void m128iPrint(__m128i &val, const char *pName = NULL)
