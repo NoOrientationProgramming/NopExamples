@@ -26,10 +26,12 @@
 #include "MandelbrotCreating.h"
 #include "ThreadPooling.h"
 #include "LibTime.h"
+#include "LibVulkan.h"
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
+		gen(StTmp) \
 
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
@@ -155,6 +157,21 @@ Success MandelbrotCreating::process()
 			return procErrLog(-1, "could not process lines");
 
 		mDurationMs = diffMs;
+
+		return Positive;
+
+		break;
+	case StTmp:
+
+		{
+			InstanceVulkan inst;
+			inst = instanceVulkanGet();
+
+			if (!inst.ok)
+				return procErrLog(-1, "could not create Vulkan instance");
+
+			devicesVulkanList(inst);
+		}
 
 		return Positive;
 

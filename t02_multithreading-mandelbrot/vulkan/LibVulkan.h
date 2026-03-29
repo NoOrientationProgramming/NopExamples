@@ -36,6 +36,7 @@ struct InstanceVulkan
 };
 
 InstanceVulkan instanceVulkanGet();
+void devicesVulkanList(InstanceVulkan &inst);
 
 #endif
 

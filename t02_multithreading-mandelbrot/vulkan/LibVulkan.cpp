@@ -33,7 +33,7 @@
 using namespace std;
 
 static mutex mtxInstance;
-static InstanceVulkan inst;
+static InstanceVulkan instInternal;
 
 static VkDebugUtilsMessengerEXT vlkMessenger = VK_NULL_HANDLE;
 
@@ -57,7 +57,7 @@ static const char *validationLayerFind()
 		return NULL;
 	}
 
-	//dbgLog("Layer count: %u", numLayers);
+	//dbgLog("layer count: %u", numLayers);
 
 	vector<VkLayerProperties> props(numLayers);
 
@@ -103,6 +103,8 @@ static const char *debugReportExtFind()
 		dbgLog("could not enumerate extension properties");
 		return NULL;
 	}
+
+	//dbgLog("extension count: %u", numExtensions);
 
 	vector<VkExtensionProperties> exts(numExtensions);
 
@@ -165,8 +167,23 @@ static VkBool32 vlkMessageReceived(
 				const VkDebugUtilsMessengerCallbackDataEXT *pData,
 				void *pUser)
 {
-	dbgLog("%x %x %s %p",
-			severity, types, pData->pMessage, pUser);
+	(void)types;
+	(void)pUser;
+
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
+		dbgLog("%s", pData->pMessage);
+	else
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
+		infLog("%s", pData->pMessage);
+	else
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+		wrnLog("%s", pData->pMessage);
+	else
+	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+		errLog(-1, "%s", pData->pMessage);
+	else
+		errLog(-1, "%x %s", severity, pData->pMessage);
+
 	return VK_FALSE;
 }
 
@@ -176,7 +193,7 @@ static void messengerCreate(vector<const char *> &layers, vector<const char *> &
 		return;
 
 	PFN_vkCreateDebugUtilsMessengerEXT pFctCreate;
-	VkInstance &vlk = inst.vlk;
+	VkInstance &vlk = instInternal.vlk;
 
 	pFctCreate = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(vlk,
 					"vkCreateDebugUtilsMessengerEXT");
@@ -191,7 +208,7 @@ static void messengerCreate(vector<const char *> &layers, vector<const char *> &
 	VkDebugUtilsMessengerCreateInfoEXT infoCreate = {};
 	infoCreate.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
 	infoCreate.messageSeverity =
-		VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+		/* VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | */
 		VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT |
 		VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
 		VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
@@ -210,14 +227,14 @@ static void messengerCreate(vector<const char *> &layers, vector<const char *> &
 
 static void vlkMessengerDestroy()
 {
-	if (!inst.ok || vlkMessenger == VK_NULL_HANDLE)
+	if (!instInternal.ok || vlkMessenger == VK_NULL_HANDLE)
 		return;
 
 	dbgLog("destroying Vulkan messenger");
 
 	PFN_vkDestroyDebugUtilsMessengerEXT pFctDestroy;
 
-	pFctDestroy = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(inst.vlk,
+	pFctDestroy = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instInternal.vlk,
 					"vkDestroyDebugUtilsMessengerEXT");
 	if (!pFctDestroy)
 	{
@@ -225,7 +242,7 @@ static void vlkMessengerDestroy()
 		return;
 	}
 
-	pFctDestroy(inst.vlk, vlkMessenger, NULL);
+	pFctDestroy(instInternal.vlk, vlkMessenger, NULL);
 	vlkMessenger = VK_NULL_HANDLE;
 
 	dbgLog("destroying Vulkan messenger: done");
@@ -241,11 +258,11 @@ static void vlkGlobalDestruct()
 
 	vlkMessengerDestroy();
 
-	if (inst.ok)
+	if (instInternal.ok)
 	{
-		vkDestroyInstance(inst.vlk, NULL);
-		inst.vlk = VK_NULL_HANDLE;
-		inst.ok = false;
+		vkDestroyInstance(instInternal.vlk, NULL);
+		instInternal.vlk = VK_NULL_HANDLE;
+		instInternal.ok = false;
 	}
 
 	dbgLog("global Vulkan deinit: done");
@@ -260,14 +277,14 @@ InstanceVulkan instanceVulkanGet()
 {
 	lock_guard<mutex> lock(mtxInstance);
 
-	if (inst.ok)
-		return inst;
+	if (instInternal.ok)
+		return instInternal;
 
 	vector<const char *> layers, extensions;
 	VkResult res;
 
-	memset(&inst, 0, sizeof(inst));
-	inst.vlk = VK_NULL_HANDLE;
+	memset(&instInternal, 0, sizeof(instInternal));
+	instInternal.vlk = VK_NULL_HANDLE;
 
 	validationLayerAdd(layers, extensions);
 
@@ -298,11 +315,11 @@ InstanceVulkan instanceVulkanGet()
 		infoCreate.ppEnabledExtensionNames = extensions.data();
 	}
 
-	res = vkCreateInstance(&infoCreate, NULL, &inst.vlk);
+	res = vkCreateInstance(&infoCreate, NULL, &instInternal.vlk);
 	if (res != VK_SUCCESS)
 	{
 		dbgLog("could not create Vulkan instance: %d", res);
-		return inst;
+		return instInternal;
 	}
 
 	dbgLog("Vulkan instance created");
@@ -325,8 +342,48 @@ InstanceVulkan instanceVulkanGet()
 
 	messengerCreate(layers, extensions);
 
-	inst.ok = true;
+	instInternal.ok = true;
 
-	return inst;
+	return instInternal;
+}
+
+/*
+ * Literature
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumeratePhysicalDevices.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkPhysicalDevice.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/vkGetPhysicalDeviceProperties.html
+ */
+void devicesVulkanList(InstanceVulkan &inst)
+{
+	uint32_t numDevices;
+	VkResult res;
+
+	res = vkEnumeratePhysicalDevices(inst.vlk, &numDevices, NULL);
+	if (res != VK_SUCCESS)
+	{
+		dbgLog("could not enumerate physical devices");
+		return;
+	}
+
+	//dbgLog("device count: %u", numDevices);
+
+	vector<VkPhysicalDevice> devs(numDevices);
+
+	res = vkEnumeratePhysicalDevices(inst.vlk, &numDevices, devs.data());
+	if (res != VK_SUCCESS)
+	{
+		dbgLog("could not enumerate physical devices");
+		return;
+	}
+
+	vector<VkPhysicalDevice>::iterator iter;
+	VkPhysicalDeviceProperties props;
+
+	iter = devs.begin();
+	for (; iter != devs.end(); ++iter)
+	{
+		vkGetPhysicalDeviceProperties(*iter, &props);
+		dbgLog("%s", props.deviceName);
+	}
 }
 
