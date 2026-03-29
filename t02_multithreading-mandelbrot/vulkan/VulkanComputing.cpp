@@ -91,3 +91,9 @@ void VulkanComputing::processInfo(char *pBuf, char *pBufEnd)
 
 /* static functions */
 
+StrctVlkCreating *VulkanComputing::structComputeCreate()
+{
+	// Create template compute-structure creating process
+	return NULL;
+}
+

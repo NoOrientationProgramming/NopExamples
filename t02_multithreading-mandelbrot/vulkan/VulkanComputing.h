@@ -27,6 +27,7 @@
 #define VULKAN_COMPUTING_H
 
 #include "Processing.h"
+#include "StrctVlkCreating.h"
 
 class VulkanComputing : public Processing
 {
@@ -37,6 +38,8 @@ public:
 	{
 		return new dNoThrow VulkanComputing;
 	}
+
+	static StrctVlkCreating *structComputeCreate();
 
 protected:
 

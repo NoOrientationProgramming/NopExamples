@@ -72,31 +72,79 @@ static string validationLayerFind()
 	{
 		//dbgLog("%-33s - %s", iter->layerName, iter->description);
 
-		if (strstr(iter->layerName, "validation"))
+		if (!strcmp(iter->layerName, "VK_LAYER_KHRONOS_validation"))
 			str = iter->layerName;
 	}
 
 	if (!str.size())
-		dbgLog("standard validation layer not supported");
+		dbgLog("standard validation layer not found");
+
+	return str;
+}
+
+/*
+ * Literature
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumerateInstanceExtensionProperties.html
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/VkExtensionProperties.html
+ */
+static string debugReportExtFind()
+{
+	uint32_t numExtensions;
+	VkResult res;
+	string str;
+
+	res = vkEnumerateInstanceExtensionProperties(NULL, &numExtensions, NULL);
+	if (res != VK_SUCCESS)
+	{
+		dbgLog("could not enumerate extension properties");
+		return str;
+	}
+
+	vector<VkExtensionProperties> exts(numExtensions);
+
+	res = vkEnumerateInstanceExtensionProperties(NULL, &numExtensions, exts.data());
+	if (res != VK_SUCCESS)
+	{
+		dbgLog("could not enumerate extension properties");
+		return str;
+	}
+
+	vector<VkExtensionProperties>::iterator iter;
+
+	iter = exts.begin();
+	for (; iter != exts.end(); ++iter)
+	{
+		//dbgLog("%s", iter->extensionName);
+
+		if (!strcmp(iter->extensionName, VK_EXT_DEBUG_REPORT_EXTENSION_NAME))
+			str = iter->extensionName;
+	}
+
+	if (!str.size())
+		dbgLog("debug report extension not found");
 
 	return str;
 }
 
 static void validationLayerEnable()
 {
-	string layer;
+	string layer, extension;
 
 	layer = validationLayerFind();
 	if (!layer.size())
-	{
-		dbgLog("validation layer not found");
 		return;
-	}
 
 	dbgLog("validation layer found: %s", layer.c_str());
 
+	extension = debugReportExtFind();
+	if (!extension.size())
+		return;
+
+	dbgLog("debug report extension found: %s", extension.c_str());
+
 	inst.haveValLayer = true;
 	inst.layers.push_back(layer);
+	inst.extensions.push_back(extension);
 }
 
 InstanceVulkan instanceVulkanGet()
