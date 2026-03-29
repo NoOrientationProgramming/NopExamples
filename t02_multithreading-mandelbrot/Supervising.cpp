@@ -363,7 +363,7 @@ void Supervising::resultPrint()
 	userInfLog("\n");
 	userInfLog("  Duration                 %14zu [ms]", (size_t)durMs);
 	userInfLog("  Iterations               %14.3e", numIter);
-	ips = numIter / (durMs / 1000);
+	ips = durMs >= 1.0 ? numIter / (durMs / 1000) : 0.0;
 	userInfLog("  Iter. per second         %14.3e", ips);
 	userInfLog("  Pixel * IPS              %14.3e", ips * pCfg->imgWidth * pCfg->imgHeight);
 	userInfLog("");
