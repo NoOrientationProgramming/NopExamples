@@ -170,7 +170,7 @@ static VkBool32 vlkMessageReceived(
 	return VK_FALSE;
 }
 
-static void validationLayerEnable(vector<const char *> &layers, vector<const char *> &extensions)
+static void messengerCreate(vector<const char *> &layers, vector<const char *> &extensions)
 {
 	if (!layers.size() || !extensions.size())
 		return;
@@ -323,7 +323,7 @@ InstanceVulkan instanceVulkanGet()
 		dbgLog("Version %u.%u.%u", major, minor, patch);
 	}
 
-	validationLayerEnable(layers, extensions);
+	messengerCreate(layers, extensions);
 
 	inst.ok = true;
 
