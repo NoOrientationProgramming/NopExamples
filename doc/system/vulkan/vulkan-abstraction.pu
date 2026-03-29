@@ -1,0 +1,28 @@
+
+@startuml
+
+' skinparam linetype ortho
+
+frame "Application" as pApp {
+
+  frame "Client" as pClient
+
+  frame "Vulkan\nInstance" as pInst
+  frame "Device\n- Physical\n- Logical\n- Pools\n- ..." as pDev
+  frame "Structure\n- Descriptor Set\n- Buffers\n- ..." as pStruct
+  frame "Computing()" as pComp
+
+  pClient -> pInst : create
+  pClient -> pDev : create
+  pClient --> pStruct : create
+  pComp <- pClient : create
+
+  pInst ..> pDev : selected
+  pStruct <. pDev : bound
+  pComp <.. pStruct : bound
+}
+
+footer **Vulkan** Abstraction - Computing()\n(C) DSP-Crowd Electronics GmbH
+
+@enduml
+
