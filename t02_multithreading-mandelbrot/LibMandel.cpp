@@ -55,7 +55,6 @@ public:
 	Color operator*(MbValFull t) const
 	{ return Color(mR * t, mG * t, mB * t); }
 
-private:
 	ElemColor mR;
 	ElemColor mG;
 	ElemColor mB;
