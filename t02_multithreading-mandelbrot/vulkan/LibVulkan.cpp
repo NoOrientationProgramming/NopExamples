@@ -123,7 +123,7 @@ static const char *debugReportExtFind()
 	}
 
 	if (!pExt)
-		dbgLog("debug report extension not found");
+		dbgLog("debug utils not found");
 
 	return pExt;
 }
@@ -143,7 +143,7 @@ static void validationLayerEnable(vector<const char *> &layers, vector<const cha
 	if (!pExt)
 		return;
 
-	dbgLog("debug report extension found: %s", pExt);
+	dbgLog("debug utils found: %s", pExt);
 
 	layers.push_back(pLayer);
 	extensions.push_back(pExt);
