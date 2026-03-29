@@ -313,20 +313,20 @@ void Supervising::configPrint(ConfigMandelbrot *pCfg)
 	userInfLog("  Image height            %14u [pixel]", pCfg->imgHeight);
 	userInfLog("");
 
+	userInfLog("  Max. iter. per pix.     %14u", pCfg->numIterMax);
+	userInfLog("  Pos X                   %32.17f", pCfg->posX);
+	userInfLog("  Pos Y                   %32.17f", pCfg->posY);
+	userInfLog("  Zoom                    %14.3e", pCfg->zoom);
 	userInfLog("  Datatype                %14s%s",
 					pCfg->useDouble ? "double" : "float",
 					pCfg->forceDouble ? " (forced)" : "");
-#if APP_HAS_AVX2
-	userInfLog("  SIMD                    %14s", pCfg->disableSimd ? "Disabled" : "Enabled");
-#endif
-	userInfLog("  Max. iter. per pix.     %14u", pCfg->numIterMax);
-	userInfLog("  Pos X                   %31.17f", pCfg->posX);
-	userInfLog("  Pos Y                   %31.17f", pCfg->posY);
-	userInfLog("  Zoom                    %14.3e", pCfg->zoom);
 	userInfLog("");
 	userInfLog("  Driver type             %14s", env.typeDriver.c_str());
 	userInfLog("  Num. Pool-threads       %14u", env.numThreadsPool);
 	userInfLog("  Num. fillers            %14u", env.numFillers);
+#if APP_HAS_AVX2
+	userInfLog("  SIMD                    %14s", pCfg->disableSimd ? "Disabled" : "Enabled");
+#endif
 	userInfLog("");
 }
 
