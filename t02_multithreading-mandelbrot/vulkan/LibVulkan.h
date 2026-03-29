@@ -26,10 +26,12 @@
 #ifndef LIB_VULKAN_H
 #define LIB_VULKAN_H
 
+#include <vulkan/vulkan.h>
 #include <inttypes.h>
 
 struct InstanceVulkan
 {
+	VkInstance vlk;
 	uint32_t a;
 };
 

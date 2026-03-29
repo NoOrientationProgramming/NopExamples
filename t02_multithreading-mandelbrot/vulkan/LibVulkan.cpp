@@ -23,15 +23,48 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <mutex>
+
 #include "LibVulkan.h"
+#include "Processing.h"
 
 using namespace std;
 
+static mutex mtxInstance;
+
+/*
+ * Literature
+ * - https://docs.vulkan.org/refpages/latest/refpages/source/vkEnumerateInstanceLayerProperties.html
+ */
+static Success validationLayerCreate()
+{
+	uint32_t numLayers;
+	VkResult res;
+
+	res = vkEnumerateInstanceLayerProperties(&numLayers, NULL);
+	if (res != VK_SUCCESS)
+		return errLog(-1, "could not enumerate layer properties");
+
+	dbgLog("Layer count: %u", numLayers);
+
+	return Positive;
+}
+
 InstanceVulkan instanceVulkanGet()
 {
+	lock_guard<mutex> lock(mtxInstance);
+
 	InstanceVulkan inst;
+	Success success;
 
 	inst.a = 0;
+
+	success = validationLayerCreate();
+	if (success != Positive)
+	{
+		wrnLog("could not create validation layer");
+		return inst;
+	}
 
 	return inst;
 }
