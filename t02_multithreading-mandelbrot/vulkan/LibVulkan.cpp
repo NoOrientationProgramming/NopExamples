@@ -313,6 +313,20 @@ InstanceVulkan instanceVulkanGet()
 
 	dbgLog("Vulkan instance created");
 
+	uint32_t versionInst;
+
+	res = vkEnumerateInstanceVersion(&versionInst);
+	if (res != VK_SUCCESS)
+		dbgLog("could not get vulkan version");
+	else
+	{
+		uint32_t major = VK_VERSION_MAJOR(versionInst);
+		uint32_t minor = VK_VERSION_MINOR(versionInst);
+		uint32_t patch = VK_VERSION_PATCH(versionInst);
+
+		dbgLog("Version %u.%u.%u", major, minor, patch);
+	}
+
 	Processing::globalDestructorRegister(vlkGlobalDestruct);
 
 	//validationLayerEnable(layers, extensions);
