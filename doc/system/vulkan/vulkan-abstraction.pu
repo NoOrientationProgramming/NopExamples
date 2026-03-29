@@ -3,23 +3,26 @@
 
 ' skinparam linetype ortho
 
-frame "Application" as pApp {
+frame "MsgDispatching()" as pMsg {
 
-  frame "Client" as pClient
+  frame "Initializing()" as pInit
+  frame "ResultCreating()" as pParent
 
-  frame "Vulkan\nInstance" as pInst
-  frame "Device\n- Physical\n- Logical\n- Pools\n- ..." as pDev
-  frame "Structure\n- Descriptor Set\n- Buffers\n- ..." as pStruct
-  frame "Computing()" as pComp
+  frame "<< Vulkan Instance >>\nOwner: LibVulkan\nAccess: Global\n- Validation Layer\n- Messenger" as pInst
+  frame "<< Vulkan Device >>\nOwner: LibVulkan\nAccess: Global by name\n- Physical\n- Logical\n- Pools\n- ..." as pDev
+  frame "Vulkan Structure\nOwner/Lifetime: Parent\nAccess: Local\n- Descriptor Set\n- Buffers (R + RW)\n- ..." as pStruct
+  frame "VulkanComputing()\nOwner/Lifetime: Parent\nAccess: Local\n- Result" as pComp
 
-  pClient -> pInst : create
-  pClient -> pDev : create
-  pClient --> pStruct : create
-  pComp <- pClient : create
+  pInit --> pInst : create
+  pInit --> pDev : create
 
-  pInst ..> pDev : selected
-  pStruct <. pDev : bound
-  pComp <.. pStruct : bound
+  pParent --> pStruct : create
+  pParent --> pComp : create
+  pParent ..> pDev : use
+
+  pInst .> pDev : selected
+  pDev .> pStruct : bound
+  pStruct .> pComp : bound
 }
 
 footer **Vulkan** Abstraction - Computing()\n(C) DSP-Crowd Electronics GmbH
