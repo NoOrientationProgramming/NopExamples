@@ -89,6 +89,8 @@ Success Supervising::process()
 	{
 	case StStart:
 
+		sleepUsInternalDriveSet(30000);
+
 		ok = basicsStart();
 		if (!ok)
 			return procErrLog(-1, "could not start basic services");

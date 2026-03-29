@@ -99,8 +99,6 @@ Success MandelbrotCreating::process()
 	{
 	case StStart:
 
-		sleepUsInternalDriveSet(30000);
-
 		success = argumentsCheck();
 		if (success != Positive)
 			return procErrLog(-1, "invalid arguments");
