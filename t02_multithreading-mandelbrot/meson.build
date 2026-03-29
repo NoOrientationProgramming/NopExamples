@@ -150,6 +150,13 @@ if cxx.get_id() == 'gcc'
 	endif
 endif
 
+dep_vulkan = dependency('vulkan', required : false)
+if dep_vulkan.found()
+	args += '-DAPP_HAS_VULKAN=1'
+	srcs += 'vulkan/StrctVlkCreating.cpp'
+	srcs += 'vulkan/VulkanComputing.cpp'
+endif
+
 # Application
 
 nameExe = 'app'
@@ -165,6 +172,7 @@ myApp = executable(
 	include_directories : include_directories([
 		'../deps/SystemCore',
 		'../deps/LibNaegCommon',
+		'vulkan',
 	]),
 	dependencies : [
 		deps,
