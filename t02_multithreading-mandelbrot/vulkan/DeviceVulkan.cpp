@@ -23,66 +23,8 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "StrctVlkCreating.h"
-
-#define dForEach_ProcState(gen) \
-		gen(StStart) \
-		gen(StMain) \
-		gen(StNop) \
-
-#define dGenProcStateEnum(s) s,
-dProcessStateEnum(ProcState);
-
-#if 1
-#define dGenProcStateString(s) #s,
-dProcessStateStr(ProcState);
-#endif
+#include "DeviceVulkan.h"
 
 using namespace std;
 
-StrctVlkCreating::StrctVlkCreating()
-	: Processing("StrctVlkCreating")
-	//, mStartMs(0)
-{
-	mState = StStart;
-}
-
-/* member functions */
-
-Success StrctVlkCreating::process()
-{
-	//uint32_t curTimeMs = millis();
-	//uint32_t diffMs = curTimeMs - mStartMs;
-	//Success success;
-#if 0
-	dStateTrace;
-#endif
-	switch (mState)
-	{
-	case StStart:
-
-		mState = StMain;
-
-		break;
-	case StMain:
-
-		break;
-	case StNop:
-
-		break;
-	default:
-		break;
-	}
-
-	return Pending;
-}
-
-void StrctVlkCreating::processInfo(char *pBuf, char *pBufEnd)
-{
-#if 1
-	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
-#endif
-}
-
-/* static functions */
 

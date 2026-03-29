@@ -23,53 +23,8 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef VULKAN_COMPUTING_H
-#define VULKAN_COMPUTING_H
-
-#include "Processing.h"
 #include "StructComputing.h"
 
-class VulkanComputing : public Processing
-{
+using namespace std;
 
-public:
-
-	static VulkanComputing *create()
-	{
-		return new dNoThrow VulkanComputing;
-	}
-
-	static StructComputing *structComputeCreate();
-
-protected:
-
-	virtual ~VulkanComputing() {}
-
-private:
-
-	VulkanComputing();
-	VulkanComputing(const VulkanComputing &) = delete;
-	VulkanComputing &operator=(const VulkanComputing &) = delete;
-
-	/*
-	 * Naming of functions:  objectVerb()
-	 * Example:              peerAdd()
-	 */
-
-	/* member functions */
-	Success process();
-	void processInfo(char *pBuf, char *pBufEnd);
-
-	/* member variables */
-	//uint32_t mStartMs;
-
-	/* static functions */
-
-	/* static variables */
-
-	/* constants */
-
-};
-
-#endif
 

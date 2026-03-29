@@ -23,60 +23,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STRCT_VLK_CREATING_H
-#define STRCT_VLK_CREATING_H
+#ifndef STRUCT_COMPUTING_H
+#define STRUCT_COMPUTING_H
 
-#include "Processing.h"
-
-struct StructureVulkan
+class StructComputing
 {
-	uint32_t a;
-};
-
-class StrctVlkCreating : public Processing
-{
-
 public:
-
-	static StrctVlkCreating *create()
-	{
-		return new dNoThrow StrctVlkCreating;
-	}
-
-	// Configuration
-	// ...
-
-	// Output
-	StructureVulkan result;
-
-protected:
-
-	virtual ~StrctVlkCreating() {}
-
-private:
-
-	StrctVlkCreating();
-	StrctVlkCreating(const StrctVlkCreating &) = delete;
-	StrctVlkCreating &operator=(const StrctVlkCreating &) = delete;
-
-	/*
-	 * Naming of functions:  objectVerb()
-	 * Example:              peerAdd()
-	 */
-
-	/* member functions */
-	Success process();
-	void processInfo(char *pBuf, char *pBufEnd);
-
-	/* member variables */
-	//uint32_t mStartMs;
-
-	/* static functions */
-
-	/* static variables */
-
-	/* constants */
-
+	int a;
 };
 
 #endif
