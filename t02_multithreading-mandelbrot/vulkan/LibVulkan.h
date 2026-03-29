@@ -26,6 +26,8 @@
 #ifndef LIB_VULKAN_H
 #define LIB_VULKAN_H
 
+#include <string>
+
 #include <vulkan/vulkan.h>
 #include <inttypes.h>
 
@@ -35,8 +37,21 @@ struct InstanceVulkan
 	bool ok;
 };
 
+class DeviceVulkan
+{
+public:
+
+	std::string name();
+
+	VkPhysicalDevice phy;
+
+	// Logical
+	// Pools?
+};
+
 InstanceVulkan instanceVulkanGet();
 void devicesVulkanList(InstanceVulkan &inst);
+VkPhysicalDevice deviceVulkanSelect(InstanceVulkan &inst, const char *pName = NULL);
 
 #endif
 

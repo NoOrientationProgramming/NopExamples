@@ -23,7 +23,6 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <string>
 #include <vector>
 #include <mutex>
 
@@ -383,5 +382,26 @@ void devicesVulkanList(InstanceVulkan &inst)
 		vkGetPhysicalDeviceProperties(*iter, &props);
 		dbgLog("%s", props.deviceName);
 	}
+}
+
+VkPhysicalDevice deviceVulkanSelect(InstanceVulkan &inst, const char *pName)
+{
+	(void)inst;
+	(void)pName;
+
+	// Errors
+	// - Not found
+	// - Multiple found
+
+	// if pName == NULL => Return first device
+
+	return VK_NULL_HANDLE;
+}
+
+// DeviceVulkan
+
+string DeviceVulkan::name()
+{
+	return "";
 }
 
