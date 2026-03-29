@@ -153,6 +153,7 @@ endif
 dep_vulkan = dependency('vulkan', required : false)
 if dep_vulkan.found()
 	args += '-DAPP_HAS_VULKAN=1'
+	srcs += 'vulkan/LibVulkan.cpp'
 	srcs += 'vulkan/StrctVlkCreating.cpp'
 	srcs += 'vulkan/VulkanComputing.cpp'
 endif
