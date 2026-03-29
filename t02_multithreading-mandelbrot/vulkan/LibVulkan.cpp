@@ -171,18 +171,18 @@ static VkBool32 vlkMessageReceived(
 	(void)pUser;
 
 	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT)
-		dbgLog("%s", pData->pMessage);
+		dbgLog("\n### %s", pData->pMessage);
 	else
 	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT)
-		infLog("%s", pData->pMessage);
+		infLog("\n### %s", pData->pMessage);
 	else
 	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-		wrnLog("%s", pData->pMessage);
+		wrnLog("\n### %s", pData->pMessage);
 	else
 	if (severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-		errLog(-1, "%s", pData->pMessage);
+		errLog(-1, "\n### %s", pData->pMessage);
 	else
-		errLog(-1, "%x %s", severity, pData->pMessage);
+		errLog(-1, "\n### %x %s", severity, pData->pMessage);
 
 	return VK_FALSE;
 }
