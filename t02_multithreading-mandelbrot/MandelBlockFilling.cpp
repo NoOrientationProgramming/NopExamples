@@ -121,7 +121,7 @@ Success MandelBlockFilling::lineFill()
 
 	while (numRemaining = mNumPixel - mIdxPixel, numRemaining && numBurst)
 	{
-		numPixelProcessed = PMIN(numRemaining, cNumPixelPerBlock);
+		numPixelProcessed = PMIN(numRemaining, cNumDoublesPerBlock);
 
 		colorMandelbrotChunks(mpData, mIdxLine, mIdxPixel, numPixelProcessed);
 

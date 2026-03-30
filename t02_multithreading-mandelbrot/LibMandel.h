@@ -34,8 +34,8 @@ typedef double MbValFull;
 typedef float MbVal;
 
 const size_t cShiftElem = 2;
-const size_t cNumPixelPerBlock = 1 << cShiftElem;
-const size_t cMaskElem = cNumPixelPerBlock - 1;
+const size_t cNumDoublesPerBlock = 1 << cShiftElem;
+const size_t cMaskElem = cNumDoublesPerBlock - 1;
 
 struct ConfigMandelbrot
 {
