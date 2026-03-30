@@ -13,6 +13,7 @@ frame "Moving()" as pMove {
 sUn -> sIn : Attempt
 sUn <. sIn : Failed
 sIn .> sMo : Done
+sMo -> sMo
 
 footer **Definition** Resistance\n(C) DSP-Crowd Electronics GmbH
 
