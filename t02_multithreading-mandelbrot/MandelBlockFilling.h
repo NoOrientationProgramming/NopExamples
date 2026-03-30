@@ -78,6 +78,7 @@ private:
 
 	/* member variables */
 	uint32_t mStartMs;
+	size_t mNumElemPerBlock;
 	size_t mNumBlock;
 	size_t mIdxBlock;
 	size_t mNumPixel;

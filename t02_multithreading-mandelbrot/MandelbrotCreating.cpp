@@ -104,7 +104,10 @@ Success MandelbrotCreating::process()
 		success = argumentsCheck();
 		if (success != Positive)
 			return procErrLog(-1, "invalid arguments");
-
+#if 0
+		mState = StTmp;
+		break;
+#endif
 		cfg.w2 = ((MbValFull)cfg.imgWidth) / 2;
 		cfg.h2 = ((MbValFull)cfg.imgHeight) / 2;
 		cfg.scaleX = 1.0 / cfg.zoom;
