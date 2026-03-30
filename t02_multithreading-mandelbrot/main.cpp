@@ -198,10 +198,10 @@ int main(int argc, char *argv[])
 	ValueArg<size_t> argNumIterMax("", "iter-max", "Maximum number of Mandelbrot iterations per pixel. Default: " cNumIterMaxDefault,
 								false, atoi(cNumIterMaxDefault), "uint");
 	cmd.add(argNumIterMax);
-	ValueArg<size_t> argThreadsPool("", "threads-pool", "Number of threads used by the thread-pool. Default: " cNumThreadsPoolDefault,
+	ValueArg<size_t> argThreadsPool("", "num-threads-pool", "Number of threads used by the thread-pool. Default: " cNumThreadsPoolDefault,
 								false, atoi(cNumThreadsPoolDefault), "uint");
 	cmd.add(argThreadsPool);
-	ValueArg<size_t> argNumFillers("", "fillers", "Number of parallel line filler processes. Default: " cNumFillersDefault,
+	ValueArg<size_t> argNumFillers("", "num-fillers", "Number of parallel line filler processes. Default: " cNumFillersDefault,
 								false, atoi(cNumFillersDefault), "uint");
 	cmd.add(argNumFillers);
 	ValueArg<size_t> argNumBurst("", "num-burst", "Pixel blocks processed per filler per scheduler tick. Default: " cNumBurstDefault,
