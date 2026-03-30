@@ -51,6 +51,7 @@ struct Environment
 	size_t numIterMax;
 	size_t numThreadsPool;
 	size_t numFillers;
+	size_t numBurst;
 };
 
 extern Environment env;

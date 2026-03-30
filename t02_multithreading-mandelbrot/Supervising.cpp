@@ -257,6 +257,7 @@ bool Supervising::mandelbrotStart()
 	pMandel->posY = env.posY;
 	pMandel->zoom = env.zoom;
 	pMandel->numIterMax = env.numIterMax;
+	pMandel->numBurst = env.numBurst;
 
 	configPrint(pMandel);
 
@@ -324,6 +325,7 @@ void Supervising::configPrint(ConfigMandelbrot *pCfg)
 	userInfLog("  Driver type              %14s", env.typeDriver.c_str());
 	userInfLog("  Num. Pool-threads        %14u", env.numThreadsPool);
 	userInfLog("  Num. fillers             %14u", env.numFillers);
+	userInfLog("  Num. burst               %14u", env.numBurst);
 #if APP_HAS_AVX2
 	userInfLog("  SIMD                     %14s", pCfg->disableSimd ? "Disabled" : "Enabled");
 #endif

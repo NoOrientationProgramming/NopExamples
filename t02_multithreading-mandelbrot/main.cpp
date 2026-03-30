@@ -73,6 +73,7 @@ class AppHelpOutput : public TclapOutput {};
 #define cNumIterMaxDefault		"2000"
 #define cNumThreadsPoolDefault	"20"
 #define cNumFillersDefault		cImgHeightDefault
+#define cNumBurstDefault		"300"
 
 // OS signal handler => Tell the application what to do on Ctrl-C
 #if defined(_WIN32)
@@ -203,6 +204,9 @@ int main(int argc, char *argv[])
 	ValueArg<size_t> argNumFillers("", "fillers", "Number of parallel line filler processes. Default: " cNumFillersDefault,
 								false, atoi(cNumFillersDefault), "uint");
 	cmd.add(argNumFillers);
+	ValueArg<size_t> argNumBurst("", "num-burst", "Pixel blocks processed per filler per scheduler tick. Default: " cNumBurstDefault,
+								false, atoi(cNumBurstDefault), "uint");
+	cmd.add(argNumBurst);
 
 	// Parse
 	cmd.parse(argc, argv);
@@ -242,6 +246,7 @@ int main(int argc, char *argv[])
 	env.numIterMax = argNumIterMax.getValue();
 	env.numThreadsPool = argThreadsPool.getValue();
 	env.numFillers = argNumFillers.getValue();
+	env.numBurst = argNumBurst.getValue();
 #else
 	(void)argc;
 	(void)argv;
