@@ -332,7 +332,7 @@ static __m256 fractionalIter(
 	_mm256_storeu_ps(mag_f, mag);
 
 	for (size_t i = 0; i < 2 * cNumDoublesPerBlock; ++i)
-		mag_f[i] = log2f(log2f(mag_f[i]));
+		mag_f[i] = log2(log2(mag_f[i]));
 
 	mag = _mm256_loadu_ps(mag_f);
 	mag = _mm256_sub_ps(mag, cOneF);
