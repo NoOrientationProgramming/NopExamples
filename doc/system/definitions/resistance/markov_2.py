@@ -7,9 +7,10 @@ np.set_printoptions(formatter = {'float': '{:.3f}'.format})
 
 x = np.zeros((6, 1))
 
+i = 2.00
+
 a = 0.25;
 b = 1 - a;
-c = 1.00
 
 A = np.array([[1.00, 0.00, 0.00, 0.00, 0.00, 0.00],
               [1.00, 0.00,    a, 0.00, 0.00, 0.00],
@@ -24,7 +25,7 @@ def matrix_power(n):
 
 	print(f"")
 
-	x[0] = 1.00
+	x[0] = i
 	print(f"x0")
 	print(np.transpose(x))
 	print(f"")
@@ -48,7 +49,7 @@ def matrix_power(n):
 
 	print(f"")
 
-	xn = (R @ x) * c
+	xn = R @ x
 	print(f"x{n} = A^{n} * x0")
 	print(np.transpose(xn))
 	print(f"             ^                 ^")
