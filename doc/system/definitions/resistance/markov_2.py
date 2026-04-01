@@ -5,13 +5,11 @@ import argparse
 
 np.set_printoptions(formatter = {'float': '{:.3f}'.format})
 
-x = np.zeros((6, 1))
-
 i = 2.00
+x = np.zeros((6, 1))
 
 a = 0.25;
 b = 1 - a;
-
 A = np.array([[1.00, 0.00, 0.00, 0.00, 0.00, 0.00],
               [1.00, 0.00,    a, 0.00, 0.00, 0.00],
               [0.00, 1.00, 0.00,    a, 0.00, 0.00],

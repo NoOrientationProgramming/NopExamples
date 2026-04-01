@@ -5,11 +5,14 @@ import argparse
 
 np.set_printoptions(formatter = {'float': '{:.3f}'.format})
 
+i = 2.00
 x = np.zeros((3, 1))
 
-A = np.array([[0.00, 0.10, 0.00],
+a = 0.10;
+b = 1 - a;
+A = np.array([[0.00,    a, 0.00],
               [1.00, 0.00, 0.00],
-              [0.00, 0.90, 1.00]])
+              [0.00,    b, 1.00]])
 
 nDef = 1
 
@@ -17,7 +20,7 @@ def matrix_power(n):
 
 	print(f"")
 
-	x[0] = 1.00
+	x[0] = i
 	print(f"x0")
 	print(np.transpose(x))
 	print(f"")
