@@ -51,6 +51,10 @@ def matrix_power(n):
 	xn = (R @ x) * c
 	print(f"x{n} = A^{n} * x0")
 	print(np.transpose(xn))
+	print(f"             ^                 ^")
+	print(f"             |     Resistor    |")
+	print(f"             |                 |")
+	print(f"         Beginning            End")
 
 	print(f"")
 
