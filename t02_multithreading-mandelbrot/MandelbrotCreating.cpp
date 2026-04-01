@@ -26,7 +26,9 @@
 #include "MandelbrotCreating.h"
 #include "ThreadPooling.h"
 #include "LibTime.h"
+#if APP_HAS_VULKAN
 #include "LibVulkan.h"
+#endif
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
@@ -166,6 +168,7 @@ Success MandelbrotCreating::process()
 		break;
 	case StTmp:
 
+#if APP_HAS_VULKAN
 		{
 			InstanceVulkan inst;
 			inst = instanceVulkanGet();
@@ -175,7 +178,7 @@ Success MandelbrotCreating::process()
 
 			devicesVulkanList(inst);
 		}
-
+#endif
 		return Positive;
 
 		break;

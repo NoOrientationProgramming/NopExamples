@@ -32,6 +32,11 @@ srcs = [
 	'LibMandel.cpp',
 ]
 
+incs = [
+	'../deps/SystemCore',
+	'../deps/LibNaegCommon',
+]
+
 # Arguments
 
 args = [
@@ -151,15 +156,22 @@ if cxx.get_id() == 'gcc'
 	endif
 endif
 
-dep_vulkan = dependency('vulkan', required : false)
-if dep_vulkan.found()
-	deps += dep_vulkan
-	args += '-DAPP_HAS_VULKAN=1'
+if fs.is_dir('../../LibDspc')
+	message('Submodule DSP-Crowd found')
+	args += '-DAPP_HAS_LIB_DSPC=1'
 
-	srcs += 'vulkan/LibVulkan.cpp'
-	srcs += 'vulkan/DeviceVulkan.cpp'
-	srcs += 'vulkan/StructComputing.cpp'
-	srcs += 'vulkan/VulkanComputing.cpp'
+	dep_vulkan = dependency('vulkan', required : false)
+	if dep_vulkan.found()
+		deps += dep_vulkan
+		args += '-DAPP_HAS_VULKAN=1'
+
+		srcs += '../../LibDspc/vulkan/LibVulkan.cpp'
+		srcs += '../../LibDspc/vulkan/DeviceVulkan.cpp'
+		srcs += '../../LibDspc/vulkan/StructComputing.cpp'
+		srcs += '../../LibDspc/vulkan/VulkanComputing.cpp'
+
+		incs += '../../LibDspc/vulkan'
+	endif
 endif
 
 # Application
@@ -175,9 +187,7 @@ myApp = executable(
 		srcs,
 	],
 	include_directories : include_directories([
-		'../deps/SystemCore',
-		'../deps/LibNaegCommon',
-		'vulkan',
+		incs,
 	]),
 	dependencies : [
 		deps,
