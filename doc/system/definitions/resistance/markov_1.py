@@ -1,0 +1,58 @@
+#!/usr/bin/env python3
+
+import numpy as np
+import argparse
+
+np.set_printoptions(formatter = {'float': '{:.3f}'.format})
+
+x = np.zeros((3, 1))
+
+A = np.array([[0.00, 0.10, 0.00],
+              [1.00, 0.00, 0.00],
+              [0.00, 0.90, 1.00]])
+
+nDef = 1
+
+def matrix_power(n):
+
+	print(f"")
+
+	x[0] = 1.00
+	print(f"x0")
+	print(np.transpose(x))
+	print(f"")
+
+	print(f"A")
+	print(A)
+
+	sums = np.sum(A, axis = 0)
+	print(f"Sums A")
+	print(f" {sums}")
+
+	print(f"")
+
+	R = np.linalg.matrix_power(A, n)
+	print(f"A^{n}")
+	print(R)
+
+	sums = np.sum(R, axis = 0)
+	print(f"Sums A^{n}")
+	print(f" {sums}")
+
+	print(f"")
+
+	xn = R @ x
+	print(f"x{n} = A^{n} * x0")
+	print(np.transpose(xn))
+
+	print(f"")
+
+	return xn
+
+if __name__ == "__main__":
+	parser = argparse.ArgumentParser(description = 'Calculating A^n')
+	parser.add_argument('n', type = int, nargs = '?', default = nDef, help = f"Exponent for A^n (default: {nDef})")
+
+	args = parser.parse_args()
+	matrix_power(args.n)
+
