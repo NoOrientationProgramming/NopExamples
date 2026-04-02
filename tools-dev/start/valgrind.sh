@@ -28,6 +28,15 @@ dRelTargetToTool="$(realpath --relative-to=$dTarget $dTool)"
 
 echo "Target: $dRelHereToTarget"
 
+supp="--suppressions=../valgrind.supp.txt"
+dirVulkan="../LibDspc/vulkan"
+if [ -d "$dirVulkan" ]; then
+	echo "Suppressing Vulkan errors"
+	suppVulkan="../../$dirVulkan/vulkan.supp.txt"
+	echo "suppVulkan = $suppVulkan"
+	supp="$supp --suppressions=$suppVulkan"
+fi
+
 cd "${dRelHereToTarget}" && \
 ninja && \
 
@@ -36,7 +45,7 @@ valgrind \
 	--show-leak-kinds=all \
 	--gen-suppressions=all \
 	--track-fds=yes \
-	--suppressions=../valgrind_suppressions.txt \
+	$supp \
 ./app \
 	$@
 

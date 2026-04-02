@@ -176,7 +176,7 @@ Success MandelbrotCreating::process()
 			if (!inst.ok)
 				return procErrLog(-1, "could not create Vulkan instance");
 
-			devicesVulkanList(inst);
+			//devicesVulkanList(inst);
 
 			DeviceVulkan dev;
 
