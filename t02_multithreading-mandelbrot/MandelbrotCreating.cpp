@@ -23,6 +23,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <fstream>
+#include <sstream>
+
 #include "MandelbrotCreating.h"
 #include "ThreadPooling.h"
 #include "LibTime.h"
@@ -201,6 +204,7 @@ Success MandelbrotCreating::process()
 Success MandelbrotCreating::vulkanStart()
 {
 	InstanceVulkan inst;
+	bool ok;
 
 	inst = instanceVulkanGet();
 	if (!inst.ok)
@@ -209,6 +213,11 @@ Success MandelbrotCreating::vulkanStart()
 	//devicesVulkanList(inst);
 
 	DeviceVulkan dev;
+	string shader;
+
+	ok = shaderRead("../computing.c", shader);
+	if (!ok)
+		return procErrLog(-1, "could not read shader file");
 
 	(void)DeviceVulkan::selectAndRegister(inst, "main", NULL,
 						VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
@@ -223,6 +232,23 @@ Success MandelbrotCreating::vulkanStart()
 	start(mpCompute);
 
 	return Positive;
+}
+
+bool MandelbrotCreating::shaderRead(const string &filename, string &str)
+{
+	ifstream file(filename, ios::binary);
+	if (!file)
+	{
+		procErrLog(-1, "could not open shader file: %s", filename.c_str());
+		return false;
+	}
+
+	stringstream ss;
+
+	ss << file.rdbuf();
+	str = ss.str();
+
+	return true;
 }
 #endif
 

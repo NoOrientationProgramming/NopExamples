@@ -87,6 +87,7 @@ private:
 	Success argumentsCheck();
 #if APP_HAS_VULKAN
 	Success vulkanStart();
+	bool shaderRead(const std::string &filename, std::string &str);
 #endif
 	/* member variables */
 	uint32_t mStartMs;
