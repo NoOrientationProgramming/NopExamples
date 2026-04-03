@@ -170,11 +170,9 @@ Success MandelbrotCreating::process()
 	case StVulkanStart:
 
 #if APP_HAS_VULKAN
-		mpCompute = VulkanComputing::create();
-		if (!mpCompute)
-			return procErrLog(-1, "could not create process");
-
-		start(mpCompute);
+		success = vulkanStart();
+		if (success != Positive)
+			return procErrLog(-1, "could not start Vulkan computing");
 #endif
 		mState = StVulkanDoneWait;
 
@@ -198,6 +196,35 @@ Success MandelbrotCreating::process()
 
 	return Pending;
 }
+
+#if APP_HAS_VULKAN
+Success MandelbrotCreating::vulkanStart()
+{
+	InstanceVulkan inst;
+
+	inst = instanceVulkanGet();
+	if (!inst.ok)
+		return procErrLog(-1, "could not create Vulkan instance");
+
+	//devicesVulkanList(inst);
+
+	DeviceVulkan dev;
+
+	(void)DeviceVulkan::selectAndRegister(inst, "main", NULL,
+						VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
+
+	dev = DeviceVulkan::get("main");
+	procDbgLog("Selected device: %s", dev.name().c_str());
+
+	mpCompute = VulkanComputing::create(dev);
+	if (!mpCompute)
+		return procErrLog(-1, "could not create process");
+
+	start(mpCompute);
+
+	return Positive;
+}
+#endif
 
 Success MandelbrotCreating::shutdown()
 {

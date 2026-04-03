@@ -85,7 +85,9 @@ private:
 
 	Success fillersProcess();
 	Success argumentsCheck();
-
+#if APP_HAS_VULKAN
+	Success vulkanStart();
+#endif
 	/* member variables */
 	uint32_t mStartMs;
 	char *mpBuffer;
