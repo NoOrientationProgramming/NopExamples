@@ -27,7 +27,7 @@
 #include "ThreadPooling.h"
 #include "LibTime.h"
 #if APP_HAS_VULKAN
-#include "DeviceVulkan.h"
+#include "PipelineComputing.h"
 #endif
 
 #define dForEach_ProcState(gen) \
@@ -185,6 +185,12 @@ Success MandelbrotCreating::process()
 
 			dev = DeviceVulkan::get("main");
 			procDbgLog("Selected device: %s", dev.name().c_str());
+
+			PipelineComputing plc(dev);
+
+			success = plc.construct();
+			if (success != Positive)
+				procDbgLog("could not create buffer");
 		}
 #endif
 		return Positive;
