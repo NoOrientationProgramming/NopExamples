@@ -32,6 +32,9 @@
 #include "Processing.h"
 #include "MandelBlockFilling.h"
 #include "LibBmp.h"
+#if APP_HAS_VULKAN
+#include "VulkanComputing.h"
+#endif
 
 class MandelbrotCreating : public Processing
 {
@@ -94,7 +97,9 @@ private:
 
 	size_t mIdxLineFiller;
 	char *mpLineFiller;
-
+#if APP_HAS_VULKAN
+	VulkanComputing *mpCompute;
+#endif
 	/* static functions */
 
 	/* static variables */

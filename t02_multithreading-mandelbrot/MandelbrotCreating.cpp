@@ -26,14 +26,12 @@
 #include "MandelbrotCreating.h"
 #include "ThreadPooling.h"
 #include "LibTime.h"
-#if APP_HAS_VULKAN
-#include "PipelineComputing.h"
-#endif
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
 		gen(StMain) \
-		gen(StTmp) \
+		gen(StVulkanStart) \
+		gen(StVulkanDoneWait) \
 
 #define dGenProcStateEnum(s) s,
 dProcessStateEnum(ProcState);
@@ -62,6 +60,9 @@ MandelbrotCreating::MandelbrotCreating()
 	, mLstFillers()
 	, mIdxLineFiller(0)
 	, mpLineFiller(NULL)
+#if APP_HAS_VULKAN
+	, mpCompute(NULL)
+#endif
 {
 	// Image
 	cfg.imgWidth = 1920;
@@ -107,7 +108,7 @@ Success MandelbrotCreating::process()
 		if (success != Positive)
 			return procErrLog(-1, "invalid arguments");
 #if 0
-		mState = StTmp;
+		mState = StVulkanStart;
 		break;
 #endif
 		cfg.w2 = ((MbValFull)cfg.imgWidth) / 2;
@@ -166,32 +167,27 @@ Success MandelbrotCreating::process()
 		return Positive;
 
 		break;
-	case StTmp:
+	case StVulkanStart:
 
 #if APP_HAS_VULKAN
-		{
-			InstanceVulkan inst;
-			inst = instanceVulkanGet();
+		mpCompute = VulkanComputing::create();
+		if (!mpCompute)
+			return procErrLog(-1, "could not create process");
 
-			if (!inst.ok)
-				return procErrLog(-1, "could not create Vulkan instance");
+		start(mpCompute);
+#endif
+		mState = StVulkanDoneWait;
 
-			//devicesVulkanList(inst);
+		break;
+	case StVulkanDoneWait:
 
-			DeviceVulkan dev;
+#if APP_HAS_VULKAN
+		success = mpCompute->success();
+		if (success == Pending)
+			break;
 
-			(void)DeviceVulkan::selectAndRegister(inst, "main", NULL,
-								VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
-
-			dev = DeviceVulkan::get("main");
-			procDbgLog("Selected device: %s", dev.name().c_str());
-
-			PipelineComputing plc(dev);
-
-			success = plc.construct();
-			if (success != Positive)
-				procDbgLog("could not create buffer");
-		}
+		if (success != Positive)
+			return procErrLog(-1, "could not compute Mandelbrot set");
 #endif
 		return Positive;
 
