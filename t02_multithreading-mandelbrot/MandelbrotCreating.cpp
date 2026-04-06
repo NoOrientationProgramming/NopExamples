@@ -217,7 +217,7 @@ Success MandelbrotCreating::vulkanStart()
 	DeviceVulkan dev;
 	string shader;
 
-	ok = shaderRead("../computing.c", shader);
+	ok = shaderRead("../mandelbrot.comp", shader);
 	if (!ok)
 		return procErrLog(-1, "could not read shader file");
 
