@@ -206,6 +206,8 @@ Success MandelbrotCreating::vulkanStart()
 	InstanceVulkan inst;
 	bool ok;
 
+	gpuAvEnabledSet();
+
 	inst = instanceVulkanGet();
 	if (!inst.ok)
 		return procErrLog(-1, "could not create Vulkan instance");
