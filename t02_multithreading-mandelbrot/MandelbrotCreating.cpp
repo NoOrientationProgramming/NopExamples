@@ -245,6 +245,10 @@ Success MandelbrotCreating::vulkanStart()
 	if (!ok)
 		return procErrLog(-1, "could not add gradient buffer");
 
+	ok = mpCompute->bufferOutAdd(5, 120);
+	if (!ok)
+		return procErrLog(-1, "could not add gradient buffer");
+
 	ok = mpCompute->fileShaderAdd("../mandelbrot.comp");
 	if (!ok)
 		return procErrLog(-1, "could not add Mandelbrot compute shader");
