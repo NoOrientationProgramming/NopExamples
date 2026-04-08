@@ -209,8 +209,12 @@ Success MandelbrotCreating::process()
 #if APP_HAS_VULKAN
 Success MandelbrotCreating::vulkanStart()
 {
+	GradientStop *pStartGrad;
+	size_t numElemGrad;
 	InstanceVulkan inst;
 	bool ok;
+
+	gradientsGet(pStartGrad, numElemGrad);
 
 	gpuAvEnabledSet();
 
@@ -236,11 +240,6 @@ Success MandelbrotCreating::vulkanStart()
 	ok = mpCompute->bufferInAdd(0, &cfg, sizeof(cfg));
 	if (!ok)
 		return procErrLog(-1, "could not add configuration buffer");
-
-	GradientStop *pStartGrad;
-	size_t numElemGrad;
-
-	gradientsGet(pStartGrad, numElemGrad);
 
 	ok = mpCompute->bufferInAdd(1, pStartGrad, numElemGrad * sizeof(GradientStop));
 	if (!ok)
