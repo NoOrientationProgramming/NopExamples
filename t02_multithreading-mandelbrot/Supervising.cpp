@@ -253,6 +253,9 @@ bool Supervising::mandelbrotStart()
 #if APP_HAS_AVX2
 	pMandel->disableSimd = env.disableSimd;
 #endif
+#if APP_HAS_VULKAN
+	pMandel->disableGpu = env.disableGpu;
+#endif
 	pMandel->posX = env.posX;
 	pMandel->posY = env.posY;
 	pMandel->zoom = env.zoom;

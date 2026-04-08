@@ -54,6 +54,9 @@ struct ConfigMandelbrot
 #if APP_HAS_AVX2
 	bool disableSimd;
 #endif
+#if APP_HAS_VULKAN
+	bool disableGpu;
+#endif
 	size_t numIterMax;
 	MbValFull posX;
 	MbValFull posY;

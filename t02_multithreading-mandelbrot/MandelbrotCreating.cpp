@@ -32,7 +32,7 @@
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
-		gen(StMain) \
+		gen(StCpuFillers) \
 		gen(StVulkanStart) \
 		gen(StVulkanDoneWait) \
 
@@ -110,10 +110,7 @@ Success MandelbrotCreating::process()
 		success = argumentsCheck();
 		if (success != Positive)
 			return procErrLog(-1, "invalid arguments");
-#if 0
-		mState = StVulkanStart;
-		break;
-#endif
+
 		cfg.w2 = ((MbValFull)cfg.imgWidth) / 2;
 		cfg.h2 = ((MbValFull)cfg.imgHeight) / 2;
 		cfg.scaleX = 1.0 / cfg.zoom;
@@ -149,14 +146,22 @@ Success MandelbrotCreating::process()
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
+		mStartMs = curTimeMs;
+
+#if APP_HAS_VULKAN
+		if (!cfg.disableGpu)
+		{
+			mState = StVulkanStart;
+			break;
+		}
+#endif
 		mIdxLineFiller = 0;
 		mpLineFiller = mpBuffer;
 
-		mStartMs = curTimeMs;
-		mState = StMain;
+		mState = StCpuFillers;
 
 		break;
-	case StMain:
+	case StCpuFillers:
 
 		success = fillersProcess();
 		if (success == Pending)
@@ -169,29 +174,30 @@ Success MandelbrotCreating::process()
 
 		return Positive;
 
+#if APP_HAS_VULKAN
 		break;
 	case StVulkanStart:
 
-#if APP_HAS_VULKAN
 		success = vulkanStart();
 		if (success != Positive)
 			return procErrLog(-1, "could not start Vulkan computing");
-#endif
+
 		mState = StVulkanDoneWait;
 
 		break;
 	case StVulkanDoneWait:
 
-#if APP_HAS_VULKAN
 		success = mpCompute->success();
 		if (success == Pending)
 			break;
 
 		if (success != Positive)
 			return procErrLog(-1, "could not compute Mandelbrot set");
-#endif
-		return Positive;
 
+		mDurationMs = diffMs;
+
+		return Positive;
+#endif
 		break;
 	default:
 		break;

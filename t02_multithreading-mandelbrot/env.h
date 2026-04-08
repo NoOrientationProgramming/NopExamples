@@ -39,6 +39,9 @@ struct Environment
 #if APP_HAS_AVX2
 	bool disableSimd;
 #endif
+#if APP_HAS_VULKAN
+	bool disableGpu;
+#endif
 	uint16_t port;
 
 	uint32_t imgWidth;

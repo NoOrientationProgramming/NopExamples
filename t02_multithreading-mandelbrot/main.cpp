@@ -171,6 +171,10 @@ int main(int argc, char *argv[])
 	SwitchArg argDisableSimd("", "no-simd", "Disable usage of SIMD (Single Instruction Multiple Data)", false);
 	cmd.add(argDisableSimd);
 #endif
+#if APP_HAS_VULKAN
+	SwitchArg argDisableGpu("", "no-gpu", "Disable usage of GPU", false);
+	cmd.add(argDisableGpu);
+#endif
 	ValueArg<uint16_t> argPort("", "port-telnet", "Start in server mode if not zero. Default: 0", false, 0, "uint");
 	cmd.add(argPort);
 	ValueArg<size_t> argImgWidth("", "img-width", "Width of generated image. Default: " cImgWidthDefault,
@@ -233,6 +237,9 @@ int main(int argc, char *argv[])
 	env.forceDouble = argForceDouble.getValue();
 #if APP_HAS_AVX2
 	env.disableSimd = argDisableSimd.getValue();
+#endif
+#if APP_HAS_VULKAN
+	env.disableGpu = argDisableGpu.getValue();
 #endif
 	env.port = argPort.getValue();
 
