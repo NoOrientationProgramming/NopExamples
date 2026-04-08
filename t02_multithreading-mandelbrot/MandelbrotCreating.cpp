@@ -222,7 +222,7 @@ Success MandelbrotCreating::vulkanStart()
 	if (!inst.ok)
 		return procErrLog(-1, "could not create Vulkan instance");
 
-	devicesVulkanList(inst);
+	//devicesVulkanList(inst);
 
 	DeviceVulkan dev;
 	string shader;
