@@ -237,11 +237,11 @@ Success MandelbrotCreating::vulkanStart()
 	if (!mpCompute)
 		return procErrLog(-1, "could not create process");
 
-	ok = mpCompute->bufferInAdd(0, &cfg, sizeof(cfg));
+	ok = mpCompute->bufferInAdd(0, sizeof(cfg), &cfg);
 	if (!ok)
 		return procErrLog(-1, "could not add configuration buffer");
 
-	ok = mpCompute->bufferInAdd(1, pStartGrad, numElemGrad * sizeof(GradientStop));
+	ok = mpCompute->bufferInAdd(1, numElemGrad * sizeof(GradientStop), pStartGrad);
 	if (!ok)
 		return procErrLog(-1, "could not add gradient buffer");
 
