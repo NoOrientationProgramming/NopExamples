@@ -223,10 +223,6 @@ Success MandelbrotCreating::vulkanStart()
 	DeviceVulkan dev;
 	string shader;
 
-	ok = shaderRead("../mandelbrot.comp", shader);
-	if (!ok)
-		return procErrLog(-1, "could not read shader file");
-
 	(void)DeviceVulkan::selectAndRegister(inst, "main", NULL,
 						VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
 
@@ -237,7 +233,10 @@ Success MandelbrotCreating::vulkanStart()
 	if (!mpCompute)
 		return procErrLog(-1, "could not create process");
 
-	mpCompute->fileShaderAdd("../mandelbrot.comp");
+	ok = mpCompute->fileShaderAdd("../mandelbrot.comp");
+	if (!ok)
+		return procErrLog(-1, "could not add shader file");
+
 	mpCompute->infoDebugShaders = true;
 
 	start(mpCompute);
