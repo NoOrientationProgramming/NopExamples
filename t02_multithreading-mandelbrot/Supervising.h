@@ -29,6 +29,9 @@
 #include "Processing.h"
 #include "MandelbrotCreating.h"
 #include "TcpListening.h"
+#if APP_HAS_VULKAN
+#include "ShaderCompiling.h"
+#endif
 
 class Supervising : public Processing
 {
@@ -64,7 +67,10 @@ private:
 	bool mandelbrotStart();
 	bool serverStart();
 	void peerAdd();
-
+#if APP_HAS_VULKAN
+	bool mustCompileShader();
+	bool compilerStart();
+#endif
 	void configPrint(ConfigMandelbrot *pMandel);
 	void progressPrint();
 	void resultPrint();
@@ -78,6 +84,9 @@ private:
 	MandelbrotCreating *mpMbCreate;
 	TcpListening *mpListen;
 	size_t mIdxLineDone;
+#if APP_HAS_VULKAN
+	ShaderCompiling *mpComp;
+#endif
 
 	/* static functions */
 

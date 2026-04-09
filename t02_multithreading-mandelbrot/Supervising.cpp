@@ -31,12 +31,19 @@
 #include "SystemDebugging.h"
 #include "ThreadPooling.h"
 #include "UserInteracting.h"
+#include "LibFilesys.h"
 #include "LibMandel.h"
+#if APP_HAS_VULKAN
+#include "LibVulkan.h"
+#endif
 
 #include "env.h"
 
 #define dForEach_ProcState(gen) \
 		gen(StStart) \
+		gen(StShaderStart) \
+		gen(StShaderDoneWait) \
+		gen(StServiceStart) \
 		gen(StMain) \
 		gen(StServerStart) \
 		gen(StServer) \
@@ -70,6 +77,9 @@ Supervising::Supervising()
 	, mpMbCreate(NULL)
 	, mpListen(NULL)
 	, mIdxLineDone(10)
+#if APP_HAS_VULKAN
+	, mpComp(NULL)
+#endif
 {
 	mState = StStart;
 }
@@ -94,6 +104,44 @@ Success Supervising::process()
 		ok = basicsStart();
 		if (!ok)
 			return procErrLog(-1, "could not start basic services");
+
+#if APP_HAS_GLSLANG
+		ok = mustCompileShader();
+		if (ok)
+		{
+			mState = StShaderStart;
+			break;
+		}
+#endif
+		mState = StServiceStart;
+
+		break;
+	case StShaderStart:
+
+#if APP_HAS_GLSLANG
+		ok = compilerStart();
+		if (!ok)
+			return procErrLog(-1, "could not start shader compilation");
+#endif
+		mState = StShaderDoneWait;
+
+		break;
+	case StShaderDoneWait:
+
+#if APP_HAS_GLSLANG
+		success = mpComp->success();
+		if (success == Pending)
+			break;
+
+		if (success != Positive)
+			return procErrLog(-1, "could not compile shader");
+
+		repel(mpComp);
+#endif
+		mState = StServiceStart;
+
+		break;
+	case StServiceStart:
 
 		if (env.port)
 		{
@@ -309,6 +357,65 @@ void Supervising::peerAdd()
 		whenFinishedRepel(pUser);
 	}
 }
+
+#if APP_HAS_GLSLANG
+bool Supervising::mustCompileShader()
+{
+	bool ok;
+
+	ok = fileExists(env.nameFileShader);
+	if (!ok)
+	{
+		procDbgLog("could not find shader file. GPU computation disabled");
+		env.disableGpu = true;
+		return false;
+	}
+
+	if (env.disableCacheShader)
+		return true;
+
+	// Cache misses
+	string shaderBin = env.nameFileShader + ".bin";
+
+	ok = fileExists(shaderBin);
+	if (!ok)
+		return true;
+
+	TimePoint tpSource, tpCompiled;
+
+	tpSource = tpFileModified(env.nameFileShader);
+	tpCompiled = tpFileModified(shaderBin);
+
+	if (tpCompiled < tpSource)
+		return true;
+
+	// Cache hit
+
+	// TODO: Binary add
+
+	return false;
+}
+
+bool Supervising::compilerStart()
+{
+	InstanceVulkan inst;
+
+	inst = instanceVulkanGet();
+	if (!inst.ok)
+		return procErrLog(-1, "could not create Vulkan instance");
+
+	mpComp = ShaderCompiling::create();
+	if (!mpComp)
+	{
+		procErrLog(-1, "could not create process");
+		return false;
+	}
+
+	start(mpComp);
+
+	return true;
+}
+#endif
 
 void Supervising::configPrint(ConfigMandelbrot *pCfg)
 {
