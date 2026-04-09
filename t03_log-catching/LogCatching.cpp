@@ -112,24 +112,14 @@ Success LogCatching::linesFetch()
 	size_t lenReq;
 	ssize_t lenRead;
 	char *pBuf, *pFound;
-	bool ok;
 
 	lenReq = sizeof(buf) - 1;
 
 #if defined(__unix__)
-	lenRead = read(STDIN_FILENO, buf, lenReq);
-#else
-	(void)lenReq;
-	lenRead = 0;
-#endif
-#if 0
-	if (!lenRead)
-		break;
+	bool ok;
 
-	if (lenRead < 0)
-#else
+	lenRead = read(STDIN_FILENO, buf, lenReq);
 	if (lenRead <= 0)
-#endif
 	{
 #if 0
 		if (errno == EAGAIN or errno == EWOULDBLOCK)
@@ -144,6 +134,10 @@ Success LogCatching::linesFetch()
 
 		return Positive;
 	}
+#else
+	(void)lenReq;
+	lenRead = 0;
+#endif
 
 	buf[lenRead] = 0;
 	pBuf = buf;

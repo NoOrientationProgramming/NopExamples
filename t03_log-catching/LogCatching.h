@@ -48,8 +48,8 @@ protected:
 
 private:
 
-	LogCatching(const LogCatching &) : Processing("") {}
-	LogCatching &operator=(const LogCatching &) { return *this; }
+	LogCatching(const LogCatching &) = delete;
+	LogCatching &operator=(const LogCatching &) = delete;
 
 	/*
 	 * Naming of functions:  objectVerb()

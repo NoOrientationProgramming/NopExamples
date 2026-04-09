@@ -348,7 +348,7 @@ void Supervising::progressPrint()
 	char *pBuf = pBufStart;
 	char *pBufEnd = pBuf + sizeof(buf);
 
-	pBuf[0] = 0;
+	pBufStart[0] = 0;
 
 	dInfo("\r  ");
 	pBuf += progressStr(pBuf, pBufEnd,
@@ -363,7 +363,7 @@ void Supervising::resultPrint()
 {
 	double ips, numIter = (double)mpMbCreate->mNumIterations;
 	double durMs = (double)mpMbCreate->mDurationMs;
-	ConfigMandelbrot *pCfg = &mpMbCreate->cfg;
+	const ConfigMandelbrot *pCfg = &mpMbCreate->cfg;
 
 	userInfLog("\n");
 	userInfLog("  Duration                 %14zu [ms]", (size_t)durMs);

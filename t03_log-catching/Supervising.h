@@ -47,8 +47,8 @@ protected:
 
 private:
 
-	Supervising(const Supervising &) : Processing("") {}
-	Supervising &operator=(const Supervising &) { return *this; }
+	Supervising(const Supervising &) = delete;
+	Supervising &operator=(const Supervising &) = delete;
 
 	/*
 	 * Naming of functions:  objectVerb()

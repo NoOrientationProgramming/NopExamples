@@ -125,7 +125,6 @@ int main(int argc, char *argv[])
 	signal(SIGINT, applicationCloseRequest);
 	signal(SIGTERM, applicationCloseRequest);
 #endif
-	env.haveTclap = 1;
 	env.daemonDebug = false;
 	env.verbosity = 3;
 #if defined(__unix__)
@@ -133,6 +132,8 @@ int main(int argc, char *argv[])
 #endif
 
 #if APP_HAS_TCLAP
+	env.haveTclap = 1;
+
 	int res;
 
 	CmdLine cmd("Command description message", ' ', appVersion());

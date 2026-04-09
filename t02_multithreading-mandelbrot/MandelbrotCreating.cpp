@@ -388,6 +388,8 @@ void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 
 	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineDone, (int)mBmp.height);
 	dInfo("\n");
+
+	(void)pBuf;
 }
 
 /* static functions */
