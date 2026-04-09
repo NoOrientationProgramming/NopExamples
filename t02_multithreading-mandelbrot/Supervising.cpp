@@ -375,6 +375,7 @@ bool Supervising::mustCompileShader()
 		return true;
 
 	// Cache misses
+
 	string shaderBin = env.nameFileShader + ".bin";
 
 	ok = fileExists(shaderBin);
