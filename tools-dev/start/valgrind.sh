@@ -45,6 +45,7 @@ valgrind \
 	--show-leak-kinds=all \
 	--gen-suppressions=all \
 	--track-fds=yes \
+	--track-origins=yes \
 	$supp \
 ./app \
 	$@
