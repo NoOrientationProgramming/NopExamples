@@ -167,7 +167,6 @@ if fs.is_dir('../../LibDspc')
 		deps += dep_vulkan
 		args += '-DAPP_HAS_VULKAN=1'
 
-		srcs += '../../LibDspc/vulkan/LibVulkan.cpp'
 		srcs += '../../LibDspc/vulkan/DeviceVulkan.cpp'
 		srcs += '../../LibDspc/vulkan/VulkanComputing.cpp'
 		incs += '../../LibDspc/vulkan'

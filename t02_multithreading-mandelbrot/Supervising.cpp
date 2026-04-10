@@ -34,7 +34,7 @@
 #include "LibFilesys.h"
 #include "LibMandel.h"
 #if APP_HAS_VULKAN
-#include "LibVulkan.h"
+#include "DeviceVulkan.h"
 #endif
 
 #include "env.h"
@@ -398,17 +398,37 @@ bool Supervising::mustCompileShader()
 	// Cache hit
 
 	// TODO: Binary add
+	// ShaderCompiling static function
 
 	return false;
 }
 
 bool Supervising::compilerStart()
 {
-	InstanceVulkan inst;
+	string aliasDev = "main";
+	bool ok;
 
-	inst = instanceVulkanGet();
-	if (!inst.ok)
-		return procErrLog(-1, "could not create Vulkan instance");
+	DeviceVulkan::physList();
+	DeviceVulkan::gpuAvEnabledSet();
+
+	ok = DeviceVulkan::phySelectAndRegister(aliasDev, NULL,
+						VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
+	if (!ok)
+	{
+		procErrLog(-1, "could not select and register Vulkan device");
+		return false;
+	}
+
+	DeviceVulkan dev;
+
+	ok = DeviceVulkan::registeredGet(aliasDev, dev);
+	if (!ok)
+	{
+		procErrLog(-1, "could not get Vulkan device");
+		return false;
+	}
+
+	procDbgLog("Selected device: %s", dev.name().c_str());
 
 	mpComp = ShaderCompiling::create();
 	if (!mpComp)
@@ -416,6 +436,8 @@ bool Supervising::compilerStart()
 		procErrLog(-1, "could not create process");
 		return false;
 	}
+
+	// TODO: Set source file
 
 	start(mpComp);
 

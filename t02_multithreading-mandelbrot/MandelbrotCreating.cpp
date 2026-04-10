@@ -211,29 +211,11 @@ Success MandelbrotCreating::vulkanStart()
 {
 	GradientStop *pStartGrad;
 	size_t numElemGrad;
-	InstanceVulkan inst;
 	bool ok;
 
 	gradientsGet(pStartGrad, numElemGrad);
 
-	gpuAvEnabledSet();
-
-	inst = instanceVulkanGet();
-	if (!inst.ok)
-		return procErrLog(-1, "could not create Vulkan instance");
-
-	//devicesVulkanList(inst);
-
-	DeviceVulkan dev;
-	string shader;
-
-	(void)DeviceVulkan::selectAndRegister(inst, "main", NULL,
-						VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
-
-	dev = DeviceVulkan::get("main");
-	procDbgLog("Selected device: %s", dev.name().c_str());
-
-	mpCompute = VulkanComputing::create(dev);
+	mpCompute = VulkanComputing::create("main");
 	if (!mpCompute)
 		return procErrLog(-1, "could not create process");
 
