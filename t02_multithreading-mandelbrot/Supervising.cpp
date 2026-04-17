@@ -557,8 +557,7 @@ bool Supervising::vulkanInit()
 
 	//DeviceVulkan::physList();
 
-	ok = DeviceVulkan::phySelectAndRegister(aliasDev, NULL,
-						VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU);
+	ok = DeviceVulkan::phySelectAndRegister(aliasDev, 0);
 	if (!ok)
 	{
 		errLog(-1, "could not select and register Vulkan device");
