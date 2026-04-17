@@ -243,15 +243,15 @@ Success MandelbrotCreating::vulkanStart()
 	mpCompute->shaderUse("mandel");
 
 	// Input
-	mpCompute->bufferInAdd(0, NULL, sizeof(cfg), &cfg);
-	mpCompute->bufferInAdd(1, NULL, numElemGrad * sizeof(GradientStop), pStartGrad);
+	mpCompute->bufferInAdd(0, sizeof(cfg), &cfg);
+	mpCompute->bufferInAdd(1, numElemGrad * sizeof(GradientStop), pStartGrad);
 
 	hexDump(&cfg, sizeof(cfg));
 
 	// Output
-	mpCompute->bufferOutAdd(5, NULL, 120);
-	mpCompute->bufferOutAdd(6, NULL, 120);
-	mpCompute->bufferOutAdd(7, NULL, 120);
+	mpCompute->bufferOutAdd(5, 120);
+	mpCompute->bufferOutAdd(6, 120);
+	mpCompute->bufferOutAdd(7, 120);
 
 	start(mpCompute);
 
