@@ -139,11 +139,8 @@ Success MandelbrotCreating::process()
 		procDbgLog("Buffer start     %p", mpBuffer);
 		procDbgLog("Buffer end       %p", mpBufferEnd);
 #endif
-		mBmp.width = cfg.imgWidth;
-		mBmp.height = cfg.imgHeight;
-
 		mNameFile += ".bmp";
-		ok = FileBmp::create(mNameFile.c_str(), &mBmp);
+		ok = mBmp.writeOpen(mNameFile.c_str(), cfg.imgWidth, cfg.imgHeight);
 		if (!ok)
 			return procErrLog(-1, "could not create BMP file");
 
@@ -307,9 +304,9 @@ Success MandelbrotCreating::fillersProcess()
 
 		mNumIterations += pFill->mNumIter;
 
-		ok = mBmp.lineAppend(pFill->mpLine, cfg.szLine);
+		ok = mBmp.lineWrite(pFill->mpLine, cfg.szLine);
 		if (!ok)
-			return procErrLog(-1, "could not append line");
+			return procErrLog(-1, "could not write line");
 
 		repel(pFill);
 		iter = mLstFillers.erase(iter);
@@ -393,10 +390,10 @@ void MandelbrotCreating::processInfo(char *pBuf, char *pBufEnd)
 #if 0
 	dInfo("State\t\t\t%s\n", ProcStateString[mState]);
 #endif
-	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineFiller, (int)mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineFiller, (int)cfg.imgHeight);
 	dInfo("\n");
 
-	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineDone, (int)mBmp.height);
+	pBuf += progressStr(pBuf, pBufEnd, (int)mIdxLineDone, (int)cfg.imgHeight);
 	dInfo("\n");
 
 	(void)pBuf;

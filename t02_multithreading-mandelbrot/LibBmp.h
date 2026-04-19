@@ -34,31 +34,25 @@ const size_t cNumBytesPerPixel = 3 * sizeof(char);
 class FileBmp
 {
 public:
-	FileBmp()
-		: pFile(NULL)
-		, width(0)
-		, height(0)
-		, idxLine(0)
-		, mMtxFile()
-	{}
-
+	FileBmp();
 	virtual ~FileBmp() { this->close(); }
 
-	bool lineAppend(const char *pData, size_t len);
+	void modeGreySet(bool val = true);
+
+	bool writeOpen(const char *pFilename, uint32_t width, uint32_t height);
+	bool lineWrite(const char *pData, size_t len);
 	void close();
-
-	FILE *pFile;
-	uint32_t width;
-	uint32_t height;
-	uint32_t idxLine;
-
-	static bool create(const char *pFilename, FileBmp *pBmp);
 
 private:
 	void imageComplete(size_t szLine);
-	bool lineAppendUnlocked(const char *pData, size_t len);
+	bool lineWriteUnlocked(const char *pData, size_t len);
 
 	std::mutex mMtxFile;
+	uint32_t mWidth;
+	uint32_t mHeight;
+	uint32_t mIdxWritten;
+	FILE *mpFile;
+	bool mModeGrey;
 };
 
 #endif

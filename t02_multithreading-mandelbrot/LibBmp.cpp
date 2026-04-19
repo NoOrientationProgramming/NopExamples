@@ -35,30 +35,44 @@ using namespace std;
 const size_t cSzHeaderBmp = 14;
 const size_t cSzHeaderDib = 40;
 
-bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
+FileBmp::FileBmp()
+	: mMtxFile()
+	, mWidth(0)
+	, mHeight(0)
+	, mIdxWritten(0)
+	, mpFile(NULL)
+	, mModeGrey(false)
 {
-	if (!pFilename || !pBmp)
+}
+
+void FileBmp::modeGreySet(bool val)
+{
+	mModeGrey = val;
+}
+
+bool FileBmp::writeOpen(const char *pFilename, uint32_t width, uint32_t height)
+{
+	if (!pFilename)
 		return false;
 
-	Guard lock(pBmp->mMtxFile);
+	Guard lock(mMtxFile);
 
-	if (pBmp->pFile)
+	if (mpFile)
 		return false;
-
-	FILE *pFile;
 
 #if defined(_WIN32)
-	errno_t numErr = ::fopen_s(&pFile, pFilename, "wb");
+	errno_t numErr = ::fopen_s(&mpFile, pFilename, "wb");
 	if (numErr)
 #else
-	pFile = fopen(pFilename, "wb");
-	if (!pFile)
+	mpFile = fopen(pFilename, "wb");
+	if (!mpFile)
 #endif
 		return false;
 
 	// Object
-	pBmp->pFile = pFile;
-	pBmp->idxLine = 0;
+	mWidth = width;
+	mHeight = height;
+	mIdxWritten = 0;
 
 	// Headers
 	uint8_t buf[cSzHeaderDib];
@@ -73,7 +87,7 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	buf[1] = 'M';
 	buf[10] = 54; // Pixel data offset
 
-	fwrite(buf, sizeof(buf[0]), len, pFile);
+	fwrite(buf, sizeof(buf[0]), len, mpFile);
 
 	// Header DIB
 	len = sizeof(buf);
@@ -85,32 +99,32 @@ bool FileBmp::create(const char *pFilename, FileBmp *pBmp)
 	buf[12] = 1; // Planes
 	buf[14] = 24; // Bits per pixel
 
-	fwrite(buf, sizeof(buf[0]), len, pFile);
+	fwrite(buf, sizeof(buf[0]), len, mpFile);
 
 	return true;
 }
 
-bool FileBmp::lineAppend(const char *pData, size_t len)
+bool FileBmp::lineWrite(const char *pData, size_t len)
 {
 	Guard lock(mMtxFile);
-	return lineAppendUnlocked(pData, len);
+	return lineWriteUnlocked(pData, len);
 }
 
 void FileBmp::close()
 {
 	Guard lock(mMtxFile);
 
-	if (!pFile)
+	if (!mpFile)
 		return;
 
-	if (!width || !height)
+	if (!mWidth || !mHeight)
 	{
-		fclose(pFile);
-		pFile = NULL;
+		fclose(mpFile);
+		mpFile = NULL;
 		return;
 	}
 
-	size_t szData = width * cNumBytesPerPixel; // Size of data per line
+	size_t szData = mWidth * cNumBytesPerPixel; // Size of data per line
 	size_t maskLine = 3;
 	size_t szLine = ((szData + maskLine) & ~maskLine);
 	size_t szFile;
@@ -123,38 +137,38 @@ void FileBmp::close()
 	 */
 	imageComplete(szLine);
 
-	szData = szLine * idxLine; // Size of data for all (written) lines
+	szData = szLine * mIdxWritten; // Size of data for all (written) lines
 	szFile = szData + cSzHeaderBmp + cSzHeaderDib;
 #if 0
 	dbgLog("Updating headers");
 	dbgLog("Size file        %u", szFile);
-	dbgLog("Width            %u", width);
-	dbgLog("Height written   %u", idxLine);
+	dbgLog("Width            %u", mWidth);
+	dbgLog("Height written   %u", mIdxWritten);
 	dbgLog("Size data        %u", szData);
 #endif
-	fseek(pFile, 2, SEEK_SET);
-	fwrite(&szFile, sizeof(uint32_t), 1, pFile);
+	fseek(mpFile, 2, SEEK_SET);
+	fwrite(&szFile, sizeof(uint32_t), 1, mpFile);
 
-	fseek(pFile, cSzHeaderBmp + 4, SEEK_SET);
-	fwrite(&width, sizeof(width), 1, pFile);
+	fseek(mpFile, cSzHeaderBmp + 4, SEEK_SET);
+	fwrite(&mWidth, sizeof(mWidth), 1, mpFile);
 
-	fseek(pFile, cSzHeaderBmp + 8, SEEK_SET);
-	fwrite(&idxLine, sizeof(idxLine), 1, pFile);
+	fseek(mpFile, cSzHeaderBmp + 8, SEEK_SET);
+	fwrite(&mIdxWritten, sizeof(mIdxWritten), 1, mpFile);
 
-	fseek(pFile, cSzHeaderBmp + 20, SEEK_SET);
-	fwrite(&szData, sizeof(szData), 1, pFile);
+	fseek(mpFile, cSzHeaderBmp + 20, SEEK_SET);
+	fwrite(&szData, sizeof(szData), 1, mpFile);
 
-	fclose(pFile);
-	pFile = NULL;
+	fclose(mpFile);
+	mpFile = NULL;
 }
 
 void FileBmp::imageComplete(size_t szLine)
 {
-	if (idxLine >= height)
+	if (mIdxWritten >= mHeight)
 		return;
 
 	wrnLog("Image not finished. Filling up");
-	wrnLog("Line index       %u", idxLine);
+	wrnLog("Line index       %u", mIdxWritten);
 	wrnLog("Size             %u", szLine);
 
 	size_t numLinesRemaining;
@@ -173,15 +187,15 @@ void FileBmp::imageComplete(size_t szLine)
 	/*
 	 * Important:
 	 * We are in an unusual situation.
-	 * We could check idxLine and height,
+	 * We could check mIdxWritten and mHeight,
 	 * but we can control the remaining lines
 	 * variable by ourselves.
 	 */
-	numLinesRemaining = height - idxLine;
+	numLinesRemaining = mHeight - mIdxWritten;
 
 	for (; numLinesRemaining; --numLinesRemaining)
 	{
-		ok = lineAppendUnlocked(pData, szLine);
+		ok = lineWriteUnlocked(pData, szLine);
 		if (ok)
 			continue;
 
@@ -192,28 +206,28 @@ void FileBmp::imageComplete(size_t szLine)
 	delete[] pData;
 }
 
-bool FileBmp::lineAppendUnlocked(const char *pData, size_t len)
+bool FileBmp::lineWriteUnlocked(const char *pData, size_t len)
 {
-	if (idxLine >= height)
+	if (!mpFile || !pData || !len)
 		return false;
 
-	if (!pFile || !pData || !len)
+	if (!mWidth || !mHeight)
 		return false;
 
-	if (!width || !height)
+	if (mIdxWritten >= mHeight)
 		return false;
 
 	if (len & 3)
 	{
-		wrnLog("Padding error: %u (%u) @ %p -> %p", idxLine, len, pData, pFile);
+		wrnLog("padding error: %u (%u) @ %p -> %p", mIdxWritten, len, pData, mpFile);
 		return false;
 	}
 #if 0
-	if (idxLine < 5)
-		wrnLog("Writing line: %u (%u) @ %p -> %p", idxLine, len, pData, pFile);
+	if (mIdxWritten < 5)
+		wrnLog("Writing line: %u (%u) @ %p -> %p", mIdxWritten, len, pData, mpFile);
 #endif
-	fwrite(pData, sizeof(*pData), len, pFile);
-	++idxLine;
+	fwrite(pData, sizeof(*pData), len, mpFile);
+	++mIdxWritten;
 
 	return true;
 }
