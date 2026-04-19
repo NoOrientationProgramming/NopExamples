@@ -37,8 +37,6 @@ public:
 	FileBmp();
 	virtual ~FileBmp() { this->close(); }
 
-	void modeGraySet(bool val = true);
-
 	bool writeOpen(const char *pFilename, uint32_t width, uint32_t height);
 	bool lineWrite(const char *pData, size_t len);
 
@@ -53,7 +51,6 @@ private:
 	uint32_t mHeight;
 	uint32_t mIdxWritten;
 	FILE *mpFile;
-	bool mModeGray;
 };
 
 #endif

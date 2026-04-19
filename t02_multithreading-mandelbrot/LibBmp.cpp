@@ -41,13 +41,7 @@ FileBmp::FileBmp()
 	, mHeight(0)
 	, mIdxWritten(0)
 	, mpFile(NULL)
-	, mModeGray(false)
 {
-}
-
-void FileBmp::modeGraySet(bool val)
-{
-	mModeGray = val;
 }
 
 bool FileBmp::writeOpen(const char *pFilename, uint32_t width, uint32_t height)
@@ -100,7 +94,7 @@ bool FileBmp::writeOpen(const char *pFilename, uint32_t width, uint32_t height)
 	buf[0] = (uint8_t)len; // Header size
 
 	buf[12] = 1; // Planes
-	buf[14] = mModeGray ? 8 : 24; // Bits per pixel
+	buf[14] = 24; // Bits per pixel
 
 	fwrite(buf, sizeof(buf[0]), len, mpFile);
 
