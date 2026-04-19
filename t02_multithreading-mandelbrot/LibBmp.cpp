@@ -55,6 +55,9 @@ bool FileBmp::writeOpen(const char *pFilename, uint32_t width, uint32_t height)
 	if (!pFilename)
 		return false;
 
+	if (!width || !height)
+		return false;
+
 	Guard lock(mMtxFile);
 
 	if (mpFile)
