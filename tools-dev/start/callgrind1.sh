@@ -1,3 +1,4 @@
+#!/bin/sh
 
 dirTut="t01_tcp-echo-server"
 
