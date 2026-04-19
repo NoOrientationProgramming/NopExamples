@@ -23,12 +23,12 @@ srcs = [
 	'../deps/LibNaegCommon/LibFilesys.cpp',
 	'../deps/LibNaegCommon/LibDspc.cpp',
 	'../deps/LibNaegCommon/Res.cpp',
+	'../deps/LibNaegCommon/LibBmp.cpp',
 	'main.cpp',
 	'Supervising.cpp',
 	'MandelbrotCreating.cpp',
 	'MandelBlockFilling.cpp',
 	'UserInteracting.cpp',
-	'LibBmp.cpp',
 	'LibMandel.cpp',
 ]
 
