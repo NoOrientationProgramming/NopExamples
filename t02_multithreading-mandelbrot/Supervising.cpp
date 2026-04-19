@@ -549,6 +549,9 @@ void Supervising::processInfo(char *pBuf, char *pBufEnd)
 #if APP_HAS_VULKAN
 bool Supervising::vulkanInit()
 {
+	if (env.disableGpu)
+		return true;
+
 	const string aliasDev = "main";
 	bool ok;
 
